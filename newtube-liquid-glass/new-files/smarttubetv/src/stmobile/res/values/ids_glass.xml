@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="newtube_glass_original_saved" type="id" />
+    <item name="newtube_glass_original_background" type="id" />
+    <item name="newtube_glass_original_elevation" type="id" />
+    <item name="newtube_glass_original_animator" type="id" />
+    <item name="newtube_glass_original_outline_provider" type="id" />
+    <item name="newtube_glass_original_clip_outline" type="id" />
+    <item name="newtube_glass_original_haptic" type="id" />
+    <item name="newtube_glass_original_text_colors" type="id" />
+    <item name="newtube_glass_recycler_hook" type="id" />
+</resources>
