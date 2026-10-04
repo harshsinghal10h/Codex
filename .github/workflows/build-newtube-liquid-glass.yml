@@ -37,14 +37,6 @@ jobs:
           cache: gradle
           cache-dependency-path: newtube/**/*.gradle*
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android API 37
-        run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-37" "platform-tools"
-
       - name: Apply and verify frontend
         run: |
           python integration/newtube-liquid-glass/apply_liquid_glass.py newtube
