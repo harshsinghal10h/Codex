@@ -69,10 +69,12 @@ public class GlassDeviceTest {
             }
             try(ActivityScenario<MobileSettingsActivity> settings=ActivityScenario.launch(MobileSettingsActivity.intent(context,SettingsPages.APPEARANCE))) {
                 SystemClock.sleep(900);
+                windowFrame(settings).recycle();
                 settings.onActivity(a -> {
                     assertNotNull(a.findViewById(R.id.newtube_glass_profile_picker));
                     assertNotNull(a.findViewById(R.id.settings_list));
                     int height = a.findViewById(R.id.newtube_glass_amoled_option).getHeight();
+                    assertTrue("Appearance rows must finish layout",height > 0);
                     for (int id : new int[]{R.id.newtube_glass_amoled_option, R.id.newtube_glass_dynamic_option, R.id.newtube_glass_enabled_option}) {
                         View row = a.findViewById(id); assertNotNull(row); assertEquals(height, row.getHeight());
                         int width = row.getWidth(); CompoundButton toggle = row.findViewById(R.id.settings_row_switch);
@@ -159,17 +161,19 @@ public class GlassDeviceTest {
         int color = image.getPixel(point[0], point[1]); image.recycle(); return color;
     }
     private void assertSwitchGraphics(ActivityScenario<MobileSettingsActivity> settings) throws Exception {
+        // Rebinding after toggles is completed by the next traversal, not by a fixed sleep.
+        Bitmap image = windowFrame(settings);
         android.graphics.Rect[] controls = new android.graphics.Rect[3];
         settings.onActivity(a -> {
             int[] ids = {R.id.newtube_glass_amoled_option, R.id.newtube_glass_dynamic_option, R.id.newtube_glass_enabled_option};
             for (int i = 0; i < ids.length; i++) {
                 View control = a.findViewById(ids[i]).findViewById(R.id.settings_row_switch);
-                assertTrue(control.isShown()); assertTrue(control.getWidth() > 0);
+                assertTrue("Switch must be shown after layout",control.isShown());
+                assertTrue("Switch must have measured width",control.getWidth() > 0);
                 int[] location = new int[2]; control.getLocationInWindow(location);
                 controls[i] = new android.graphics.Rect(location[0], location[1], location[0]+control.getWidth(), location[1]+control.getHeight());
             }
         });
-        Bitmap image = windowFrame(settings);
         for (android.graphics.Rect control : controls) {
             int low = 255, high = 0;
             for (int y = control.top+2; y < control.bottom-2; y += 2) {
