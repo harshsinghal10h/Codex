@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="newtube_glass_header" type="id" />
+    <item name="newtube_glass_settings_page" type="id" />
+    <item name="newtube_glass_settings_row" type="id" />
+    <item name="newtube_glass_profile_picker" type="id" />
     <item name="newtube_glass_original_saved" type="id" />
     <item name="newtube_glass_original_background" type="id" />
     <item name="newtube_glass_original_elevation" type="id" />

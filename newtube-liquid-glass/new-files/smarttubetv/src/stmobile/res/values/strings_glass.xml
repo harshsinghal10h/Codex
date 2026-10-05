@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="newtube_glass_app_name">NewTube Glass</string>
+    <string name="newtube_glass_profile_vaso_name">Vaso</string>
+    <string name="newtube_glass_profile_lastwave_name">LastWave</string>
+    <string name="newtube_glass_profile_vaso_detail">Clear lenses · fine rims</string>
+    <string name="newtube_glass_profile_lastwave_detail">Warm glass · expressive dock</string>
     <string name="mobile_settings_appearance">Appearance &amp; glass</string>
     <string name="mobile_settings_appearance_summary">Liquid Glass, geometry, motion and surface customization</string>
     <string name="mobile_glass_group_style">Glass profile</string>

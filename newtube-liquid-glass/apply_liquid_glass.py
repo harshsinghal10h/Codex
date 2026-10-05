@@ -107,6 +107,64 @@ def patch_settings(root):
                 context.getString(R.string.mobile_settings_appearance_summary), APPEARANCE));'''
     p.write_text(t.replace(needle, replacement, 1), encoding="utf-8")
 
+def replace_once(root, relative, old, new):
+    p = root / relative
+    t = p.read_text(encoding="utf-8")
+    if new in t:
+        return
+    require(t, old, relative)
+    p.write_text(t.replace(old, new, 1), encoding="utf-8")
+
+def patch_components(root):
+    base = "smarttubetv/src/stmobile/"
+    replace_once(root, base + "res/layout/activity_mobile_browse.xml",
+                 "<com.google.android.material.bottomnavigation.BottomNavigationView",
+                 "<com.newtube.mobile.ui.glass.GlassNavigationView")
+    replace_once(root, base + "res/layout/item_mobile_settings_row.xml",
+                 '    android:layout_width="match_parent"',
+                 '    android:id="@+id/newtube_glass_settings_row"\n    android:layout_width="match_parent"')
+    replace_once(root, base + "res/layout/fragment_mobile_settings_page.xml",
+                 '    android:layout_width="match_parent"',
+                 '    android:id="@+id/newtube_glass_settings_page"\n    android:layout_width="match_parent"')
+    replace_once(root, base + "java/com/newtube/mobile/ui/settings/SettingsPageFragment.java",
+                 "        super.onViewCreated(view, savedInstanceState);",
+                 "        super.onViewCreated(view, savedInstanceState);\n"
+                 "        if (SettingsPages.APPEARANCE.equals(mPageId)) {\n"
+                 "            ((android.widget.LinearLayout) view).addView(\n"
+                 "                    new com.newtube.mobile.ui.glass.GlassProfilePicker(requireContext(), this::rebuild), 1,\n"
+                 "                    new android.widget.LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT,\n"
+                 "                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT));\n"
+                 "        }\n"
+                 "        view.post(() -> { if (getActivity() != null) com.newtube.mobile.ui.glass.GlassRuntime.apply(requireActivity()); });")
+    replace_once(root, base + "java/com/newtube/mobile/ui/playback/MiniPlayerListInset.java",
+                 "        int extra = requiredExtra();",
+                 "        int extra = requiredExtra() + com.newtube.mobile.ui.glass.GlassShell.navigationInset(mList);")
+    replace_once(root, base + "java/com/newtube/mobile/ui/playback/MiniPlayerListInset.java",
+                 "if (extra != mAppliedExtra) {",
+                 "if (extra != mAppliedExtra || mList.getPaddingBottom() != mBasePaddingBottom + extra) {")
+    replace_once(root, base + "java/com/newtube/mobile/ui/browse/MobileBrowseActivity.java",
+                 "View itemView = mBottomNav.findViewById(toMenuItemId(section.getId()));",
+                 "View itemView = ((com.newtube.mobile.ui.glass.GlassNavigationView) mBottomNav).findNavigationItem(toMenuItemId(section.getId()));")
+    replace_once(root, base + "java/com/newtube/mobile/ui/browse/MobileBrowseActivity.java",
+                 "itemView.setOnLongClickListener(v -> {",
+                 "((com.newtube.mobile.ui.glass.GlassNavigationView) mBottomNav).setNavigationLongClickListener(toMenuItemId(sectionId), v -> {")
+    # Every bitmap that can appear behind the dock must support a software canvas.
+    replace_once(root, base + "java/com/newtube/mobile/NewTubeGlideModule.java",
+                 "new RequestOptions().set(HttpGlideUrlLoader.TIMEOUT, HTTP_TIMEOUT_MS)",
+                 "new RequestOptions().disallowHardwareConfig().set(HttpGlideUrlLoader.TIMEOUT, HTTP_TIMEOUT_MS)")
+
+def patch_fork_identity(root):
+    p = root / "smarttubetv/build.gradle"
+    t = p.read_text(encoding="utf-8")
+    t = t.replace('applicationId "io.github.aleixrodriala.arc"', 'applicationId "io.github.harshsinghal10h.newtubeglass"')
+    t = t.replace('versionCode 11500', 'versionCode 11502').replace('versionName "1.15.0"', 'versionName "1.15.0-glass.2"')
+    t = t.replace('buildConfigField "boolean", "IN_APP_UPDATES", project.hasProperty(\'fdroid\') ? "false" : "true"',
+                  'buildConfigField "boolean", "IN_APP_UPDATES", "false"')
+    p.write_text(t, encoding="utf-8")
+    replace_once(root, "smarttubetv/src/stmobile/AndroidManifest.xml",
+                 'android:theme="@style/Theme.NewTube"\n        tools:replace="android:name,android:theme">',
+                 'android:theme="@style/Theme.NewTube"\n        android:label="@string/newtube_glass_app_name"\n        tools:replace="android:name,android:theme,android:label">')
+
 def main():
     if len(sys.argv) != 2:
         fail("Usage: apply_liquid_glass.py /path/to/newtube")
@@ -116,6 +174,8 @@ def main():
 
     patch_mobile(root)
     patch_settings(root)
+    patch_components(root)
+    patch_fork_identity(root)
 
     for src in NEW_FILES.rglob("*"):
         if src.is_file():

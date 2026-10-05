@@ -4,283 +4,250 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
 import android.app.Activity;
-import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.Outline;
-import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.StateSet;
+import android.graphics.drawable.RippleDrawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.liskovsoft.smartyoutubetv2.tv.R;
 import com.newtube.mobile.ui.common.ThemeMode;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Central presentation-only adapter for NewTube's touch frontend. */
+/** Explicit component roles, with complete baseline restoration between live profile changes. */
 public final class GlassRuntime {
     private static final List<WeakReference<Activity>> ACTIVITIES = new ArrayList<>();
-
     private GlassRuntime() {}
-
-    public static void register(@NonNull Activity activity) {
-        synchronized (ACTIVITIES) {
-            prune();
-            for (WeakReference<Activity> ref : ACTIVITIES) if (ref.get() == activity) return;
-            ACTIVITIES.add(new WeakReference<>(activity));
-        }
+    public static void register(@NonNull Activity a) {
+        prune(); for (WeakReference<Activity> ref : ACTIVITIES) if (ref.get() == a) return;
+        ACTIVITIES.add(new WeakReference<>(a));
     }
-
-    public static void unregister(@NonNull Activity activity) {
-        synchronized (ACTIVITIES) {
-            for (int i = ACTIVITIES.size() - 1; i >= 0; i--) {
-                Activity a = ACTIVITIES.get(i).get();
-                if (a == null || a == activity) ACTIVITIES.remove(i);
-            }
-        }
-    }
-
+    public static void unregister(@NonNull Activity a) { ACTIVITIES.removeIf(ref -> ref.get() == null || ref.get() == a); }
+    private static void prune() { ACTIVITIES.removeIf(ref -> ref.get() == null); }
     public static void refreshAll() {
-        List<Activity> live = new ArrayList<>();
-        synchronized (ACTIVITIES) {
-            prune();
-            for (WeakReference<Activity> ref : ACTIVITIES) {
-                Activity a = ref.get();
-                if (a != null) live.add(a);
-            }
+        prune(); for (WeakReference<Activity> ref : new ArrayList<>(ACTIVITIES)) {
+            Activity a = ref.get(); if (a != null) a.runOnUiThread(() -> apply(a));
         }
-        for (Activity activity : live) activity.runOnUiThread(() -> apply(activity));
     }
-
-    public static void apply(@NonNull Activity activity) {
-        View content = activity.findViewById(android.R.id.content);
-        if (content == null) return;
-        GlassPreferences.Snapshot s = GlassPreferences.snapshot(activity);
-        boolean dark = ThemeMode.currentNight(activity) == Configuration.UI_MODE_NIGHT_YES;
-        int accent = resolveAccent(activity, s, dark);
-        applyTree(content, s, dark, accent);
-    }
-
-    public static void restoreForThemeRefresh(@NonNull Activity activity) {
-        View content = activity.findViewById(android.R.id.content);
-        if (content != null) restoreTree(content);
-    }
-
-    public static void rebaseline(@NonNull Activity activity) {
-        View content = activity.findViewById(android.R.id.content);
-        if (content != null) clearBaseline(content);
-    }
-
-    private static void applyTree(View view, GlassPreferences.Snapshot s, boolean dark, int accent) {
-        remember(view);
-        String id = idName(view);
-
+    public static void apply(@NonNull Activity a) {
+        View content = a.findViewById(android.R.id.content); if (content == null) return;
+        GlassPreferences.Snapshot s = GlassPreferences.snapshot(a);
+        boolean dark = ThemeMode.currentNight(a) == Configuration.UI_MODE_NIGHT_YES;
+        GlassPalette p = new GlassPalette(a, s, dark);
+        // Restore first: no accumulated margins, stale font sizes, colour or nested old glass.
+        restoreTree(content);
         if (s.style == GlassPreferences.STYLE_CLASSIC) {
-            restore(view);
-        } else {
-            boolean bottom = view instanceof BottomNavigationView || "mobile_bottom_nav".equals(id);
-            boolean top = id.startsWith("mobile_title_") || id.contains("search_field") || id.contains("settings_search");
-            boolean mini = "mobile_mini_player".equals(id);
-            boolean card = view instanceof MaterialCardView || id.contains("sheet") || id.endsWith("_card");
-            boolean button = view instanceof MaterialButton || view instanceof ImageButton;
-            boolean settings = id.contains("settings_") && !(view instanceof TextView);
-
-            boolean glass = (bottom && s.glassNav) || (top && s.glassTop)
-                    || (mini && s.glassMini) || (card && s.glassCards)
-                    || (button && s.glassButtons) || (settings && s.glassSettings);
-
-            if (glass) applyGlass(view, s, dark || mini, accent);
-            else restoreSurface(view);
-
-            if (s.highContrastText && view instanceof TextView) {
-                ((TextView) view).setTextColor(dark ? Color.WHITE : Color.BLACK);
+            View nav = content.findViewById(R.id.mobile_bottom_nav);
+            if (nav instanceof GlassNavigationView) ((GlassNavigationView) nav).configure(s, p);
+            View header = content.findViewById(R.id.newtube_glass_header);
+            if (header != null) header.setVisibility(View.GONE);
+            View picker = content.findViewById(R.id.newtube_glass_profile_picker);
+            if (picker instanceof GlassProfilePicker) ((GlassProfilePicker) picker).render();
+            if (content.findViewById(R.id.mobile_browse_root) != null || content.findViewById(R.id.settings_container) != null) {
+                a.getWindow().setStatusBarColor(androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_background));
+                a.getWindow().setNavigationBarColor(androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_navigation_bar));
             }
-
-            if (s.roundedThumbnails && view instanceof ImageView
-                    && (id.contains("thumb") || id.contains("thumbnail") || id.contains("avatar") || id.contains("artwork"))) {
-                view.setClipToOutline(true);
-                view.setOutlineProvider(new RoundedOutlineProvider(dp(view.getContext(), Math.max(8, s.radius - 6))));
-            }
+            return;
         }
-
-        if (view instanceof RecyclerView) installRecyclerHook((RecyclerView) view);
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) applyTree(group.getChildAt(i), s, dark, accent);
+        applyTree(content, s, p);
+        GlassShell.apply(content, s, p);
+        // Geometry has now established the dock's actual inset.
+        View grid = content.findViewById(R.id.mobile_content_grid);
+        if (grid != null) grid.setPadding(grid.getPaddingLeft(), grid.getPaddingTop(), grid.getPaddingRight(),
+                ((Baseline) grid.getTag(R.id.newtube_glass_original_saved)).bottom + GlassShell.navigationInset(grid));
+        // Match the opaque system bars to the new canvas without touching immersive player flags.
+        if (content.findViewById(R.id.mobile_browse_root) != null || content.findViewById(R.id.settings_container) != null) {
+            a.getWindow().setStatusBarColor(p.canvas);
+            a.getWindow().setNavigationBarColor(p.canvas);
         }
     }
-
-    private static void applyGlass(View view, GlassPreferences.Snapshot s, boolean dark, int accent) {
-        float density = view.getResources().getDisplayMetrics().density;
-        view.setBackground(new GlassDrawable(s, dark, accent, density));
-        ViewCompat.setElevation(view, dp(view.getContext(), s.elevation));
-        view.setClipToOutline(true);
-        view.setOutlineProvider(s.style == GlassPreferences.STYLE_LASTWAVE
-                ? new SquircleOutlineProvider(dp(view.getContext(), s.radius))
-                : new RoundedOutlineProvider(dp(view.getContext(), s.radius)));
-        if (view.isClickable()) view.setHapticFeedbackEnabled(s.hapticPress);
-        installPressMotion(view, s);
+    public static void restoreForThemeRefresh(@NonNull Activity a) {
+        View content = a.findViewById(android.R.id.content); if (content != null) restoreTree(content);
+    }
+    public static void rebaseline(@NonNull Activity a) {
+        View content = a.findViewById(android.R.id.content); if (content != null) clearBaseline(content);
     }
 
-    private static void installPressMotion(View view, GlassPreferences.Snapshot s) {
-        if (Build.VERSION.SDK_INT < 21 || !view.isClickable() || s.motion == 0 || s.press <= 100) return;
-        float pressed = s.press / 100f;
-        long duration = Math.max(70L, Math.round(120f * (s.motion / 100f)));
-        StateListAnimator states = new StateListAnimator();
-
-        AnimatorSet down = new AnimatorSet();
-        down.playTogether(ObjectAnimator.ofFloat(view, View.SCALE_X, pressed),
-                ObjectAnimator.ofFloat(view, View.SCALE_Y, pressed));
-        down.setDuration(duration);
-
-        AnimatorSet up = new AnimatorSet();
-        up.playTogether(ObjectAnimator.ofFloat(view, View.SCALE_X, 1f),
-                ObjectAnimator.ofFloat(view, View.SCALE_Y, 1f));
-        up.setDuration(duration + 40L);
-
-        states.addState(new int[]{android.R.attr.state_pressed}, down);
-        states.addState(StateSet.WILD_CARD, up);
-        view.setStateListAnimator(states);
+    private static void applyTree(View v, GlassPreferences.Snapshot s, GlassPalette p) {
+        if (v instanceof GlassNavigationView) { remember(v); return; }
+        if (v instanceof GlassProfilePicker) { ((GlassProfilePicker) v).render(); return; }
+        if (v.getId() != android.R.id.content) remember(v);
+        String id = idName(v);
+        switch (id) {
+            case "mobile_browse_root": case "mobile_search_root": case "settings_container":
+                v.setBackground(new GlassCanvasDrawable(p, s.amoled && p.dark)); break;
+            case "newtube_glass_settings_page":
+                v.setBackgroundColor(p.canvas); break;
+            case "mobile_title_bar":
+                if (s.glassTop) {
+                    v.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    TextView title = (TextView) v; title.setTextSize(p.vaso ? 28 : 31);
+                    title.setTypeface(p.vaso ? Typeface.create("sans-serif",Typeface.BOLD) : GlassTypography.display(v.getContext())); title.setTextColor(p.ink);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) v.getLayoutParams();
+                    lp.height = dp(v, 76); lp.topMargin = dp(v, 8); v.setLayoutParams(lp);
+                    v.setPadding(dp(v, 20), 0, dp(v, 8), 0);
+                }
+                break;
+            case "mobile_search_button": case "mobile_cast_button": case "mobile_title_back":
+                if (s.glassTop) {
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) v.getLayoutParams();
+                    lp.height = dp(v, 48); lp.topMargin = dp(v, 14); v.setLayoutParams(lp);
+                    if (s.glassButtons) surface(v, s, p, GlassDrawable.Role.CONTROL, 24);
+                }
+                break;
+            case "mobile_search_input": case "settings_search_field": case "settings_search_input":
+                if (s.glassTop) surface(v, s, p, GlassDrawable.Role.FIELD, 26);
+                break;
+            case "settings_title":
+                ((TextView) v).setTextColor(p.ink); ((TextView) v).setTextSize(25);
+                ((TextView) v).setTypeface(p.vaso ? Typeface.create("sans-serif",Typeface.BOLD) : GlassTypography.display(v.getContext())); break;
+            case "newtube_glass_settings_row":
+                if (s.glassSettings) {
+                    surface(v, s, p, GlassDrawable.Role.CARD, 18);
+                    margins(v, 16, 2, 16, 2); v.setMinimumHeight(dp(v, s.density == 1 ? 58 : s.density == 2 ? 82 : 70));
+                }
+                break;
+            case "settings_header_title":
+                ((TextView) v).setTextColor(p.muted); ((TextView) v).setTextSize(12);
+                ((TextView) v).setLetterSpacing(0.08f); v.setPadding(dp(v, 22), dp(v, 24), dp(v, 16), dp(v, 10)); break;
+            case "settings_row_title": case "settings_choice_label": case "video_title":
+                ((TextView) v).setTextColor(p.ink);
+                if (!p.vaso) ((TextView) v).setTypeface(GlassTypography.body(v.getContext())); break;
+            case "settings_row_summary": case "settings_choice_description": case "video_meta":
+                ((TextView) v).setTextColor(p.muted); break;
+            case "video_card_root":
+                if (s.glassCards && v instanceof MaterialCardView) {
+                    MaterialCardView card = (MaterialCardView) v;
+                    card.setCardBackgroundColor(p.surface); card.setRadius(dp(v, p.vaso ? Math.max(12, s.radius) : Math.max(16, s.radius + 4)));
+                    card.setCardElevation(0); card.setStrokeWidth(p.vaso ? dp(v, 0.7f) : 0);
+                    card.setStrokeColor(GlassPalette.alpha(p.muted, 0.10f));
+                    int inset = dp(v, s.density == 1 ? 6 : s.density == 2 ? 14 : 10);
+                    card.setContentPadding(inset, inset, inset, dp(v, 2)); margins(v, 0, 4, 0, s.density == 1 ? 10 : 16);
+                }
+                break;
+            case "video_thumbnail_frame":
+                if (v instanceof MaterialCardView) ((MaterialCardView) v).setRadius(dp(v, s.roundedThumbnails ? (p.vaso ? 16 : 18) : 0)); break;
+            case "mobile_mini_player":
+                if (s.glassMini && v instanceof MaterialCardView) {
+                    MaterialCardView card = (MaterialCardView) v; card.setRadius(dp(v, 16));
+                    card.setStrokeWidth(dp(v, 1)); card.setStrokeColor(GlassPalette.alpha(p.ink, 0.2f));
+                }
+                break;
+            case "mobile_content_grid": case "mobile_search_grid":
+                v.setPadding(dp(v, 16), dp(v, 12), dp(v, 16), v.getPaddingBottom()); break;
+            default: break;
+        }
+        if (v instanceof RecyclerView) installRecyclerHook((RecyclerView) v);
+        if (v instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) v;
+            for (int i = 0; i < group.getChildCount(); i++) applyTree(group.getChildAt(i), s, p);
+        }
     }
-
+    private static void surface(View v, GlassPreferences.Snapshot s, GlassPalette p, GlassDrawable.Role role, float radius) {
+        Drawable d = new GlassDrawable(s, p, role, v.getResources().getDisplayMetrics().density, radius);
+        v.setBackground(v.isClickable() ? new RippleDrawable(ColorStateList.valueOf(GlassPalette.alpha(p.ink, 0.10f)), d, null) : d);
+        // Expansion belongs to controls; feed cards and container geometry remain stable.
+        if (v instanceof ImageButton && s.motion > 0 && s.press > 100) {
+            StateListAnimator states = new StateListAnimator();
+            states.addState(new int[]{android.R.attr.state_pressed}, scale(v, Math.min(1.06f, s.press / 100f), 100));
+            states.addState(new int[]{}, scale(v, 1, 160)); v.setStateListAnimator(states);
+        }
+    }
+    private static AnimatorSet scale(View v, float to, long time) {
+        AnimatorSet a = new AnimatorSet(); a.playTogether(ObjectAnimator.ofFloat(v, View.SCALE_X, to), ObjectAnimator.ofFloat(v, View.SCALE_Y, to)); a.setDuration(time); return a;
+    }
+    private static void margins(View v, int l, int t, int r, int b) {
+        if (!(v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        lp.setMarginStart(dp(v,l)); lp.setMarginEnd(dp(v,r)); lp.topMargin = dp(v,t); lp.bottomMargin = dp(v,b); v.setLayoutParams(lp);
+    }
     private static void installRecyclerHook(RecyclerView rv) {
         if (Boolean.TRUE.equals(rv.getTag(R.id.newtube_glass_recycler_hook))) return;
         rv.setTag(R.id.newtube_glass_recycler_hook, true);
         rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override public void onChildViewAttachedToWindow(@NonNull View child) {
-                Context c = child.getContext();
-                GlassPreferences.Snapshot s = GlassPreferences.snapshot(c);
-                boolean dark = (c.getResources().getConfiguration().uiMode
-                        & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-                applyTree(child, s, dark, resolveAccent(c, s, dark));
+                GlassPreferences.Snapshot s = GlassPreferences.snapshot(child.getContext());
+                restoreTree(child);
+                if (s.style != GlassPreferences.STYLE_CLASSIC) applyTree(child, s, new GlassPalette(child.getContext(), s,
+                        ThemeMode.currentNight(child.getContext()) == Configuration.UI_MODE_NIGHT_YES));
             }
             @Override public void onChildViewDetachedFromWindow(@NonNull View child) {}
         });
     }
-
-    private static void remember(View view) {
-        if (Boolean.TRUE.equals(view.getTag(R.id.newtube_glass_original_saved))) return;
-        view.setTag(R.id.newtube_glass_original_saved, true);
-        view.setTag(R.id.newtube_glass_original_background, view.getBackground());
-        view.setTag(R.id.newtube_glass_original_elevation, ViewCompat.getElevation(view));
-        view.setTag(R.id.newtube_glass_original_outline_provider, view.getOutlineProvider());
-        view.setTag(R.id.newtube_glass_original_clip_outline, view.getClipToOutline());
-        view.setTag(R.id.newtube_glass_original_haptic, view.isHapticFeedbackEnabled());
-        if (Build.VERSION.SDK_INT >= 21) view.setTag(R.id.newtube_glass_original_animator, view.getStateListAnimator());
-        if (view instanceof TextView) {
-            view.setTag(R.id.newtube_glass_original_text_colors, ((TextView) view).getTextColors());
-        }
+    static void remember(View v) { if (!(v.getTag(R.id.newtube_glass_original_saved) instanceof Baseline)) v.setTag(R.id.newtube_glass_original_saved, new Baseline(v)); }
+    private static void restoreTree(View v) {
+        Object original = v.getTag(R.id.newtube_glass_original_saved);
+        if (original instanceof Baseline) ((Baseline) original).restore(v);
+        if (v instanceof GlassNavigationView || v instanceof GlassProfilePicker) return;
+        if (v instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) restoreTree(((ViewGroup) v).getChildAt(i));
     }
-
-    private static void restoreSurface(View view) {
-        if (!Boolean.TRUE.equals(view.getTag(R.id.newtube_glass_original_saved))) return;
-        view.setBackground((Drawable) view.getTag(R.id.newtube_glass_original_background));
-        Object elevation = view.getTag(R.id.newtube_glass_original_elevation);
-        if (elevation instanceof Float) ViewCompat.setElevation(view, (Float) elevation);
-        view.setOutlineProvider((ViewOutlineProvider) view.getTag(R.id.newtube_glass_original_outline_provider));
-        Object clip = view.getTag(R.id.newtube_glass_original_clip_outline);
-        if (clip instanceof Boolean) view.setClipToOutline((Boolean) clip);
-        Object haptic = view.getTag(R.id.newtube_glass_original_haptic);
-        if (haptic instanceof Boolean) view.setHapticFeedbackEnabled((Boolean) haptic);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Object animator = view.getTag(R.id.newtube_glass_original_animator);
-            if (animator == null || animator instanceof StateListAnimator) view.setStateListAnimator((StateListAnimator) animator);
-        }
-        view.setScaleX(1f);
-        view.setScaleY(1f);
+    private static void clearBaseline(View v) {
+        v.setTag(R.id.newtube_glass_original_saved, null);
+        if (v instanceof GlassNavigationView) ((GlassNavigationView) v).rebaselineNative();
+        if (v instanceof GlassNavigationView || v instanceof GlassProfilePicker) return;
+        if (v instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) clearBaseline(((ViewGroup) v).getChildAt(i));
     }
-
-    private static void restore(View view) {
-        restoreSurface(view);
-        if (view instanceof TextView) {
-            Object colors = view.getTag(R.id.newtube_glass_original_text_colors);
-            if (colors instanceof android.content.res.ColorStateList) {
-                ((TextView) view).setTextColor((android.content.res.ColorStateList) colors);
+    private static String idName(View v) {
+        if (v.getId() == View.NO_ID) return "";
+        try { return v.getResources().getResourceEntryName(v.getId()); } catch (RuntimeException e) { return ""; }
+    }
+    private static int dp(View v, float d) { return Math.round(d * v.getResources().getDisplayMetrics().density); }
+    private static ViewGroup.LayoutParams copy(ViewGroup.LayoutParams lp) {
+        if (lp == null) return null;
+        if (lp instanceof ConstraintLayout.LayoutParams) return new ConstraintLayout.LayoutParams((ConstraintLayout.LayoutParams) lp);
+        if (lp instanceof RecyclerView.LayoutParams) return new RecyclerView.LayoutParams((RecyclerView.LayoutParams) lp);
+        if (lp instanceof LinearLayout.LayoutParams) return new LinearLayout.LayoutParams((LinearLayout.LayoutParams) lp);
+        if (lp instanceof FrameLayout.LayoutParams) return new FrameLayout.LayoutParams((FrameLayout.LayoutParams) lp);
+        if (lp instanceof ViewGroup.MarginLayoutParams) return new ViewGroup.MarginLayoutParams((ViewGroup.MarginLayoutParams) lp);
+        return new ViewGroup.LayoutParams(lp);
+    }
+    private static final class Baseline {
+        final Drawable background;
+        final ViewGroup.LayoutParams layout;
+        final int left,top,right,bottom,minHeight;
+        final float elevation, textSize, letterSpacing, radius, cardElevation;
+        final int stroke, contentLeft,contentTop,contentRight,contentBottom;
+        final ColorStateList textColors, cardColors, strokeColors;
+        final Typeface font;
+        final StateListAnimator animator;
+        final ViewOutlineProvider outline;
+        final boolean clip;
+        Baseline(View v) {
+            background = v.getBackground(); layout = copy(v.getLayoutParams());
+            left=v.getPaddingLeft();top=v.getPaddingTop();right=v.getPaddingRight();bottom=v.getPaddingBottom(); minHeight=v.getMinimumHeight();
+            elevation=ViewCompat.getElevation(v); animator=v.getStateListAnimator(); outline=v.getOutlineProvider(); clip=v.getClipToOutline();
+            TextView tv=v instanceof TextView ? (TextView) v : null;
+            textColors=tv == null ? null : tv.getTextColors(); textSize=tv == null ? 0 : tv.getTextSize(); font=tv == null ? null : tv.getTypeface(); letterSpacing=tv == null ? 0 : tv.getLetterSpacing();
+            MaterialCardView c=v instanceof MaterialCardView ? (MaterialCardView) v : null;
+            cardColors=c == null ? null : c.getCardBackgroundColor(); radius=c == null ? 0 : c.getRadius(); cardElevation=c == null ? 0 : c.getCardElevation();
+            stroke=c == null ? 0 : c.getStrokeWidth(); strokeColors=c == null ? null : c.getStrokeColorStateList();
+            contentLeft=c == null ? 0 : c.getContentPaddingLeft();contentTop=c == null ? 0 : c.getContentPaddingTop();contentRight=c == null ? 0 : c.getContentPaddingRight();contentBottom=c == null ? 0 : c.getContentPaddingBottom();
+        }
+        void restore(View v) {
+            if (!(v instanceof MaterialCardView)) v.setBackground(background);
+            if (layout != null) v.setLayoutParams(copy(layout));
+            v.setPadding(left,top,right,bottom);v.setMinimumHeight(minHeight); ViewCompat.setElevation(v,elevation);
+            v.setStateListAnimator(animator);v.setScaleX(1);v.setScaleY(1);v.setOutlineProvider(outline);v.setClipToOutline(clip);
+            if (v instanceof TextView) {
+                TextView tv=(TextView) v;tv.setTextColor(textColors);tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize);tv.setTypeface(font);tv.setLetterSpacing(letterSpacing);
             }
-        }
-    }
-
-    private static void restoreTree(View view) {
-        restore(view);
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) restoreTree(group.getChildAt(i));
-        }
-    }
-
-    private static void clearBaseline(View view) {
-        view.setTag(R.id.newtube_glass_original_saved, null);
-        view.setTag(R.id.newtube_glass_original_background, null);
-        view.setTag(R.id.newtube_glass_original_elevation, null);
-        view.setTag(R.id.newtube_glass_original_outline_provider, null);
-        view.setTag(R.id.newtube_glass_original_clip_outline, null);
-        view.setTag(R.id.newtube_glass_original_haptic, null);
-        view.setTag(R.id.newtube_glass_original_animator, null);
-        view.setTag(R.id.newtube_glass_original_text_colors, null);
-        if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) clearBaseline(group.getChildAt(i));
-        }
-    }
-
-    private static String idName(View view) {
-        if (view.getId() == View.NO_ID) return "";
-        try { return view.getResources().getResourceEntryName(view.getId()); }
-        catch (RuntimeException ignored) { return ""; }
-    }
-
-    private static int resolveAccent(Context c, GlassPreferences.Snapshot s, boolean dark) {
-        if (!s.dynamicTint) return dark ? Color.rgb(190, 198, 214) : Color.rgb(92, 100, 116);
-        if (Build.VERSION.SDK_INT >= 31) {
-            try { return ContextCompat.getColor(c, android.R.color.system_accent1_500); }
-            catch (RuntimeException ignored) {}
-        }
-        try { return ContextCompat.getColor(c, R.color.mobile_color_primary); }
-        catch (RuntimeException ignored) { return Color.RED; }
-    }
-
-    private static float dp(Context c, float value) {
-        return value * c.getResources().getDisplayMetrics().density;
-    }
-
-    private static void prune() {
-        for (int i = ACTIVITIES.size() - 1; i >= 0; i--) if (ACTIVITIES.get(i).get() == null) ACTIVITIES.remove(i);
-    }
-
-    private static final class RoundedOutlineProvider extends ViewOutlineProvider {
-        private final float radius;
-        RoundedOutlineProvider(float radius) { this.radius = radius; }
-        @Override public void getOutline(View view, Outline outline) {
-            float max = Math.min(view.getWidth(), view.getHeight()) / 2f;
-            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), Math.min(radius, max));
-        }
-    }
-
-    private static final class SquircleOutlineProvider extends ViewOutlineProvider {
-        private final float radius;
-        SquircleOutlineProvider(float radius) { this.radius = radius; }
-        @Override public void getOutline(View view, Outline outline) {
-            int w = view.getWidth(), h = view.getHeight();
-            if (w <= 0 || h <= 0) return;
-            android.graphics.Path path = GlassGeometry.squircle(new RectF(0f, 0f, w, h), radius);
-            if (Build.VERSION.SDK_INT >= 30) outline.setPath(path); else outline.setConvexPath(path);
+            if (v instanceof MaterialCardView) {
+                MaterialCardView c=(MaterialCardView) v;c.setCardBackgroundColor(cardColors);c.setRadius(radius);c.setCardElevation(cardElevation);c.setStrokeWidth(stroke);c.setStrokeColor(strokeColors);c.setContentPadding(contentLeft,contentTop,contentRight,contentBottom);
+            }
         }
     }
 }

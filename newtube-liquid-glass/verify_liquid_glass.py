@@ -3,6 +3,11 @@ import sys, xml.etree.ElementTree as ET
 from pathlib import Path
 
 REQ=[
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassNavigationView.java",
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassShell.java",
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassPalette.java",
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassProfilePicker.java",
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassCanvasDrawable.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassPreferences.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassGeometry.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassDrawable.java",
@@ -22,6 +27,12 @@ def main():
             except Exception as e: errors.append(f"bad XML {rel}: {e}")
     mobile=(root/"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/common/MobileActivity.java").read_text()
     settings=(root/"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/settings/SettingsPages.java").read_text()
+    browse=(root/"smarttubetv/src/stmobile/res/layout/activity_mobile_browse.xml").read_text()
+    if "com.newtube.mobile.ui.glass.GlassNavigationView" not in browse: errors.append("custom dock is not used by the browse layout")
+    mini=(root/"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/playback/MiniPlayerListInset.java").read_text()
+    if "GlassShell.navigationInset(mList)" not in mini: errors.append("list end is not clear of the floating dock")
+    fragment=(root/"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/settings/SettingsPageFragment.java").read_text()
+    if "GlassProfilePicker" not in fragment: errors.append("missing appearance profile picker")
     for needle in ["GlassRuntime.register(this);","GlassRuntime.unregister(this);","GlassRuntime.restoreForThemeRefresh(this);","GlassRuntime.rebaseline(this);"]:
         if needle not in mobile: errors.append("missing mobile hook "+needle)
     for needle in ['APPEARANCE = "appearance"',"GlassSettingsPage.build(context)","ic_settings_appearance"]:
