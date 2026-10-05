@@ -106,6 +106,13 @@ public class GlassNavigationRegressionTest {
                     GlassAppearanceToggleView row = (GlassAppearanceToggleView) list.getChildAt(i); row.render();
                     android.widget.CompoundButton control = row.findViewById(R.id.settings_row_switch);
                     int controlWidth = control.getWidth(), controlHeight = control.getHeight();
+                    com.google.android.material.materialswitch.MaterialSwitch visibleSwitch =
+                            (com.google.android.material.materialswitch.MaterialSwitch) control;
+                    assertNotNull("Every switch must have a visible thumb", visibleSwitch.getThumbDrawable());
+                    assertNotNull("Every switch must have a visible track", visibleSwitch.getTrackDrawable());
+                    assertTrue(visibleSwitch.getThumbDrawable().getIntrinsicWidth() > 0);
+                    assertTrue(visibleSwitch.getTrackDrawable().getIntrinsicWidth() > 0);
+                    assertTrue(controlWidth > 0); assertTrue(controlHeight > 0);
                     control.setChecked(!control.isChecked());
                     assertEquals(height, row.getHeight()); assertEquals(320, row.getWidth());
                     assertEquals(controlWidth, control.getWidth()); assertEquals(controlHeight, control.getHeight());

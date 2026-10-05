@@ -53,13 +53,13 @@ public class GlassDeviceTest {
                     }
                 });
                 assertDockFollowsScrollingContent(scenario, name);
-                screenshot(name+"-home");
+                screenshot(scenario,name+"-home");
                 scenario.onActivity(a -> {
                     GlassNavigationView nav=a.findViewById(R.id.mobile_bottom_nav);
                     int you=nav.getMenu().getItem(nav.getMenu().size()-1).getItemId();
                     assertTrue(nav.findDockTab(you).performClick()); assertEquals(you,nav.getSelectedItemId());
                 });
-                SystemClock.sleep(500); screenshot(name+"-you");
+                SystemClock.sleep(500); screenshot(scenario,name+"-you");
                 scenario.onActivity(a -> {
                     GlassPreferences.setStyle(a,GlassPreferences.STYLE_CLASSIC);
                     assertFalse(((GlassNavigationView)a.findViewById(R.id.mobile_bottom_nav)).isGlassEnabled());
@@ -82,7 +82,8 @@ public class GlassDeviceTest {
                         assertTrue(row.performClick());
                     }
                 });
-                screenshot(name+"-appearance");
+                assertSwitchGraphics(settings);
+                screenshot(settings,name+"-appearance");
             }
         }
     }
@@ -136,7 +137,7 @@ public class GlassDeviceTest {
         assertTrue("Scrolling frame did not finish", done.await(8, TimeUnit.SECONDS));
         scenario.onActivity(a -> assertEquals("The source content must actually scroll", stripe[0], backdrop[0].getScrollY()));
         int after = pixel(point);
-        screenshot(name+"-scroll-glass");
+        screenshot(scenario,name+"-scroll-glass");
         assertTrue("The navbar must follow the current committed scroll frame: before="+Integer.toHexString(before)+" after="+Integer.toHexString(after), Color.green(after) > Color.red(after)+10);
         assertTrue("The backdrop must change together with content", Color.green(after)-Color.red(after) > Color.green(before)-Color.red(before)+24);
         scenario.onActivity(a -> {
@@ -155,10 +156,53 @@ public class GlassDeviceTest {
         Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot(); assertNotNull(image);
         int color = image.getPixel(point[0], point[1]); image.recycle(); return color;
     }
-    private void screenshot(String name) throws Exception {
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        Bitmap image=InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
-        assertNotNull(image);
+    private void assertSwitchGraphics(ActivityScenario<MobileSettingsActivity> settings) throws Exception {
+        android.graphics.Rect[] controls = new android.graphics.Rect[3];
+        settings.onActivity(a -> {
+            int[] ids = {R.id.newtube_glass_amoled_option, R.id.newtube_glass_dynamic_option, R.id.newtube_glass_enabled_option};
+            for (int i = 0; i < ids.length; i++) {
+                View control = a.findViewById(ids[i]).findViewById(R.id.settings_row_switch);
+                assertTrue(control.isShown()); assertTrue(control.getWidth() > 0);
+                int[] location = new int[2]; control.getLocationInWindow(location);
+                controls[i] = new android.graphics.Rect(location[0], location[1], location[0]+control.getWidth(), location[1]+control.getHeight());
+            }
+        });
+        Bitmap image = windowFrame(settings);
+        for (android.graphics.Rect control : controls) {
+            int low = 255, high = 0;
+            for (int y = control.top+2; y < control.bottom-2; y += 2) {
+                for (int x = control.left+2; x < control.right-2; x += 2) {
+                    int color = image.getPixel(x,y);
+                    int brightness = (Color.red(color)+Color.green(color)+Color.blue(color))/3;
+                    low = Math.min(low,brightness); high = Math.max(high,brightness);
+                }
+            }
+            assertTrue("Switch thumb and track must be visibly drawn", high-low > 40);
+        }
+        image.recycle();
+    }
+    private Bitmap windowFrame(ActivityScenario<? extends android.app.Activity> scenario) throws Exception {
+        CountDownLatch committed = new CountDownLatch(1);
+        scenario.onActivity(a -> {
+            View decor = a.getWindow().getDecorView();
+            decor.getViewTreeObserver().registerFrameCommitCallback(committed::countDown);
+            decor.invalidate();
+        });
+        assertTrue("App window did not commit a frame", committed.await(10,TimeUnit.SECONDS));
+        Bitmap[] image = {null}; int[] result = {-1}; CountDownLatch copied = new CountDownLatch(1);
+        scenario.onActivity(a -> {
+            View decor = a.getWindow().getDecorView();
+            image[0] = Bitmap.createBitmap(decor.getWidth(),decor.getHeight(),Bitmap.Config.ARGB_8888);
+            android.view.PixelCopy.request(a.getWindow(),image[0], code -> {
+                result[0] = code; copied.countDown();
+            },new android.os.Handler(android.os.Looper.getMainLooper()));
+        });
+        assertTrue("App window screenshot timed out",copied.await(10,TimeUnit.SECONDS));
+        assertEquals(android.view.PixelCopy.SUCCESS,result[0]);
+        return image[0];
+    }
+    private void screenshot(ActivityScenario<? extends android.app.Activity> scenario,String name) throws Exception {
+        Bitmap image=windowFrame(scenario);
         File folder=new File(context.getExternalFilesDir(null),"glass-screenshots"); assertTrue(folder.exists()||folder.mkdirs());
         try(FileOutputStream out=new FileOutputStream(new File(folder,name+".png"))) { assertTrue(image.compress(Bitmap.CompressFormat.PNG,100,out)); }
         image.recycle();

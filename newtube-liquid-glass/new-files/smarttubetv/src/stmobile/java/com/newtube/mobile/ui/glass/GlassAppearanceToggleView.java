@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
+import androidx.appcompat.view.ContextThemeWrapper;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.liskovsoft.smartyoutubetv2.tv.R;
 import com.newtube.mobile.ui.common.ThemeMode;
@@ -48,7 +49,11 @@ public final class GlassAppearanceToggleView extends LinearLayout {
         text.addView(title, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         LayoutParams sub = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT); sub.topMargin = dp(3);
         text.addView(summary, sub); addView(text, new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
-        toggle = new MaterialSwitch(c); toggle.setId(R.id.settings_row_switch);
+        // SwitchCompat reads its base drawables through materialSwitchStyle. The app's
+        // MaterialComponents theme does not define that Material3 attribute.
+        toggle = new MaterialSwitch(new ContextThemeWrapper(c,
+                com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar));
+        toggle.setId(R.id.settings_row_switch);
         toggle.setShowText(false); toggle.setTextOn(""); toggle.setTextOff("");
         toggle.setClickable(false); toggle.setFocusable(false);
         toggle.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
