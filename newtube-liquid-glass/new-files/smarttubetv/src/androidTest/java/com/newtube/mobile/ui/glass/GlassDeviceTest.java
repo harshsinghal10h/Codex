@@ -96,6 +96,10 @@ public class GlassDeviceTest {
             ScrollView scroll = new ScrollView(a); scroll.setFillViewport(true);
             View colors = new View(a) {
                 final Paint paint = new Paint();
+                @Override protected void onMeasure(int width, int height) {
+                    // ScrollView deliberately measures content with an unspecified height.
+                    setMeasuredDimension(View.MeasureSpec.getSize(width), stripe[0]*2);
+                }
                 @Override protected void onDraw(Canvas c) {
                     paint.setColor(Color.MAGENTA); c.drawRect(0, 0, getWidth(), stripe[0], paint);
                     paint.setColor(Color.GREEN); c.drawRect(0, stripe[0], getWidth(), stripe[0]*2, paint);
@@ -111,6 +115,7 @@ public class GlassDeviceTest {
             nav.getViewTreeObserver().registerFrameCommitCallback(initial::countDown);
         });
         assertTrue("Initial backdrop frame was not committed", initial.await(5, TimeUnit.SECONDS));
+        scenario.onActivity(a -> assertTrue("The test content must have a real scroll range", backdrop[0].getChildAt(0).getHeight() > backdrop[0].getHeight()));
         int before = pixel(point);
         assertTrue("Glass must show the magenta backdrop without its own labels", Color.red(before) > Color.green(before)+10);
         java.util.List<Long> frames = new java.util.ArrayList<>();
@@ -129,6 +134,7 @@ public class GlassDeviceTest {
             });
         });
         assertTrue("Scrolling frame did not finish", done.await(8, TimeUnit.SECONDS));
+        scenario.onActivity(a -> assertEquals("The source content must actually scroll", stripe[0], backdrop[0].getScrollY()));
         int after = pixel(point);
         screenshot(name+"-scroll-glass");
         assertTrue("The navbar must follow the current committed scroll frame: before="+Integer.toHexString(before)+" after="+Integer.toHexString(after), Color.green(after) > Color.red(after)+10);

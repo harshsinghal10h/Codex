@@ -49,6 +49,7 @@ jobs:
           ./gradlew --no-daemon :smarttubetv:testStmobileDebugUnitTest --tests com.newtube.mobile.ui.glass.GlassNavigationRegressionTest
 
       - name: Build APKs and device test APK
+        id: build_apks
         working-directory: newtube
         run: |
           chmod +x gradlew
@@ -83,6 +84,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Collect APKs
+        if: always() && steps.build_apks.outcome == 'success'
         run: |
           mkdir -p out
           find newtube/smarttubetv/build/outputs/apk/stmobile -type f -name "*.apk" -print -exec cp {} out/ \;
@@ -90,6 +92,7 @@ jobs:
           test -n "$(find out -maxdepth 1 -type f -name '*.apk' -print -quit)"
 
       - name: Upload APK artifact
+        if: always() && steps.build_apks.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: NewTube-v1.15.0-Dual-Liquid-Glass-APK
