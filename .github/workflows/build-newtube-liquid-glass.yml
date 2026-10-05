@@ -20,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: integration
+          fetch-depth: 2
 
       - name: Checkout NewTube v1.15.0 with submodules
         uses: actions/checkout@v4
@@ -38,9 +39,19 @@ jobs:
           cache-dependency-path: newtube/**/*.gradle*
 
       - name: Apply and verify frontend
+        id: source_scope
         run: |
           python integration/newtube-liquid-glass/apply_liquid_glass.py newtube
           python integration/newtube-liquid-glass/verify_liquid_glass.py newtube
+          python - <<'PY'
+          import os, subprocess
+          changes = subprocess.check_output(['git','-C','integration','diff','--name-only','HEAD^','HEAD'],text=True).splitlines()
+          prefixes = ('newtube-liquid-glass/new-files/smarttubetv/src/androidTest/', 'newtube-liquid-glass/new-files/smarttubetv/src/test/')
+          test_only = os.environ['GITHUB_EVENT_NAME'] == 'push' and bool(changes) and all(path.startswith(prefixes) for path in changes)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output:
+              output.write('release=' + ('false' if test_only else 'true') + '\n')
+          print('Test-only change: release application source is unchanged' if test_only else 'Building release APKs')
+          PY
 
       - name: Run navigation and layout regression tests
         working-directory: newtube
@@ -54,7 +65,9 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon -PemulatorAbi :smarttubetv:assembleStmobileDebug :smarttubetv:assembleStmobileDebugAndroidTest
-          ./gradlew --no-daemon :smarttubetv:assembleStmobileRelease
+          if [ '${{ steps.source_scope.outputs.release }}' = 'true' ]; then
+            ./gradlew --no-daemon :smarttubetv:assembleStmobileRelease
+          fi
 
       - name: Enable emulator acceleration
         run: |
@@ -84,7 +97,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Collect APKs
-        if: always() && steps.build_apks.outcome == 'success'
+        if: always() && steps.build_apks.outcome == 'success' && steps.source_scope.outputs.release == 'true'
         run: |
           mkdir -p out
           find newtube/smarttubetv/build/outputs/apk/stmobile -type f -name "*.apk" -print -exec cp {} out/ \;
@@ -92,7 +105,7 @@ jobs:
           test -n "$(find out -maxdepth 1 -type f -name '*.apk' -print -quit)"
 
       - name: Upload APK artifact
-        if: always() && steps.build_apks.outcome == 'success'
+        if: always() && steps.build_apks.outcome == 'success' && steps.source_scope.outputs.release == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: NewTube-v1.15.0-Dual-Liquid-Glass-APK
