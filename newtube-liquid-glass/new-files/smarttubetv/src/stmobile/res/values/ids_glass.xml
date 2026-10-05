@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="newtube_glass_you_row" type="id" />
     <item name="newtube_glass_header" type="id" />
     <item name="newtube_glass_settings_page" type="id" />
     <item name="newtube_glass_settings_row" type="id" />

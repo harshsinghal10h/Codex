@@ -18,11 +18,13 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.ConscryptMode;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** Contracts broken by the original generic glass overlay: navigation, recycling and restoration. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 35, application = Application.class)
+@ConscryptMode(ConscryptMode.Mode.OFF)
 public class GlassNavigationRegressionTest {
     private Context context;
     @Before public void clear() {

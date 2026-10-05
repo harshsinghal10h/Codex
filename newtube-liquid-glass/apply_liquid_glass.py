@@ -123,6 +123,12 @@ def patch_components(root):
     replace_once(root, base + "res/layout/item_mobile_settings_row.xml",
                  '    android:layout_width="match_parent"',
                  '    android:id="@+id/newtube_glass_settings_row"\n    android:layout_width="match_parent"')
+    replace_once(root, base + "res/layout/item_mobile_you_row.xml",
+                 '    android:layout_width="match_parent"',
+                 '    android:id="@+id/newtube_glass_you_row"\n    android:layout_width="match_parent"')
+    replace_once(root, base + "java/com/newtube/mobile/ui/browse/MobileBrowseActivity.java",
+                 "        mYouPanel.setVisibility(View.VISIBLE);",
+                 "        mYouPanel.setVisibility(View.VISIBLE);\n        com.newtube.mobile.ui.glass.GlassRuntime.apply(this);")
     replace_once(root, base + "res/layout/fragment_mobile_settings_page.xml",
                  '    android:layout_width="match_parent"',
                  '    android:id="@+id/newtube_glass_settings_page"\n    android:layout_width="match_parent"')

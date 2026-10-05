@@ -92,6 +92,14 @@ public final class GlassRuntime {
                 v.setBackground(new GlassCanvasDrawable(p, s.amoled && p.dark)); break;
             case "newtube_glass_settings_page":
                 v.setBackgroundColor(p.canvas); break;
+            case "mobile_you_panel":
+                v.setBackgroundColor(p.canvas); break;
+            case "mobile_you_account_row":
+                if (s.glassCards) { surface(v,s,p,GlassDrawable.Role.CARD,26); margins(v,16,12,16,14); }
+                break;
+            case "newtube_glass_you_row":
+                if (s.glassCards) { surface(v,s,p,GlassDrawable.Role.CARD,18); margins(v,16,2,16,2); }
+                break;
             case "mobile_title_bar":
                 if (s.glassTop) {
                     v.setBackgroundColor(android.graphics.Color.TRANSPARENT);
@@ -124,10 +132,10 @@ public final class GlassRuntime {
             case "settings_header_title":
                 ((TextView) v).setTextColor(p.muted); ((TextView) v).setTextSize(12);
                 ((TextView) v).setLetterSpacing(0.08f); v.setPadding(dp(v, 22), dp(v, 24), dp(v, 16), dp(v, 10)); break;
-            case "settings_row_title": case "settings_choice_label": case "video_title":
+            case "settings_row_title": case "settings_choice_label": case "video_title": case "mobile_you_row_label": case "mobile_you_account_text":
                 ((TextView) v).setTextColor(p.ink);
                 if (!p.vaso) ((TextView) v).setTypeface(GlassTypography.body(v.getContext())); break;
-            case "settings_row_summary": case "settings_choice_description": case "video_meta":
+            case "settings_row_summary": case "settings_choice_description": case "video_meta": case "mobile_you_account_sub":
                 ((TextView) v).setTextColor(p.muted); break;
             case "video_card_root":
                 if (s.glassCards && v instanceof MaterialCardView) {
