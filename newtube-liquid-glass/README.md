@@ -1,4 +1,4 @@
-# NewTube Glass 2
+# NewTube Glass 3
 
 An independently installable Android frontend fork of NewTube **v1.15.0**. Replaces the generic nested glass overlay with a consistent browse shell, native floating dock, deliberate feed cards and a redesigned appearance page.
 
@@ -8,8 +8,8 @@ An independently installable Android frontend fork of NewTube **v1.15.0**. Repla
 | --- | --- | --- |
 | Canvas | Warm paper in light mode, charcoal in dark mode | Obsidian in dark mode, warm neutral in light mode |
 | Typography | Clear platform sans | Bundled rounded Google Sans Flex |
-| Navigation | Even icon/label segments and a travelling clear lens | Selected icon/label capsule with quiet unselected icons |
-| Material | Fine rims, sampled refraction, restrained spectral edges | Warm tinted surface, subdued rims, rounded geometry |
+| Navigation | Even icon/label segments and a travelling clear lens | Fixed icon/label segments with a warm selection capsule |
+| Material | Fine rims, GPU backdrop, restrained spectral edges | Warm tinted surface, subdued rims, rounded geometry |
 | Cards | Thin border, clear padding, rounded artwork | Soft filled containers, larger continuous corners |
 
 The two systems obey NewTube's Light / Dark / System setting. Appearance includes directly selectable preview cards, the original searchable settings controls, and Classic NewTube. Classic restores the original geometry, fonts, colours and backgrounds.
@@ -21,20 +21,20 @@ The two systems obey NewTube's Light / Dark / System setting. Appearance include
 - Content scrolls behind the floating dock. End padding clears both the dock and a visible mini-player. Placeholders and the You panel share the same safe anchors.
 - `GlassRuntime` styles **explicit component roles**. No wildcard styling of every settings container, nested thumbnail frame or player ImageButton.
 - Header hierarchy, 48 dp circular toolbar controls, consistent card spacing and grouped settings rows replace the old overlapping backgrounds.
-- Appearance has two visible profile previews. Controls remain in the standard settings tree and remain searchable.
-- Background sampling is confined to the dock rectangle at a maximum 12.5 captures per second during redraws. A low-resolution sample supplies haze; a native bitmap mesh supplies refraction. Sampling skips the dock itself and never captures the live video surface. Reduced transparency disables sampling.
-- Feed bitmap decoding permits the software canvas used by the dock. Playback, networking, downloads, casting and account presenters continue to use upstream implementations.
+- Appearance has two visible profile previews plus fixed-size AMOLED Mode, Dynamic Color and Liquid Glass switches. Controls remain in the standard settings tree and remain searchable. Turning Liquid Glass off preserves the profile and optical values. AMOLED works in dark mode with glass on or off.
+- The dock backdrop is recorded into a small GPU RenderNode in the current frame on Android 10+. Android 12+ applies native RenderEffect blur and color grading. The recorded node remains referenced by the cached dock display list, so scrolling updates it without scheduling an idle redraw loop or waiting for an 80 ms pixel sample. The selected lens reuses that node with clipped magnification. Only content intersecting the dock viewport is recorded; the dock and live mini-player are excluded. API 24–28 uses a small software sample without a fixed sampling timer. Reduced transparency disables backdrop work.
+- Modern Android devices retain hardware bitmap decoding. Feed styling reuses the current palette instead of rereading preferences for every attached card. Selection updates existing equal-width tab views without rebuilding or relaying out the dock. Playback, networking, downloads, casting and account presenters continue to use upstream implementations.
 
-This is an Android Views implementation inspired by the references. It does not embed the React Vaso renderer or LastWave's Compose renderer. Native sampled refraction is approximate; it is not a pixel-for-pixel copy of either shader.
+This is an Android Views implementation inspired by the references. It does not embed the React Vaso renderer or LastWave's Compose renderer. Native lens magnification and the older-device bitmap mesh approximate refraction; they are not pixel-for-pixel copies of either shader.
 
 ## Install identity
 
 - App label: **NewTube Glass**.
 - Release package: `io.github.harshsinghal10h.newtubeglass`.
 - Debug package: `io.github.harshsinghal10h.newtubeglass.debug`.
-- Version: `1.15.0-glass.2`, code `11502`.
+- Version: `1.15.0-glass.3`, code `11503`.
 
-The fork installs alongside upstream NewTube and the previous experiment. Their app data is separate. Upstream's in-app updater is disabled for this independent package.
+The v3 APK uses the same signing certificate and package as v2 and updates it in place. The fork installs alongside upstream NewTube and the first experiment. Their app data is separate. Upstream's in-app updater is disabled for this independent package.
 
 ## Build
 
@@ -53,7 +53,7 @@ GitHub Actions builds both release and debug variants, runs the navigation/layou
 
 ## Validation
 
-`GlassNavigationRegressionTest` covers selection, reselection, rejected selections, large-font five-tab geometry, repeated Classic restoration, palette text contrast and preservation of the populated RecyclerView's live ViewHolder metadata across restyling. `GlassDeviceTest` exercises the actual Browse and Settings Activities, switches profiles and captures Android screenshots. Build results and screenshots are available with each Actions run.
+`GlassNavigationRegressionTest` covers selection, reselection, rejected selections, unchanged tab views and widths, fixed appearance-row geometry at large fonts, preserving profile values when glass is disabled, large-font five-tab geometry, repeated Classic restoration, palette text contrast and preservation of the populated RecyclerView's live ViewHolder metadata across restyling. `GlassDeviceTest` exercises the actual Browse and Settings Activities, tests all three switches, scrolls a controlled colored surface behind the cached dock, checks the visible pixels after committed frames and captures Android screenshots and frame metrics. Build results and screenshots are available with each Actions run.
 
 An emulator check is not a physical-device performance or full video-playback certification. Actual YouTube content depends on the network and sign-in state.
 

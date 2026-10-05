@@ -15,10 +15,12 @@
     <string name="mobile_glass_style_lastwave_summary">Vibrant dark glass, soft bloom, squircle geometry and expressive depth</string>
     <string name="mobile_glass_style_classic">Classic NewTube</string>
     <string name="mobile_glass_style_classic_summary">Original NewTube surfaces with no glass restyling</string>
-    <string name="mobile_glass_dynamic_tint">Dynamic accent tint</string>
-    <string name="mobile_glass_dynamic_tint_summary">Use the Android 12+ system accent in glass surfaces, with NewTube’s accent as the fallback</string>
-    <string name="mobile_glass_amoled">AMOLED canvas</string>
-    <string name="mobile_glass_amoled_summary">Use pure black behind glass in dark mode</string>
+    <string name="mobile_glass_dynamic_tint">Dynamic Color</string>
+    <string name="mobile_glass_dynamic_tint_summary">Use your wallpaper’s colors (Android 12+)</string>
+    <string name="mobile_glass_amoled">AMOLED Mode</string>
+    <string name="mobile_glass_amoled_summary">Pure black background (Dark mode)</string>
+    <string name="mobile_glass_enabled">Liquid Glass</string>
+    <string name="mobile_glass_enabled_summary">iOS-style translucent materials</string>
     <string name="mobile_glass_reset_profile">Reset current profile</string>
     <string name="mobile_glass_reset_profile_summary">Restore the recommended optical, geometry and motion values for this visual system</string>
     <string name="mobile_glass_group_optics">Optics</string>
@@ -65,5 +67,5 @@
     <string name="mobile_glass_group_accessibility">Accessibility</string>
     <string name="mobile_glass_high_contrast">High-contrast text</string>
     <string name="mobile_glass_high_contrast_summary">Prefer stronger foreground contrast over subtle theme tinting</string>
-    <string name="mobile_glass_compat_note">The Views build uses GPU-friendly translucent glass with optical frost, depth and highlights. It avoids full-scene backdrop capture so scrolling and video playback stay stable on a broad range of Android devices.</string>
+    <string name="mobile_glass_compat_note">Liquid Glass follows content in the same drawing frame. Android 12+ uses native GPU blur; older versions use a lighter translucent finish. Your profile and custom values are kept when Liquid Glass is turned off.</string>
 </resources>

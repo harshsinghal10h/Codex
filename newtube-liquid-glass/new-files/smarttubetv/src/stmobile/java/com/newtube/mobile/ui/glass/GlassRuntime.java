@@ -51,6 +51,7 @@ public final class GlassRuntime {
         // Restore first: no accumulated margins, stale font sizes, colour or nested old glass.
         restoreTree(content);
         if (s.style == GlassPreferences.STYLE_CLASSIC) {
+            applyBaseAppearance(content, s, p);
             View nav = content.findViewById(R.id.mobile_bottom_nav);
             if (nav instanceof GlassNavigationView) ((GlassNavigationView) nav).configure(s, p);
             View header = content.findViewById(R.id.newtube_glass_header);
@@ -58,8 +59,8 @@ public final class GlassRuntime {
             View picker = content.findViewById(R.id.newtube_glass_profile_picker);
             if (picker instanceof GlassProfilePicker) ((GlassProfilePicker) picker).render();
             if (content.findViewById(R.id.mobile_browse_root) != null || content.findViewById(R.id.settings_container) != null) {
-                a.getWindow().setStatusBarColor(androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_background));
-                a.getWindow().setNavigationBarColor(androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_navigation_bar));
+                a.getWindow().setStatusBarColor(s.amoled && dark ? android.graphics.Color.BLACK : androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_background));
+                a.getWindow().setNavigationBarColor(s.amoled && dark ? android.graphics.Color.BLACK : androidx.core.content.ContextCompat.getColor(a, R.color.mobile_color_navigation_bar));
             }
             return;
         }
@@ -82,7 +83,21 @@ public final class GlassRuntime {
         View content = a.findViewById(android.R.id.content); if (content != null) clearBaseline(content);
     }
 
+    private static void applyBaseAppearance(View v, GlassPreferences.Snapshot s, GlassPalette p) {
+        if (v instanceof GlassAppearanceToggleView) { ((GlassAppearanceToggleView) v).render(); return; }
+        if (v instanceof GlassNavigationView || v instanceof GlassProfilePicker) return;
+        if (s.amoled && p.dark) {
+            int id = v.getId();
+            if (id == R.id.mobile_browse_root || id == R.id.mobile_search_root || id == R.id.settings_container
+                    || id == R.id.newtube_glass_settings_page || id == R.id.mobile_you_panel || id == R.id.mobile_title_bar) {
+                remember(v); v.setBackgroundColor(android.graphics.Color.BLACK);
+            }
+        }
+        if (v instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) applyBaseAppearance(((ViewGroup) v).getChildAt(i), s, p);
+    }
+
     private static void applyTree(View v, GlassPreferences.Snapshot s, GlassPalette p) {
+        if (v instanceof GlassAppearanceToggleView) { ((GlassAppearanceToggleView) v).render(); return; }
         if (v instanceof GlassNavigationView) { remember(v); return; }
         if (v instanceof GlassProfilePicker) { ((GlassProfilePicker) v).render(); return; }
         if (v.getId() != android.R.id.content) remember(v);
@@ -165,7 +180,7 @@ public final class GlassRuntime {
                 v.setPadding(dp(v,16+skeletonInset),dp(v,16+skeletonInset),dp(v,16+skeletonInset),v.getPaddingBottom()); break;
             default: break;
         }
-        if (v instanceof RecyclerView) installRecyclerHook((RecyclerView) v);
+        if (v instanceof RecyclerView) installRecyclerHook((RecyclerView) v, s, p);
         if (v instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) v;
             for (int i = 0; i < group.getChildCount(); i++) applyTree(group.getChildAt(i), s, p);
@@ -189,15 +204,19 @@ public final class GlassRuntime {
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         lp.setMarginStart(dp(v,l)); lp.setMarginEnd(dp(v,r)); lp.topMargin = dp(v,t); lp.bottomMargin = dp(v,b); v.setLayoutParams(lp);
     }
-    private static void installRecyclerHook(RecyclerView rv) {
+    private static final class FeedStyle {
+        final GlassPreferences.Snapshot settings; final GlassPalette palette;
+        FeedStyle(GlassPreferences.Snapshot s, GlassPalette p) { settings = s; palette = p; }
+    }
+    private static void installRecyclerHook(RecyclerView rv, GlassPreferences.Snapshot s, GlassPalette p) {
+        rv.setTag(R.id.newtube_glass_feed_style, new FeedStyle(s, p));
         if (Boolean.TRUE.equals(rv.getTag(R.id.newtube_glass_recycler_hook))) return;
         rv.setTag(R.id.newtube_glass_recycler_hook, true);
         rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override public void onChildViewAttachedToWindow(@NonNull View child) {
-                GlassPreferences.Snapshot s = GlassPreferences.snapshot(child.getContext());
+                FeedStyle style = (FeedStyle) rv.getTag(R.id.newtube_glass_feed_style);
                 restoreTree(child);
-                if (s.style != GlassPreferences.STYLE_CLASSIC) applyTree(child, s, new GlassPalette(child.getContext(), s,
-                        ThemeMode.currentNight(child.getContext()) == Configuration.UI_MODE_NIGHT_YES));
+                if (style != null && style.settings.style != GlassPreferences.STYLE_CLASSIC) applyTree(child, style.settings, style.palette);
             }
             @Override public void onChildViewDetachedFromWindow(@NonNull View child) {}
         });
@@ -206,7 +225,8 @@ public final class GlassRuntime {
     private static void restoreTree(View v) {
         Object original = v.getTag(R.id.newtube_glass_original_saved);
         if (original instanceof Baseline) ((Baseline) original).restore(v);
-        if (v instanceof GlassNavigationView || v instanceof GlassProfilePicker) return;
+        if (v instanceof RecyclerView) v.setTag(R.id.newtube_glass_feed_style, null);
+        if (v instanceof GlassNavigationView || v instanceof GlassProfilePicker || v instanceof GlassAppearanceToggleView) return;
         if (v instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) restoreTree(((ViewGroup) v).getChildAt(i));
     }
     private static void clearBaseline(View v) {

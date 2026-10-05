@@ -3,6 +3,7 @@ import sys, xml.etree.ElementTree as ET
 from pathlib import Path
 
 REQ=[
+"smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassAppearanceToggleView.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassNavigationView.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassShell.java",
 "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/glass/GlassPalette.java",

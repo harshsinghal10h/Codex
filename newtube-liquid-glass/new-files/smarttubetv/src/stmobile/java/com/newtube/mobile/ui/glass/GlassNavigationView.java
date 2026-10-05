@@ -10,7 +10,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
+import android.os.Build;
+import android.content.res.ColorStateList;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -33,12 +34,11 @@ import com.liskovsoft.smartyoutubetv2.tv.R;
 
 /**
  * A real dock, backed by the original Material menu/presenter and selection listeners.
- * LastWave: selected icon + label, quiet unselected icons. Vaso: even segments + moving lens.
+ * Both profiles retain even fixed-size segments; only the selection lens and tint move.
  * The original navigation is retained for Classic and disabling navigation glass.
  */
 public final class GlassNavigationView extends BottomNavigationView {
     private static final int MESH_X = 20, MESH_Y = 6;
-    private static final long CAPTURE_INTERVAL_MS = 80;
     private final LinearLayout track;
     private final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint badgePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -55,9 +55,13 @@ public final class GlassNavigationView extends BottomNavigationView {
     private GlassPreferences.Snapshot settings;
     private GlassPalette palette;
     private GlassDrawable dock, lens;
-    private String menuSignature = "";
+    private long menuSignature = Long.MIN_VALUE, stateSignature = Long.MIN_VALUE;
+    private HardwareBackdrop hardwareBackdrop;
+    private ViewGroup backdropRoot;
+    private long softwareScene = Long.MIN_VALUE;
+    private final Path lensClip = new Path();
     private Bitmap snapshot;
-    private long lastCapture;
+    private ColorStateList nativeIconTint, nativeTextTint;
     private ValueAnimator animator;
     private Drawable nativeBackground;
     private int nativePaddingLeft, nativePaddingTop, nativePaddingRight, nativePaddingBottom;
@@ -79,6 +83,7 @@ public final class GlassNavigationView extends BottomNavigationView {
         boolean enabled = s.style != GlassPreferences.STYLE_CLASSIC && s.glassNav;
         if (!nativeSaved) {
             nativeBackground = getBackground();
+            nativeIconTint = getItemIconTintList(); nativeTextTint = getItemTextColor();
             nativePaddingLeft = getPaddingLeft(); nativePaddingTop = getPaddingTop();
             nativePaddingRight = getPaddingRight(); nativePaddingBottom = getPaddingBottom();
             nativeSaved = true;
@@ -105,11 +110,20 @@ public final class GlassNavigationView extends BottomNavigationView {
             ViewCompat.setElevation(this, dp(s.elevation));
             dock = new GlassDrawable(s, p, GlassDrawable.Role.DOCK, density(), 36);
             lens = new GlassDrawable(s, p, GlassDrawable.Role.LENS, density(), 30);
-            menuSignature = "";
+            menuSignature = Long.MIN_VALUE; stateSignature = Long.MIN_VALUE;
+            if (Build.VERSION.SDK_INT >= 29 && isHardwareAccelerated()) {
+                if (hardwareBackdrop == null) hardwareBackdrop = new HardwareBackdrop();
+                hardwareBackdrop.configure(s, density());
+            }
             refreshItems();
         } else {
             if (animator != null) animator.cancel();
-            setBackground(nativeBackground);
+            releaseBackdrop();
+            setBackground(s.amoled && p.dark ? new android.graphics.drawable.ColorDrawable(Color.BLACK) : nativeBackground);
+            int[][] states = new int[][]{new int[]{android.R.attr.state_checked}, new int[]{}};
+            ColorStateList colors = new ColorStateList(states, new int[]{p.accent, p.muted});
+            setItemIconTintList(s.dynamicTint ? colors : nativeIconTint);
+            setItemTextColor(s.dynamicTint ? colors : nativeTextTint);
             setPadding(nativePaddingLeft, nativePaddingTop, nativePaddingRight, nativePaddingBottom);
             setClipToOutline(false);
             ViewCompat.setElevation(this, 0);
@@ -137,20 +151,23 @@ public final class GlassNavigationView extends BottomNavigationView {
 
     private void refreshItems() {
         if (!glass || settings == null) return;
-        StringBuilder signature = new StringBuilder().append(settings.style).append(':').append(getSelectedItemId());
+        long shape = 17, state = getSelectedItemId();
         for (int i = 0; i < getMenu().size(); i++) {
             MenuItem item = getMenu().getItem(i);
+            shape = shape * 31 + item.getItemId();
+            shape = shape * 31 + (item.getTitle() == null ? 0 : item.getTitle().hashCode());
+            shape = shape * 31 + (item.isVisible() ? 1 : 0);
+            shape = shape * 31 + System.identityHashCode(item.getIcon());
             BadgeDrawable badge = getBadge(item.getItemId());
-            signature.append('|').append(item.getItemId()).append(item.getTitle()).append(item.isVisible()).append(item.isEnabled())
-                    .append(badge != null && badge.isVisible());
+            state = state * 31 + (item.isEnabled() ? 1 : 0);
+            state = state * 31 + (badge != null && badge.isVisible() ? 1 : 0);
         }
-        if (menuSignature.equals(signature.toString())) return;
-        menuSignature = signature.toString();
+        if (menuSignature == shape) {
+            if (stateSignature != state) { updateTabStates(); updateLens(); stateSignature = state; invalidate(); }
+            return;
+        }
+        menuSignature = shape; stateSignature = state;
         track.removeAllViews();
-        boolean largeType = getResources().getConfiguration().fontScale >= 1.3f;
-        boolean vertical = palette.vaso || largeType;
-        int visibleCount = 0;
-        for (int i = 0; i < getMenu().size(); i++) if (getMenu().getItem(i).isVisible()) visibleCount++;
         for (int i = 0; i < getMenu().size(); i++) {
             MenuItem item = getMenu().getItem(i);
             if (!item.isVisible()) continue;
@@ -158,8 +175,8 @@ public final class GlassNavigationView extends BottomNavigationView {
             LinearLayout tab = new LinearLayout(getContext());
             tab.setId(item.getItemId());
             tab.setGravity(Gravity.CENTER);
-            tab.setOrientation(vertical ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
-            tab.setPadding(dp(vertical ? 3 : 9), dp(3), dp(vertical ? 3 : 9), dp(3));
+            tab.setOrientation(LinearLayout.VERTICAL);
+            tab.setPadding(dp(3), dp(3), dp(3), dp(3));
             tab.setMinimumWidth(dp(48)); tab.setMinimumHeight(dp(48));
             tab.setClickable(true); tab.setFocusable(true); tab.setEnabled(item.isEnabled());
             tab.setSelected(selected); tab.setContentDescription(item.getTitle());
@@ -184,22 +201,38 @@ public final class GlassNavigationView extends BottomNavigationView {
             }
             icon.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
             tab.addView(icon, new LinearLayout.LayoutParams(dp(23), dp(23)));
-            if (selected || vertical) {
+            {
                 TextView label = new TextView(getContext());
-                label.setText(item.getTitle()); label.setTextSize(vertical ? 10 : 14);
+                label.setText(item.getTitle()); label.setTextSize(10);
                 label.setTypeface(palette.vaso ? Typeface.create("sans-serif-medium", Typeface.NORMAL) : GlassTypography.label(getContext()));
                 label.setTextColor(selected ? palette.onSelected : palette.muted);
                 label.setSingleLine(true); label.setEllipsize(TextUtils.TruncateAt.END);
                 label.setGravity(Gravity.CENTER); label.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-                LinearLayout.LayoutParams text = new LinearLayout.LayoutParams(vertical ? ViewGroup.LayoutParams.MATCH_PARENT : 0, ViewGroup.LayoutParams.WRAP_CONTENT);
-                if (vertical) text.topMargin = dp(3); else { text.leftMargin = dp(7); text.weight = 1; }
+                LinearLayout.LayoutParams text = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                text.topMargin = dp(3);
                 tab.addView(label, text);
             }
             LinearLayout.LayoutParams cell = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,
-                    !vertical && selected && visibleCount < 6 ? 1.85f : 1f);
+                    1f);
             track.addView(tab, cell);
         }
         requestLayout(); invalidate();
+    }
+
+    private void updateTabStates() {
+        for (int i = 0; i < track.getChildCount(); i++) {
+            LinearLayout tab = (LinearLayout) track.getChildAt(i);
+            MenuItem item = getMenu().findItem(tab.getId());
+            if (item == null) continue;
+            boolean selected = item.getItemId() == getSelectedItemId();
+            tab.setSelected(selected); tab.setEnabled(item.isEnabled());
+            Drawable icon = ((ImageView) tab.getChildAt(0)).getDrawable();
+            if (icon != null) {
+                icon.setState(selected ? new int[]{android.R.attr.state_checked} : new int[]{});
+                icon.setTint(selected ? palette.onSelected : palette.muted);
+            }
+            ((TextView) tab.getChildAt(1)).setTextColor(selected ? palette.onSelected : palette.muted);
+        }
     }
 
     @Override protected void onMeasure(int widthSpec, int heightSpec) {
@@ -217,7 +250,7 @@ public final class GlassNavigationView extends BottomNavigationView {
         dock.setBounds(0, 0, getWidth(), getHeight());
         updateLens();
         updateMesh();
-        lastCapture = 0;
+        backdropRoot = null;
     }
 
     private void updateLens() {
@@ -255,27 +288,107 @@ public final class GlassNavigationView extends BottomNavigationView {
 
     private void captureBackdrop() {
         if (settings.reduceTransparency || !isShown() || getWidth() <= 0 || getHeight() <= 0) return;
-        long now = SystemClock.uptimeMillis();
-        if (now - lastCapture < CAPTURE_INTERVAL_MS) return;
-        lastCapture = now;
-        View root = getRootView().findViewById(R.id.mobile_browse_root);
-        if (root == null) return;
-        // Haze is produced by a small sampled image; no full-screen bitmap or video capture.
+        if (backdropRoot == null) {
+            View root = getRootView().findViewById(R.id.mobile_browse_root);
+            if (!(root instanceof ViewGroup)) return;
+            backdropRoot = (ViewGroup) root;
+        }
+        getLocationInWindow(location); backdropRoot.getLocationInWindow(parentLocation);
+        if (Build.VERSION.SDK_INT >= 29 && isHardwareAccelerated()) {
+            if (hardwareBackdrop == null) { hardwareBackdrop = new HardwareBackdrop(); hardwareBackdrop.configure(settings, density()); }
+            // Update the referenced display list before this frame is drawn. No invalidation here:
+            // an idle screen schedules no extra frames, and scrolling has no delayed pixel readback.
+            hardwareBackdrop.record(this);
+        } else {
+            long scene = 17; boolean dirty = snapshot == null;
+            for (int i = 0; i < backdropRoot.getChildCount(); i++) {
+                View child = backdropRoot.getChildAt(i); if (child == this || child.getId() == R.id.mobile_mini_player) continue;
+                scene = scene * 31 + child.getVisibility(); scene = scene * 31 + child.getScrollY();
+                scene = scene * 31 + child.getTop(); scene = scene * 31 + child.getBottom();
+                dirty |= child.getVisibility() == VISIBLE && child.isDirty();
+            }
+            dirty |= scene != softwareScene; softwareScene = scene;
+            captureSoftwareBackdrop();
+            if (dirty) invalidate();
+        }
+    }
+
+    private void captureSoftwareBackdrop() {
         float scale = Math.max(0.10f, 0.55f - settings.blur / 100f * 0.43f);
         int width = Math.max(1, Math.round(getWidth() * scale)), height = Math.max(1, Math.round(getHeight() * scale));
         if (snapshot == null || snapshot.getWidth() != width || snapshot.getHeight() != height) {
             if (snapshot != null) snapshot.recycle();
             snapshot = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         }
-        getLocationInWindow(location); root.getLocationInWindow(parentLocation);
         snapshot.eraseColor(palette.canvas);
-        Canvas sample = new Canvas(snapshot);
-        sample.scale(scale, scale);
-        sample.translate(parentLocation[0] - location[0], parentLocation[1] - location[1]);
+        Canvas sample = new Canvas(snapshot); sample.scale(scale, scale);
+        try { drawBackdrop(sample, 0); }
+        catch (IllegalArgumentException hardwareBitmapOnSoftwareCanvas) { snapshot.eraseColor(palette.canvas); }
+    }
+
+    /** Draw only content behind the dock, clipped to its small viewport. Never draw the dock/video. */
+    private void drawBackdrop(Canvas c, int padding) {
+        int save = c.save();
+        c.clipRect(0, 0, getWidth() + padding * 2, getHeight() + padding * 2);
+        c.drawColor(palette.canvas);
+        c.translate(parentLocation[0] - location[0] + padding, parentLocation[1] - location[1] + padding);
+        Drawable background = backdropRoot.getBackground(); if (background != null) background.draw(c);
         capturing = true;
-        try { root.draw(sample); } catch (RuntimeException ignored) { snapshot.eraseColor(palette.canvas); }
-        finally { capturing = false; }
-        invalidate();
+        try {
+            for (int i = 0; i < backdropRoot.getChildCount(); i++) {
+                View child = backdropRoot.getChildAt(i);
+                if (child == this || child.getId() == R.id.mobile_mini_player || child.getVisibility() != VISIBLE || child.getAlpha() == 0) continue;
+                float left = child.getLeft() + child.getTranslationX(), top = child.getTop() + child.getTranslationY();
+                if (c.quickReject(left, top, left + child.getWidth(), top + child.getHeight(), Canvas.EdgeType.AA)) continue;
+                int childSave = c.save();
+                c.translate(child.getLeft(), child.getTop());
+                if (!child.getMatrix().isIdentity()) c.concat(child.getMatrix());
+                int alphaSave = child.getAlpha() < 1 ? c.saveLayerAlpha(0, 0, child.getWidth(), child.getHeight(), Math.round(child.getAlpha() * 255)) : -1;
+                child.draw(c);
+                if (alphaSave >= 0) c.restoreToCount(alphaSave);
+                c.restoreToCount(childSave);
+            }
+        } finally { capturing = false; c.restoreToCount(save); }
+    }
+
+    private void releaseBackdrop() {
+        if (snapshot != null) { snapshot.recycle(); snapshot = null; }
+        if (hardwareBackdrop != null) { hardwareBackdrop.release(); hardwareBackdrop = null; }
+        backdropRoot = null;
+    }
+
+    /** API 29 classes stay isolated from the API 24-28 compatibility path. */
+    @androidx.annotation.RequiresApi(29)
+    private static final class HardwareBackdrop {
+        final android.graphics.RenderNode node = new android.graphics.RenderNode("NewTube dock backdrop");
+        int padding;
+        void configure(GlassPreferences.Snapshot s, float density) {
+            padding = Math.round(24 * density);
+            if (Build.VERSION.SDK_INT >= 31) Blur.configure(node, s, density);
+        }
+        void record(GlassNavigationView nav) {
+            int width = nav.getWidth() + padding * 2, height = nav.getHeight() + padding * 2;
+            node.setPosition(0, 0, width, height);
+            Canvas sample = node.beginRecording(width, height);
+            try { nav.drawBackdrop(sample, padding); } finally { node.endRecording(); }
+        }
+        void draw(Canvas c) {
+            int save = c.save(); c.translate(-padding, -padding); c.drawRenderNode(node); c.restoreToCount(save);
+        }
+        void release() { node.discardDisplayList(); }
+    }
+    @androidx.annotation.RequiresApi(31)
+    private static final class Blur {
+        static void configure(android.graphics.RenderNode node, GlassPreferences.Snapshot s, float density) {
+            android.graphics.ColorMatrix saturation = new android.graphics.ColorMatrix(); saturation.setSaturation(s.saturation / 100f);
+            float contrast = s.contrast / 100f, shift = (1 - contrast) * 127.5f;
+            android.graphics.ColorMatrix grading = new android.graphics.ColorMatrix(new float[]{contrast,0,0,0,shift, 0,contrast,0,0,shift, 0,0,contrast,0,shift, 0,0,0,1,0});
+            grading.postConcat(saturation);
+            android.graphics.RenderEffect effect = android.graphics.RenderEffect.createColorFilterEffect(new android.graphics.ColorMatrixColorFilter(grading));
+            float radius = s.blur * .20f * density;
+            if (radius > 0) effect = android.graphics.RenderEffect.createBlurEffect(radius, radius, effect, android.graphics.Shader.TileMode.CLAMP);
+            node.setRenderEffect(effect);
+        }
     }
 
     @Override public void draw(@NonNull Canvas canvas) { if (!capturing) super.draw(canvas); }
@@ -288,7 +401,21 @@ public final class GlassNavigationView extends BottomNavigationView {
         clip.reset(); clip.addRoundRect(0, 0, getWidth(), getHeight(), dp(36), dp(36), Path.Direction.CW);
         int save = c.save(); c.clipPath(clip);
         c.drawColor(palette.canvas);
-        if (snapshot != null && !settings.reduceTransparency) c.drawBitmapMesh(snapshot, MESH_X, MESH_Y, vertices, 0, null, 0, bitmapPaint);
+        if (!settings.reduceTransparency) {
+            if (Build.VERSION.SDK_INT >= 29 && c.isHardwareAccelerated() && hardwareBackdrop != null) {
+                hardwareBackdrop.draw(c);
+                if (!lensBounds.isEmpty() && settings.depth > 0) {
+                    int refraction = c.save(); lensClip.reset();
+                    lensClip.addRoundRect(lensBounds, dp(30), dp(30), Path.Direction.CW); c.clipPath(lensClip);
+                    float scale = 1 + settings.depth / 100f * (palette.vaso ? .055f : .02f);
+                    c.scale(scale, scale, lensBounds.centerX(), lensBounds.centerY()); hardwareBackdrop.draw(c);
+                    c.restoreToCount(refraction);
+                }
+            } else {
+                if (backdropRoot != null && snapshot == null) captureSoftwareBackdrop();
+                if (snapshot != null) c.drawBitmapMesh(snapshot, MESH_X, MESH_Y, vertices, 0, null, 0, bitmapPaint);
+            }
+        }
         dock.draw(c);
         if (!lensBounds.isEmpty()) {
             lens.setBounds(Math.round(lensBounds.left), Math.round(lensBounds.top), Math.round(lensBounds.right), Math.round(lensBounds.bottom));
@@ -311,7 +438,7 @@ public final class GlassNavigationView extends BottomNavigationView {
     @Override protected void onDetachedFromWindow() {
         getViewTreeObserver().removeOnPreDrawListener(observer);
         if (animator != null) animator.cancel();
-        if (snapshot != null) { snapshot.recycle(); snapshot = null; }
+        releaseBackdrop();
         super.onDetachedFromWindow();
     }
 

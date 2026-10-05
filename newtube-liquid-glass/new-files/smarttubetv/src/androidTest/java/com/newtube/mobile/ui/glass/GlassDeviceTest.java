@@ -20,7 +20,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.lang.reflect.Field;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.widget.ScrollView;
+import android.widget.CompoundButton;
+import android.view.Choreographer;
 
 /** Runs the real Activities on an Android emulator. Screenshots never substitute a web mock. */
 @RunWith(AndroidJUnit4.class)
@@ -46,7 +52,7 @@ public class GlassDeviceTest {
                         assertTrue(tab.getWidth()>=48*a.getResources().getDisplayMetrics().density-1);
                     }
                 });
-                assertDockSamplesOnlyTheBackdrop(scenario);
+                assertDockFollowsScrollingContent(scenario, name);
                 screenshot(name+"-home");
                 scenario.onActivity(a -> {
                     GlassNavigationView nav=a.findViewById(R.id.mobile_bottom_nav);
@@ -66,34 +72,82 @@ public class GlassDeviceTest {
                 settings.onActivity(a -> {
                     assertNotNull(a.findViewById(R.id.newtube_glass_profile_picker));
                     assertNotNull(a.findViewById(R.id.settings_list));
+                    int height = a.findViewById(R.id.newtube_glass_amoled_option).getHeight();
+                    for (int id : new int[]{R.id.newtube_glass_amoled_option, R.id.newtube_glass_dynamic_option, R.id.newtube_glass_enabled_option}) {
+                        View row = a.findViewById(id); assertNotNull(row); assertEquals(height, row.getHeight());
+                        int width = row.getWidth(); CompoundButton toggle = row.findViewById(R.id.settings_row_switch);
+                        boolean previous = toggle.isChecked(); assertTrue(row.performClick());
+                        assertEquals(!previous, ((CompoundButton)row.findViewById(R.id.settings_row_switch)).isChecked());
+                        assertEquals(width, row.getWidth()); assertEquals(height, row.getHeight());
+                        assertTrue(row.performClick());
+                    }
                 });
                 screenshot(name+"-appearance");
             }
         }
     }
-    private void assertDockSamplesOnlyTheBackdrop(ActivityScenario<MobileBrowseActivity> scenario) throws Exception {
-        View[] backdrop={null};
+    private void assertDockFollowsScrollingContent(ActivityScenario<MobileBrowseActivity> scenario, String name) throws Exception {
+        ScrollView[] backdrop = {null}; int[] stripe = {0}; int[] point = new int[2];
+        CountDownLatch initial = new CountDownLatch(1);
         scenario.onActivity(a -> {
-            ViewGroup root=a.findViewById(R.id.mobile_browse_root);
-            GlassNavigationView nav=a.findViewById(R.id.mobile_bottom_nav);
-            View solid=new View(a); solid.setBackgroundColor(Color.MAGENTA);
-            ConstraintLayout.LayoutParams lp=new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-            root.addView(solid,root.indexOfChild(nav),lp); backdrop[0]=solid;
+            ViewGroup root = a.findViewById(R.id.mobile_browse_root);
+            GlassNavigationView nav = a.findViewById(R.id.mobile_bottom_nav);
+            stripe[0] = root.getHeight() + 100;
+            ScrollView scroll = new ScrollView(a); scroll.setFillViewport(true);
+            View colors = new View(a) {
+                final Paint paint = new Paint();
+                @Override protected void onDraw(Canvas c) {
+                    paint.setColor(Color.MAGENTA); c.drawRect(0, 0, getWidth(), stripe[0], paint);
+                    paint.setColor(Color.GREEN); c.drawRect(0, stripe[0], getWidth(), stripe[0]*2, paint);
+                }
+            };
+            scroll.addView(colors, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, stripe[0]*2));
+            root.addView(scroll, root.indexOfChild(nav), new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            backdrop[0] = scroll;
+            int[] location = new int[2]; nav.getLocationOnScreen(location);
+            point[0] = location[0] + nav.getWidth()/2;
+            // Below the label track and selection lens, away from the glass rim.
+            point[1] = location[1] + nav.getHeight() - Math.round(3 * a.getResources().getDisplayMetrics().density);
+            nav.getViewTreeObserver().registerFrameCommitCallback(initial::countDown);
         });
-        SystemClock.sleep(400);
-        scenario.onActivity(a -> a.findViewById(R.id.mobile_bottom_nav).invalidate());
-        SystemClock.sleep(120);
-        Field field=GlassNavigationView.class.getDeclaredField("snapshot"); field.setAccessible(true);
+        assertTrue("Initial backdrop frame was not committed", initial.await(5, TimeUnit.SECONDS));
+        int before = pixel(point);
+        assertTrue("Glass must show the magenta backdrop without its own labels", Color.red(before) > Color.green(before)+10);
+        java.util.List<Long> frames = new java.util.ArrayList<>();
+        android.view.Window.OnFrameMetricsAvailableListener metrics = (window, frame, dropped) -> frames.add(frame.getMetric(android.view.FrameMetrics.TOTAL_DURATION));
+        CountDownLatch done = new CountDownLatch(1);
         scenario.onActivity(a -> {
-            try {
-                Bitmap sampled=(Bitmap)field.get(a.findViewById(R.id.mobile_bottom_nav));
-                assertNotNull(sampled);
-                for(int y=0;y<sampled.getHeight();y+=3) for(int x=0;x<sampled.getWidth();x+=3)
-                    assertEquals("The dock must not feed its own icons or labels into its sample",Color.MAGENTA,sampled.getPixel(x,y));
-            } catch(IllegalAccessException e) { throw new AssertionError(e); }
+            a.getWindow().addOnFrameMetricsAvailableListener(metrics, new android.os.Handler(android.os.Looper.getMainLooper()));
+            long start = SystemClock.uptimeMillis();
+            Choreographer.getInstance().postFrameCallback(new Choreographer.FrameCallback() {
+                @Override public void doFrame(long time) {
+                    float progress = Math.min(1, (SystemClock.uptimeMillis()-start)/1200f);
+                    backdrop[0].scrollTo(0, Math.round(progress * stripe[0]));
+                    if (progress < 1) Choreographer.getInstance().postFrameCallback(this);
+                    else a.findViewById(R.id.mobile_bottom_nav).getViewTreeObserver().registerFrameCommitCallback(done::countDown);
+                }
+            });
+        });
+        assertTrue("Scrolling frame did not finish", done.await(8, TimeUnit.SECONDS));
+        int after = pixel(point);
+        assertTrue("The cached navbar must follow the current scroll frame without a navbar invalidation", Color.green(after) > Color.red(after)+10);
+        assertTrue("The backdrop must change together with content", Color.green(after)-Color.red(after) > Color.green(before)-Color.red(before)+24);
+        screenshot(name+"-scroll-glass");
+        scenario.onActivity(a -> {
+            a.getWindow().removeOnFrameMetricsAvailableListener(metrics);
             ((ViewGroup)backdrop[0].getParent()).removeView(backdrop[0]);
         });
-        SystemClock.sleep(200);
+        assertTrue("Scrolling must produce frame metrics", frames.size() > 5);
+        java.util.Collections.sort(frames);
+        File folder = new File(context.getExternalFilesDir(null), "glass-screenshots"); assertTrue(folder.exists() || folder.mkdirs());
+        try (FileOutputStream out = new FileOutputStream(new File(folder, name+"-scroll-metrics.txt"))) {
+            String report = "Android emulator, controlled 1.2 s scroll\nframes="+frames.size()+"\np50_ms="+(frames.get(frames.size()/2)/1000000f)+"\np95_ms="+(frames.get((frames.size()-1)*95/100)/1000000f)+"\n";
+            out.write(report.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+    private int pixel(int[] point) {
+        Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot(); assertNotNull(image);
+        int color = image.getPixel(point[0], point[1]); image.recycle(); return color;
     }
     private void screenshot(String name) throws Exception {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();

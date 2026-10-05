@@ -24,6 +24,8 @@ public final class GlassPreferences {
     private static final String FILE = "newtube_liquid_glass";
 
     private static final String K_STYLE = "style";
+    private static final String K_ENABLED = "glass_enabled";
+    private static final String K_LAST_STYLE = "last_glass_style";
     private static final String K_BLUR = "blur";
     private static final String K_OPACITY = "opacity";
     private static final String K_RADIUS = "radius";
@@ -75,6 +77,14 @@ public final class GlassPreferences {
         int value = i(c, K_STYLE, STYLE_LASTWAVE);
         return value == STYLE_VASO || value == STYLE_CLASSIC ? value : STYLE_LASTWAVE;
     }
+    public static boolean glassEnabled(Context c) { return b(c, K_ENABLED, true) && style(c) != STYLE_CLASSIC; }
+    public static void setGlassEnabled(Context c, boolean enabled) {
+        if (enabled && style(c) == STYLE_CLASSIC) {
+            applyPreset(c, i(c, K_LAST_STYLE, STYLE_LASTWAVE));
+        } else {
+            putB(c, K_ENABLED, enabled);
+        }
+    }
     public static int blur(Context c) { return i(c, K_BLUR, 55); }
     public static int opacity(Context c) { return i(c, K_OPACITY, 72); }
     public static int radius(Context c) { return i(c, K_RADIUS, 22); }
@@ -104,7 +114,11 @@ public final class GlassPreferences {
     public static boolean floatingNav(Context c) { return b(c, K_FLOATING_NAV, true); }
 
     public static void setStyle(Context c, int v) {
-        putI(c, K_STYLE, v == STYLE_VASO || v == STYLE_CLASSIC ? v : STYLE_LASTWAVE);
+        int style = v == STYLE_VASO || v == STYLE_CLASSIC ? v : STYLE_LASTWAVE;
+        SharedPreferences.Editor e = p(c).edit().putInt(K_STYLE, style).putBoolean(K_ENABLED, style != STYLE_CLASSIC);
+        if (style != STYLE_CLASSIC) e.putInt(K_LAST_STYLE, style);
+        e.apply();
+        GlassRuntime.refreshAll();
     }
     public static void setBlur(Context c, int v) { putI(c, K_BLUR, clamp(v, 0, 100)); }
     public static void setOpacity(Context c, int v) { putI(c, K_OPACITY, clamp(v, 25, 100)); }
@@ -136,7 +150,8 @@ public final class GlassPreferences {
 
     /** Applies one coherent preset while retaining per-surface toggles. */
     public static void applyPreset(Context c, int style) {
-        SharedPreferences.Editor e = p(c).edit().putInt(K_STYLE, style);
+        SharedPreferences.Editor e = p(c).edit().putInt(K_STYLE, style).putBoolean(K_ENABLED, style != STYLE_CLASSIC);
+        if (style != STYLE_CLASSIC) e.putInt(K_LAST_STYLE, style);
         if (style == STYLE_VASO) {
             e.putInt(K_BLUR, 28).putInt(K_OPACITY, 58).putInt(K_RADIUS, 24)
                     .putInt(K_DEPTH, 82).putInt(K_DISPERSION, 52).putInt(K_SPECULAR, 86)
@@ -161,7 +176,7 @@ public final class GlassPreferences {
     }
 
     public static Snapshot snapshot(Context c) {
-        return new Snapshot(style(c), blur(c), opacity(c), radius(c), depth(c), dispersion(c),
+        return new Snapshot(glassEnabled(c) ? style(c) : STYLE_CLASSIC, blur(c), opacity(c), radius(c), depth(c), dispersion(c),
                 specular(c), saturation(c), contrast(c), elevation(c), motion(c), press(c), density(c),
                 dynamicTint(c), glassNav(c), glassTop(c), glassCards(c), glassButtons(c), glassSettings(c),
                 glassMini(c), amoled(c), reduceTransparency(c), highContrastText(c), hapticPress(c),

@@ -15,6 +15,16 @@ final class GlassSettingsPage {
     static SettingsPages.Page build(Context context) {
         List<SettingsRow> rows = new ArrayList<>();
 
+        rows.add(SettingsRow.appearanceToggle(R.id.newtube_glass_amoled_option, R.drawable.ic_glass_amoled,
+                context.getString(R.string.mobile_glass_amoled), context.getString(R.string.mobile_glass_amoled_summary),
+                () -> GlassPreferences.amoled(context), v -> GlassPreferences.setAmoled(context, v)));
+        rows.add(SettingsRow.appearanceToggle(R.id.newtube_glass_dynamic_option, R.drawable.ic_glass_palette,
+                context.getString(R.string.mobile_glass_dynamic_tint), context.getString(R.string.mobile_glass_dynamic_tint_summary),
+                () -> GlassPreferences.dynamicTint(context), v -> GlassPreferences.setDynamicTint(context, v)));
+        rows.add(SettingsRow.appearanceToggle(R.id.newtube_glass_enabled_option, R.drawable.ic_glass_bubbles,
+                context.getString(R.string.mobile_glass_enabled), context.getString(R.string.mobile_glass_enabled_summary),
+                () -> GlassPreferences.glassEnabled(context), v -> GlassPreferences.setGlassEnabled(context, v)));
+
         rows.add(SettingsRow.header(context.getString(R.string.mobile_glass_group_style)));
         rows.add(SettingsRow.<Integer>choice(context.getString(R.string.mobile_glass_style))
                 .option(context.getString(R.string.mobile_glass_style_vaso),
@@ -24,12 +34,6 @@ final class GlassSettingsPage {
                 .option(context.getString(R.string.mobile_glass_style_classic),
                         context.getString(R.string.mobile_glass_style_classic_summary), GlassPreferences.STYLE_CLASSIC)
                 .bind(() -> GlassPreferences.style(context), value -> GlassPreferences.applyPreset(context, value)));
-        rows.add(SettingsRow.toggle(context.getString(R.string.mobile_glass_dynamic_tint),
-                context.getString(R.string.mobile_glass_dynamic_tint_summary),
-                () -> GlassPreferences.dynamicTint(context), v -> GlassPreferences.setDynamicTint(context, v)));
-        rows.add(SettingsRow.toggle(context.getString(R.string.mobile_glass_amoled),
-                context.getString(R.string.mobile_glass_amoled_summary),
-                () -> GlassPreferences.amoled(context), v -> GlassPreferences.setAmoled(context, v)));
         rows.add(SettingsRow.action(context.getString(R.string.mobile_glass_reset_profile),
                 context.getString(R.string.mobile_glass_reset_profile_summary), page -> {
                     GlassPreferences.applyPreset(context, GlassPreferences.style(context));

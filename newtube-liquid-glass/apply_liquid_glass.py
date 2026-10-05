@@ -154,16 +154,50 @@ def patch_components(root):
     replace_once(root, base + "java/com/newtube/mobile/ui/browse/MobileBrowseActivity.java",
                  "itemView.setOnLongClickListener(v -> {",
                  "((com.newtube.mobile.ui.glass.GlassNavigationView) mBottomNav).setNavigationLongClickListener(toMenuItemId(sectionId), v -> {")
-    # Every bitmap that can appear behind the dock must support a software canvas.
+    patch_appearance_rows(root)
+    # Only pre-Android-10 devices use a software backdrop. Modern devices retain hardware bitmaps.
     replace_once(root, base + "java/com/newtube/mobile/NewTubeGlideModule.java",
                  "new RequestOptions().set(HttpGlideUrlLoader.TIMEOUT, HTTP_TIMEOUT_MS)",
-                 "new RequestOptions().disallowHardwareConfig().set(HttpGlideUrlLoader.TIMEOUT, HTTP_TIMEOUT_MS)")
+                 "new RequestOptions().set(com.bumptech.glide.load.resource.bitmap.Downsampler.ALLOW_HARDWARE_CONFIG, android.os.Build.VERSION.SDK_INT >= 29).set(HttpGlideUrlLoader.TIMEOUT, HTTP_TIMEOUT_MS)")
+
+def patch_appearance_rows(root):
+    base = "smarttubetv/src/stmobile/java/com/newtube/mobile/ui/settings/"
+    replace_once(root, base + "SettingsRow.java", "    public static final int KIND_DIVIDER = 5;",
+                 "    public static final int KIND_DIVIDER = 5;\n    public static final int KIND_APPEARANCE_SWITCH = 6;\n    int rowId;")
+    replace_once(root, base + "SettingsRow.java", "    public static <T> Choice<T> choice(CharSequence title) {",
+                 """    public static SettingsRow appearanceToggle(int id, int icon, CharSequence title, CharSequence summary,
+                                               BooleanSupplier checked, Toggle toggle) {
+        SettingsRow row = new SettingsRow(KIND_APPEARANCE_SWITCH);
+        row.rowId = id; row.icon = icon; row.title = title; row.summary = () -> summary;
+        row.checked = checked; row.toggle = toggle;
+        return row;
+    }
+
+    public static <T> Choice<T> choice(CharSequence title) {""")
+    replace_once(root, base + "SettingsAdapter.java", "            case SettingsRow.KIND_HEADER:",
+                 """            case SettingsRow.KIND_APPEARANCE_SWITCH:
+                return new RowHolder(new com.newtube.mobile.ui.glass.GlassAppearanceToggleView(parent.getContext()));
+            case SettingsRow.KIND_HEADER:""")
+    replace_once(root, base + "SettingsAdapter.java", "private final SwitchMaterial toggle;", "private final android.widget.CompoundButton toggle;")
+    replace_once(root, base + "SettingsAdapter.java", "boolean isSwitch = row.kind == SettingsRow.KIND_SWITCH;",
+                 "boolean isSwitch = row.kind == SettingsRow.KIND_SWITCH || row.kind == SettingsRow.KIND_APPEARANCE_SWITCH;")
+    replace_once(root, base + "SettingsAdapter.java", "            itemView.setClickable(enabled);",
+                 """            itemView.setClickable(enabled);
+            if (itemView instanceof com.newtube.mobile.ui.glass.GlassAppearanceToggleView) {
+                itemView.setId(row.rowId);
+                ((com.newtube.mobile.ui.glass.GlassAppearanceToggleView) itemView).render();
+            }""")
+    replace_once(root, base + "SettingsAdapter.java", "SwitchMaterial toggle = host.findViewById(R.id.settings_row_switch);",
+                 "android.widget.CompoundButton toggle = host.findViewById(R.id.settings_row_switch);")
+    replace_once(root, base + "SettingsPageFragment.java", "            case SettingsRow.KIND_SWITCH:",
+                 "            case SettingsRow.KIND_APPEARANCE_SWITCH:\n            case SettingsRow.KIND_SWITCH:")
 
 def patch_fork_identity(root):
     p = root / "smarttubetv/build.gradle"
     t = p.read_text(encoding="utf-8")
     t = t.replace('applicationId "io.github.aleixrodriala.arc"', 'applicationId "io.github.harshsinghal10h.newtubeglass"')
-    t = t.replace('versionCode 11500', 'versionCode 11502').replace('versionName "1.15.0"', 'versionName "1.15.0-glass.2"')
+    t = t.replace('versionCode 11500', 'versionCode 11503').replace('versionCode 11502', 'versionCode 11503')
+    t = t.replace('versionName "1.15.0"', 'versionName "1.15.0-glass.3"').replace('versionName "1.15.0-glass.2"', 'versionName "1.15.0-glass.3"')
     t = t.replace('buildConfigField "boolean", "IN_APP_UPDATES", project.hasProperty(\'fdroid\') ? "false" : "true"',
                   'buildConfigField "boolean", "IN_APP_UPDATES", "false"')
     p.write_text(t, encoding="utf-8")

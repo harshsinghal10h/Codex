@@ -56,6 +56,64 @@ public class GlassNavigationRegressionTest {
         nav.findDockTab(803).performClick(); assertEquals(1,reselected.get());
         assertEquals("History",nav.findDockTab(803).getContentDescription().toString());
     }
+    @Test public void selectingTabsKeepsTheSameViewsAndGeometry() {
+        for (int style : new int[]{GlassPreferences.STYLE_LASTWAVE, GlassPreferences.STYLE_VASO}) {
+            GlassPreferences.applyPreset(context, style);
+            GlassNavigationView nav = dock();
+            View[] tabs = new View[]{nav.findDockTab(801), nav.findDockTab(802), nav.findDockTab(803), nav.findDockTab(804)};
+            int width = tabs[0].getWidth();
+            for (int id : new int[]{802, 804, 801, 803}) {
+                nav.setSelectedItemId(id);
+                for (int i = 0; i < tabs.length; i++) {
+                    assertSame("Selection must update the existing tab", tabs[i], nav.findDockTab(801+i));
+                    assertEquals("Tab width must stay constant", width, tabs[i].getWidth());
+                    assertFalse("Selection must not request a new layout", nav.isLayoutRequested());
+                }
+            }
+        }
+    }
+    @Test public void disablingGlassPreservesProfileAndCustomValues() {
+        GlassPreferences.applyPreset(context, GlassPreferences.STYLE_VASO);
+        GlassPreferences.setBlur(context, 41); GlassPreferences.setRadius(context, 37);
+        GlassPreferences.setGlassEnabled(context, false);
+        assertFalse(GlassPreferences.glassEnabled(context));
+        assertEquals(GlassPreferences.STYLE_CLASSIC, GlassPreferences.snapshot(context).style);
+        assertEquals(GlassPreferences.STYLE_VASO, GlassPreferences.style(context));
+        GlassPreferences.setGlassEnabled(context, true);
+        assertEquals(GlassPreferences.STYLE_VASO, GlassPreferences.snapshot(context).style);
+        assertEquals(41, GlassPreferences.blur(context)); assertEquals(37, GlassPreferences.radius(context));
+        GlassPreferences.applyPreset(context, GlassPreferences.STYLE_CLASSIC);
+        GlassPreferences.setGlassEnabled(context, true);
+        assertEquals(GlassPreferences.STYLE_VASO, GlassPreferences.style(context));
+    }
+    @Test public void appearanceRowsAndSwitchesKeepFixedBounds() {
+        for (float fontScale : new float[]{1f, 1.8f}) {
+            Configuration c = new Configuration(context.getResources().getConfiguration()); c.fontScale = fontScale;
+            context.getResources().updateConfiguration(c, context.getResources().getDisplayMetrics());
+            LinearLayout list = new LinearLayout(context); list.setOrientation(LinearLayout.VERTICAL);
+            for (String label : new String[]{"AMOLED Mode", "Dynamic Color", "Liquid Glass"}) {
+                GlassAppearanceToggleView row = new GlassAppearanceToggleView(context);
+                ((android.widget.TextView) row.findViewById(R.id.settings_row_title)).setText(label);
+                ((android.widget.TextView) row.findViewById(R.id.settings_row_summary)).setText("An explanation that is longer than the available width");
+                list.addView(row, new LinearLayout.LayoutParams(320, row.getLayoutParams().height));
+            }
+            list.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            list.layout(0, 0, 320, list.getMeasuredHeight());
+            int height = list.getChildAt(0).getHeight();
+            for (int style : new int[]{GlassPreferences.STYLE_VASO, GlassPreferences.STYLE_LASTWAVE, GlassPreferences.STYLE_CLASSIC}) {
+                GlassPreferences.applyPreset(context, style);
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    GlassAppearanceToggleView row = (GlassAppearanceToggleView) list.getChildAt(i); row.render();
+                    android.widget.CompoundButton control = row.findViewById(R.id.settings_row_switch);
+                    int controlWidth = control.getWidth(), controlHeight = control.getHeight();
+                    control.setChecked(!control.isChecked());
+                    assertEquals(height, row.getHeight()); assertEquals(320, row.getWidth());
+                    assertEquals(controlWidth, control.getWidth()); assertEquals(controlHeight, control.getHeight());
+                    assertEquals(1, ((android.widget.TextView) row.findViewById(R.id.settings_row_summary)).getMaxLines());
+                }
+            }
+        }
+    }
     @Test public void rejectedSelectionKeepsTheCurrentTab() {
         GlassNavigationView nav=dock(); nav.setSelectedItemId(801);
         nav.setOnItemSelectedListener(item -> false); nav.findDockTab(802).performClick();
