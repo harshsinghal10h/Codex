@@ -281,6 +281,9 @@ public final class GlassNavigationView extends BottomNavigationView {
     @Override public void draw(@NonNull Canvas canvas) { if (!capturing) super.draw(canvas); }
 
     @Override protected void dispatchDraw(@NonNull Canvas c) {
+        // Software ViewGroup.drawChild can dispatch children without calling public draw().
+        // Exclude the dock from both entry paths, otherwise it refracts its own old labels.
+        if (capturing) return;
         if (!glass) { super.dispatchDraw(c); return; }
         clip.reset(); clip.addRoundRect(0, 0, getWidth(), getHeight(), dp(36), dp(36), Path.Direction.CW);
         int save = c.save(); c.clipPath(clip);
