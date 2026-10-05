@@ -109,7 +109,7 @@ public class GlassDeviceTest {
             scroll.addView(colors, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, stripe[0]*2));
             root.addView(scroll, root.indexOfChild(nav), new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             backdrop[0] = scroll;
-            int[] location = new int[2]; nav.getLocationOnScreen(location);
+            int[] location = new int[2]; nav.getLocationInWindow(location);
             point[0] = location[0] + nav.getWidth()/2;
             // Below the label track and selection lens, away from the glass rim.
             point[1] = location[1] + nav.getHeight() - Math.round(3 * a.getResources().getDisplayMetrics().density);
@@ -117,8 +117,8 @@ public class GlassDeviceTest {
         });
         assertTrue("Initial backdrop frame was not committed", initial.await(5, TimeUnit.SECONDS));
         scenario.onActivity(a -> assertTrue("The test content must have a real scroll range", backdrop[0].getChildAt(0).getHeight() > backdrop[0].getHeight()));
-        int before = pixel(point);
-        assertTrue("Glass must show the magenta backdrop without its own labels", Color.red(before) > Color.green(before)+10);
+        int before = pixel(scenario,point);
+        assertTrue("Glass must show the magenta backdrop without its own labels: "+Integer.toHexString(before), Color.red(before) > Color.green(before)+10);
         java.util.List<Long> frames = new java.util.ArrayList<>();
         android.view.Window.OnFrameMetricsAvailableListener metrics = (window, frame, dropped) -> frames.add(frame.getMetric(android.view.FrameMetrics.TOTAL_DURATION));
         CountDownLatch done = new CountDownLatch(1);
@@ -136,7 +136,7 @@ public class GlassDeviceTest {
         });
         assertTrue("Scrolling frame did not finish", done.await(8, TimeUnit.SECONDS));
         scenario.onActivity(a -> assertEquals("The source content must actually scroll", stripe[0], backdrop[0].getScrollY()));
-        int after = pixel(point);
+        int after = pixel(scenario,point);
         screenshot(scenario,name+"-scroll-glass");
         assertTrue("The navbar must follow the current committed scroll frame: before="+Integer.toHexString(before)+" after="+Integer.toHexString(after), Color.green(after) > Color.red(after)+10);
         assertTrue("The backdrop must change together with content", Color.green(after)-Color.red(after) > Color.green(before)-Color.red(before)+24);
@@ -152,8 +152,10 @@ public class GlassDeviceTest {
             out.write(report.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
     }
-    private int pixel(int[] point) {
-        Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot(); assertNotNull(image);
+    private int pixel(ActivityScenario<MobileBrowseActivity> scenario,int[] point) throws Exception {
+        // Read the newest buffer from this app window, without requesting another draw.
+        // A global display screenshot can still contain the preceding Activity at launch.
+        Bitmap image = copyWindow(scenario);
         int color = image.getPixel(point[0], point[1]); image.recycle(); return color;
     }
     private void assertSwitchGraphics(ActivityScenario<MobileSettingsActivity> settings) throws Exception {
@@ -189,6 +191,9 @@ public class GlassDeviceTest {
             decor.invalidate();
         });
         assertTrue("App window did not commit a frame", committed.await(10,TimeUnit.SECONDS));
+        return copyWindow(scenario);
+    }
+    private Bitmap copyWindow(ActivityScenario<? extends android.app.Activity> scenario) throws Exception {
         Bitmap[] image = {null}; int[] result = {-1}; CountDownLatch copied = new CountDownLatch(1);
         scenario.onActivity(a -> {
             View decor = a.getWindow().getDecorView();
