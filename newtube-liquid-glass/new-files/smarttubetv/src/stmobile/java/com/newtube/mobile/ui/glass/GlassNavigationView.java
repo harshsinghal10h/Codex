@@ -343,7 +343,11 @@ public final class GlassNavigationView extends BottomNavigationView {
                 int childSave = c.save();
                 c.translate(child.getLeft(), child.getTop());
                 if (!child.getMatrix().isIdentity()) c.concat(child.getMatrix());
+                c.clipRect(0, 0, child.getWidth(), child.getHeight());
                 int alphaSave = child.getAlpha() < 1 ? c.saveLayerAlpha(0, 0, child.getWidth(), child.getHeight(), Math.round(child.getAlpha() * 255)) : -1;
+                // Public View.draw does not apply the view's own scroll transform. Android's
+                // normal display-list recorder does this before drawing a ScrollView/RecyclerView.
+                child.computeScroll(); c.translate(-child.getScrollX(), -child.getScrollY());
                 child.draw(c);
                 if (alphaSave >= 0) c.restoreToCount(alphaSave);
                 c.restoreToCount(childSave);

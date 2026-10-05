@@ -49,6 +49,7 @@ public final class GlassAppearanceToggleView extends LinearLayout {
         LayoutParams sub = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT); sub.topMargin = dp(3);
         text.addView(summary, sub); addView(text, new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
         toggle = new MaterialSwitch(c); toggle.setId(R.id.settings_row_switch);
+        toggle.setShowText(false); toggle.setTextOn(""); toggle.setTextOff("");
         toggle.setClickable(false); toggle.setFocusable(false);
         toggle.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         StateListDrawable mark = new StateListDrawable();

@@ -52,7 +52,8 @@ jobs:
         working-directory: newtube
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon -PemulatorAbi :smarttubetv:assembleStmobileDebug :smarttubetv:assembleStmobileRelease :smarttubetv:assembleStmobileDebugAndroidTest
+          ./gradlew --no-daemon -PemulatorAbi :smarttubetv:assembleStmobileDebug :smarttubetv:assembleStmobileDebugAndroidTest
+          ./gradlew --no-daemon :smarttubetv:assembleStmobileRelease
 
       - name: Enable emulator acceleration
         run: |
@@ -92,6 +93,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NewTube-v1.15.0-Dual-Liquid-Glass-APK
-          path: out/*.apk
+          path: |
+            out/*universal*release*.apk
+            out/*arm64*release*.apk
           if-no-files-found: error
           retention-days: 30
