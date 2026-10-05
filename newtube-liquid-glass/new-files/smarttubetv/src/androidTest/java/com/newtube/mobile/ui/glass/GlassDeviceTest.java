@@ -130,9 +130,9 @@ public class GlassDeviceTest {
         });
         assertTrue("Scrolling frame did not finish", done.await(8, TimeUnit.SECONDS));
         int after = pixel(point);
-        assertTrue("The cached navbar must follow the current scroll frame without a navbar invalidation", Color.green(after) > Color.red(after)+10);
-        assertTrue("The backdrop must change together with content", Color.green(after)-Color.red(after) > Color.green(before)-Color.red(before)+24);
         screenshot(name+"-scroll-glass");
+        assertTrue("The navbar must follow the current committed scroll frame: before="+Integer.toHexString(before)+" after="+Integer.toHexString(after), Color.green(after) > Color.red(after)+10);
+        assertTrue("The backdrop must change together with content", Color.green(after)-Color.red(after) > Color.green(before)-Color.red(before)+24);
         scenario.onActivity(a -> {
             a.getWindow().removeOnFrameMetricsAvailableListener(metrics);
             ((ViewGroup)backdrop[0].getParent()).removeView(backdrop[0]);

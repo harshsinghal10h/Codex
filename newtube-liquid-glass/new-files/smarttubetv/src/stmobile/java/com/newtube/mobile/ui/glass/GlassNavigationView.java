@@ -58,7 +58,8 @@ public final class GlassNavigationView extends BottomNavigationView {
     private long menuSignature = Long.MIN_VALUE, stateSignature = Long.MIN_VALUE;
     private HardwareBackdrop hardwareBackdrop;
     private ViewGroup backdropRoot;
-    private long softwareScene = Long.MIN_VALUE;
+    private long sceneSignature = Long.MIN_VALUE;
+    private boolean sceneDirty;
     private final Path lensClip = new Path();
     private Bitmap snapshot;
     private ColorStateList nativeIconTint, nativeTextTint;
@@ -294,23 +295,46 @@ public final class GlassNavigationView extends BottomNavigationView {
             backdropRoot = (ViewGroup) root;
         }
         getLocationInWindow(location); backdropRoot.getLocationInWindow(parentLocation);
-        if (Build.VERSION.SDK_INT >= 29 && isHardwareAccelerated()) {
-            if (hardwareBackdrop == null) { hardwareBackdrop = new HardwareBackdrop(); hardwareBackdrop.configure(settings, density()); }
-            // Update the referenced display list before this frame is drawn. No invalidation here:
-            // an idle screen schedules no extra frames, and scrolling has no delayed pixel readback.
-            hardwareBackdrop.record(this);
-        } else {
-            long scene = 17; boolean dirty = snapshot == null;
-            for (int i = 0; i < backdropRoot.getChildCount(); i++) {
-                View child = backdropRoot.getChildAt(i); if (child == this || child.getId() == R.id.mobile_mini_player) continue;
-                scene = scene * 31 + child.getVisibility(); scene = scene * 31 + child.getScrollY();
-                scene = scene * 31 + child.getTop(); scene = scene * 31 + child.getBottom();
-                dirty |= child.getVisibility() == VISIBLE && child.isDirty();
-            }
-            dirty |= scene != softwareScene; softwareScene = scene;
-            captureSoftwareBackdrop();
-            if (dirty) invalidate();
+        sceneDirty = false;
+        long signature = 17;
+        for (int i = 0; i < backdropRoot.getChildCount(); i++) {
+            View child = backdropRoot.getChildAt(i);
+            if (child == this || child.getId() == R.id.mobile_mini_player) continue;
+            signature = signature * 31 + sceneState(child, parentLocation[0] - location[0], parentLocation[1] - location[1]);
         }
+        boolean changed = sceneDirty || signature != sceneSignature;
+        sceneSignature = signature;
+        if (Build.VERSION.SDK_INT >= 29 && isHardwareAccelerated()) {
+            if (hardwareBackdrop == null) { hardwareBackdrop = new HardwareBackdrop(); hardwareBackdrop.configure(settings, density()); changed = true; }
+            if (changed || !hardwareBackdrop.node.hasDisplayList()) hardwareBackdrop.record(this);
+        } else if (changed || snapshot == null) {
+            captureSoftwareBackdrop();
+        }
+        // Android caches the dock's View display list as well as its nested RenderNode. Mark
+        // the dock dirty for this traversal only when source content changes. Source drawing
+        // clears those dirty flags; the additional scheduled traversal then remains idle.
+        if (changed) invalidate();
+    }
+
+    /** Inspect only visible content intersecting the backdrop, including RecyclerView children. */
+    private long sceneState(View v, float parentX, float parentY) {
+        if (v.getVisibility() != VISIBLE || v.getAlpha() == 0) return v.getVisibility();
+        v.computeScroll();
+        float x = parentX + v.getLeft() + v.getTranslationX(), y = parentY + v.getTop() + v.getTranslationY();
+        int padding = dp(24);
+        if (x + v.getWidth() < -padding || y + v.getHeight() < -padding || x > getWidth() + padding || y > getHeight() + padding) return 0;
+        sceneDirty |= v.isDirty();
+        long hash = System.identityHashCode(v);
+        hash = hash * 31 + Float.floatToIntBits(x); hash = hash * 31 + Float.floatToIntBits(y);
+        hash = hash * 31 + v.getWidth(); hash = hash * 31 + v.getHeight();
+        hash = hash * 31 + v.getScrollX(); hash = hash * 31 + v.getScrollY();
+        hash = hash * 31 + Float.floatToIntBits(v.getAlpha());
+        hash = hash * 31 + Float.floatToIntBits(v.getScaleX()); hash = hash * 31 + Float.floatToIntBits(v.getScaleY());
+        if (v instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) v; hash = hash * 31 + group.getChildCount();
+            for (int i = 0; i < group.getChildCount(); i++) hash = hash * 31 + sceneState(group.getChildAt(i), x - v.getScrollX(), y - v.getScrollY());
+        }
+        return hash;
     }
 
     private void captureSoftwareBackdrop() {
@@ -357,8 +381,8 @@ public final class GlassNavigationView extends BottomNavigationView {
 
     private void releaseBackdrop() {
         if (snapshot != null) { snapshot.recycle(); snapshot = null; }
-        if (hardwareBackdrop != null) { hardwareBackdrop.release(); hardwareBackdrop = null; }
-        backdropRoot = null;
+        if (Build.VERSION.SDK_INT >= 29 && hardwareBackdrop != null) { hardwareBackdrop.release(); hardwareBackdrop = null; }
+        backdropRoot = null; sceneSignature = Long.MIN_VALUE;
     }
 
     /** API 29 classes stay isolated from the API 24-28 compatibility path. */
