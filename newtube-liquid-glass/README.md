@@ -53,7 +53,7 @@ GitHub Actions builds both release and debug variants, runs the navigation/layou
 
 ## Validation
 
-`GlassNavigationRegressionTest` covers selection, reselection, rejected selections, large-font five-tab geometry, repeated Classic restoration and palette text contrast. `GlassDeviceTest` exercises the actual Browse and Settings Activities, switches profiles and captures Android screenshots. Build results and screenshots are available with each Actions run.
+`GlassNavigationRegressionTest` covers selection, reselection, rejected selections, large-font five-tab geometry, repeated Classic restoration, palette text contrast and preservation of the populated RecyclerView's live ViewHolder metadata across restyling. `GlassDeviceTest` exercises the actual Browse and Settings Activities, switches profiles and captures Android screenshots. Build results and screenshots are available with each Actions run.
 
 An emulator check is not a physical-device performance or full video-playback certification. Actual YouTube content depends on the network and sign-in state.
 

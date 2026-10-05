@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.ColorUtils;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.card.MaterialCardView;
 import com.liskovsoft.smartyoutubetv2.tv.R;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,6 +105,35 @@ public class GlassNavigationRegressionTest {
                 assertTrue(ColorUtils.calculateContrast(p.onSelected,p.selected)>=4.5);
             }
         }
+    }
+    @Test public void restylingPopulatedFeedPreservesRecyclerViewHolderMetadata() {
+        Activity a=Robolectric.buildActivity(Activity.class).setup().get(); a.setTheme(R.style.Theme_NewTube);
+        RecyclerView feed=new RecyclerView(a); feed.setId(R.id.mobile_content_grid);
+        feed.setLayoutManager(new LinearLayoutManager(a));
+        feed.setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,int type) {
+                MaterialCardView card=new MaterialCardView(a); card.setId(R.id.video_card_root);
+                RecyclerView.LayoutParams lp=new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,96);
+                lp.bottomMargin=3; card.setLayoutParams(lp);
+                return new RecyclerView.ViewHolder(card) {};
+            }
+            @Override public void onBindViewHolder(RecyclerView.ViewHolder holder,int position) {}
+            @Override public int getItemCount() { return 4; }
+        });
+        a.setContentView(feed); layoutFeed(feed);
+        assertTrue(feed.getChildCount()>0);
+        View card=feed.getChildAt(0); RecyclerView.ViewHolder holder=feed.getChildViewHolder(card);
+        for(int style:new int[]{GlassPreferences.STYLE_VASO,GlassPreferences.STYLE_LASTWAVE,GlassPreferences.STYLE_CLASSIC,GlassPreferences.STYLE_VASO}) {
+            GlassPreferences.setStyle(context,style); GlassRuntime.apply(a);
+            assertSame(holder,feed.getChildViewHolder(card));
+            if(style==GlassPreferences.STYLE_CLASSIC) assertEquals(3,((RecyclerView.LayoutParams)card.getLayoutParams()).bottomMargin);
+            layoutFeed(feed);
+            for(int i=0;i<feed.getChildCount();i++) assertNotNull(feed.getChildViewHolder(feed.getChildAt(i)));
+        }
+    }
+    private static void layoutFeed(RecyclerView feed) {
+        feed.measure(View.MeasureSpec.makeMeasureSpec(360,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(600,View.MeasureSpec.EXACTLY));
+        feed.layout(0,0,360,600);
     }
     private static int countId(View v,int id) {
         int n=v.getId()==id?1:0;

@@ -113,7 +113,10 @@ public final class GlassRuntime {
             case "mobile_search_button": case "mobile_cast_button": case "mobile_title_back":
                 if (s.glassTop) {
                     ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) v.getLayoutParams();
-                    lp.height = dp(v, 48); lp.topMargin = dp(v, 14); v.setLayoutParams(lp);
+                    lp.height = dp(v, 48); lp.topMargin = dp(v, 14);
+                    if (v.getId()==R.id.mobile_cast_button) lp.setMarginEnd(dp(v,8));
+                    if (v.getId()==R.id.mobile_search_button) lp.setMarginEnd(dp(v,16));
+                    v.setLayoutParams(lp);
                     if (s.glassButtons) surface(v, s, p, GlassDrawable.Role.CONTROL, 24);
                 }
                 break;
@@ -157,6 +160,9 @@ public final class GlassRuntime {
                 break;
             case "mobile_content_grid": case "mobile_search_grid":
                 v.setPadding(dp(v, 16), dp(v, 12), dp(v, 16), v.getPaddingBottom()); break;
+            case "mobile_feed_skeleton":
+                int skeletonInset=s.glassCards ? (s.density==1 ? 6 : s.density==2 ? 14 : 10) : 0;
+                v.setPadding(dp(v,16+skeletonInset),dp(v,16+skeletonInset),dp(v,16+skeletonInset),v.getPaddingBottom()); break;
             default: break;
         }
         if (v instanceof RecyclerView) installRecyclerHook((RecyclerView) v);
@@ -217,7 +223,9 @@ public final class GlassRuntime {
     private static ViewGroup.LayoutParams copy(ViewGroup.LayoutParams lp) {
         if (lp == null) return null;
         if (lp instanceof ConstraintLayout.LayoutParams) return new ConstraintLayout.LayoutParams((ConstraintLayout.LayoutParams) lp);
-        if (lp instanceof RecyclerView.LayoutParams) return new RecyclerView.LayoutParams((RecyclerView.LayoutParams) lp);
+        // RecyclerView.LayoutParams owns a live ViewHolder and decoration bookkeeping.
+        // Snapshot geometry only; never replace that attached object with a copy.
+        if (lp instanceof RecyclerView.LayoutParams) return new ViewGroup.MarginLayoutParams((RecyclerView.LayoutParams) lp);
         if (lp instanceof LinearLayout.LayoutParams) return new LinearLayout.LayoutParams((LinearLayout.LayoutParams) lp);
         if (lp instanceof FrameLayout.LayoutParams) return new FrameLayout.LayoutParams((FrameLayout.LayoutParams) lp);
         if (lp instanceof ViewGroup.MarginLayoutParams) return new ViewGroup.MarginLayoutParams((ViewGroup.MarginLayoutParams) lp);
@@ -247,7 +255,19 @@ public final class GlassRuntime {
         }
         void restore(View v) {
             if (!(v instanceof MaterialCardView)) v.setBackground(background);
-            if (layout != null) v.setLayoutParams(copy(layout));
+            if (layout != null) {
+                ViewGroup.LayoutParams live=v.getLayoutParams();
+                if (live instanceof RecyclerView.LayoutParams) {
+                    live.width=layout.width; live.height=layout.height;
+                    if (layout instanceof ViewGroup.MarginLayoutParams) {
+                        ViewGroup.MarginLayoutParams from=(ViewGroup.MarginLayoutParams) layout;
+                        ViewGroup.MarginLayoutParams to=(ViewGroup.MarginLayoutParams) live;
+                        to.setMargins(from.leftMargin,from.topMargin,from.rightMargin,from.bottomMargin);
+                        to.setMarginStart(from.getMarginStart()); to.setMarginEnd(from.getMarginEnd());
+                    }
+                    v.setLayoutParams(live);
+                } else v.setLayoutParams(copy(layout));
+            }
             v.setPadding(left,top,right,bottom);v.setMinimumHeight(minHeight); ViewCompat.setElevation(v,elevation);
             v.setStateListAnimator(animator);v.setScaleX(1);v.setScaleY(1);v.setOutlineProvider(outline);v.setClipToOutline(clip);
             if (v instanceof TextView) {
