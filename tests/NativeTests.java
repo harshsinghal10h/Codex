@@ -70,6 +70,31 @@ public final class NativeTests extends Instrumentation {
     }
   }
 
+  private View described(View view, String description) {
+    if (description.contentEquals(
+        view.getContentDescription() == null ? "" : view.getContentDescription())) return view;
+    if (view instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) view;
+      for (int i = 0; i < group.getChildCount(); i++) {
+        View match = described(group.getChildAt(i), description);
+        if (match != null) return match;
+      }
+    }
+    return null;
+  }
+
+  private <T extends View> T typed(View view, Class<T> type) {
+    if (type.isInstance(view)) return type.cast(view);
+    if (view instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) view;
+      for (int i = 0; i < group.getChildCount(); i++) {
+        T match = typed(group.getChildAt(i), type);
+        if (match != null) return match;
+      }
+    }
+    return null;
+  }
+
   public void onStart() {
     Bundle result = new Bundle();
     try {
@@ -160,6 +185,35 @@ public final class NativeTests extends Instrumentation {
       waitForIdleSync();
       waitMs(1800);
       shot("library-r1");
+      View previewAction =
+          described(activity.getWindow().getDecorView(), "Preview selected wallpaper");
+      check(previewAction != null, "Inactive footer offers wallpaper preview");
+      boolean pausedBefore = Settings.of(c).getBoolean("paused", false);
+      main(() -> previewAction.performClick());
+      waitMs(600);
+      check(
+          ((AlertDialog) field(activity, "detailDialog")).isShowing()
+              && Settings.of(c).getBoolean("paused", false) == pausedBefore,
+          "Inactive footer opens preview without changing playback settings");
+      main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+      android.widget.GridView grid =
+          typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+      main(() -> grid.setSelection(grid.getCount() - 1));
+      waitMs(700);
+      boolean[] unobscured = {false};
+      main(
+          () -> {
+            View last = grid.getChildAt(grid.getChildCount() - 1);
+            Rect tile = new Rect(), bar = new Rect();
+            if (last != null
+                && last.getGlobalVisibleRect(tile)
+                && ((View) previewAction.getParent()).getGlobalVisibleRect(bar))
+              unobscured[0] = tile.bottom <= bar.top;
+          });
+      check(unobscured[0], "Last wallpaper can scroll entirely above playback bar");
+      shot("library-bottom-r2");
+      main(() -> grid.setSelection(0));
+      waitMs(300);
       for (Wallpaper w : Wallpaper.BUILTINS) {
         long frames = Metrics.frames.get();
         call("showDetail", new Class[] {Wallpaper.class}, w);
@@ -252,6 +306,11 @@ public final class NativeTests extends Instrumentation {
       call("build", new Class[] {});
       waitMs(1600);
       shot("performance-r1");
+      android.widget.ScrollView performanceScroll =
+          typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class);
+      main(() -> performanceScroll.fullScroll(View.FOCUS_DOWN));
+      waitMs(1500);
+      shot("memory-r2");
       main(() -> Settings.of(c).edit().putString("theme", "light").commit());
       call("navigate", new Class[] {String.class}, "Library");
       waitMs(1200);

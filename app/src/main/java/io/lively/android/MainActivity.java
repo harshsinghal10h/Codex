@@ -143,6 +143,15 @@ public final class MainActivity extends Activity {
     b.setMinHeight(dp(48));
     b.setPadding(dp(16), 0, dp(16), 0);
     b.setBackground(clickable(primary ? 0xff83c3ff : panel, 10));
+    if (!primary) {
+      GradientDrawable material = shape(panel, 10);
+      material.setStroke(dp(1), light ? 0xffd5dbe3 : 0xff414854);
+      b.setBackground(
+          new RippleDrawable(
+              android.content.res.ColorStateList.valueOf(light ? 0x18000000 : 0x30ffffff),
+              material,
+              shape(Color.WHITE, 10)));
+    }
     b.setOnClickListener(
         v -> {
           v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
@@ -345,6 +354,7 @@ public final class MainActivity extends Activity {
     grid.setVerticalSpacing(dp(14));
     grid.setPadding(dp(18), dp(page.equals("Gallery") ? 156 : 128), dp(18), dp(98));
     grid.setClipToPadding(false);
+    grid.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
     grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
     grid.setSelector(android.R.color.transparent);
     content.addView(grid, new FrameLayout.LayoutParams(-1, -1));
@@ -441,6 +451,7 @@ public final class MainActivity extends Activity {
       badge = text("", 10, Color.WHITE, true);
       badge.setPadding(dp(7), dp(2), dp(7), dp(2));
       badge.setBackground(shape(0xbe18212b, 5));
+      badge.setElevation(dp(1));
       FrameLayout.LayoutParams blp =
           new FrameLayout.LayoutParams(-2, dp(23), Gravity.BOTTOM | Gravity.LEFT);
       blp.setMargins(dp(8), 0, 0, dp(8));
@@ -477,12 +488,13 @@ public final class MainActivity extends Activity {
       title.setText(w.title);
       description.setText(w.description);
       String active = Settings.active(MainActivity.this);
-      badge.setText(isLivelyActive() && active.equals(w.id) ? "Active" : w.typeLabel());
+      boolean selected = isLivelyActive() && active.equals(w.id);
+      badge.setText(selected ? "Active" : w.typeLabel());
       setContentDescription(
           w.title
               + ", "
               + w.typeLabel()
-              + (active.equals(w.id) ? ", active" : "")
+              + (selected ? ", active" : "")
               + ". Long press for options.");
       Bitmap cached = thumbs.get(w.id);
       image.setImageBitmap(cached);
@@ -578,14 +590,20 @@ public final class MainActivity extends Activity {
     status.addView(labels, new LinearLayout.LayoutParams(0, -2, 1));
     labels.setOnClickListener(v -> controlPanel());
     boolean paused = Settings.of(this).getBoolean("paused", false);
+    boolean active = isLivelyActive();
     View pause =
         iconButton(
-            paused ? "play" : "pause",
+            !active || paused ? "play" : "pause",
             () -> {
+              if (!active) {
+                showDetail(w);
+                return;
+              }
               Settings.of(this).edit().putBoolean("paused", !paused).apply();
               build();
             });
-    pause.setContentDescription(paused ? "Resume wallpaper" : "Pause wallpaper");
+    pause.setContentDescription(
+        active ? (paused ? "Resume wallpaper" : "Pause wallpaper") : "Preview selected wallpaper");
     add(status, pause, 48, 48);
   }
 
