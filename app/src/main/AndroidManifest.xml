@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-feature android:name="android.software.live_wallpaper" android:required="true" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <application android:label="Lively Wallpaper" android:icon="@drawable/ic_lively" android:theme="@style/AppTheme" android:allowBackup="false" android:usesCleartextTraffic="false" android:hardwareAccelerated="true" android:supportsRtl="true">
+        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize" android:colorMode="wideColorGamut">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+            <intent-filter><action android:name="android.intent.action.SEND" /><category android:name="android.intent.category.DEFAULT" /><data android:mimeType="image/*" /><data android:mimeType="video/*" /><data android:mimeType="application/zip" /></intent-filter>
+        </activity>
+        <service android:name=".LivelyWallpaperService" android:label="Lively Wallpaper" android:permission="android.permission.BIND_WALLPAPER" android:exported="true">
+            <intent-filter><action android:name="android.service.wallpaper.WallpaperService" /></intent-filter>
+            <meta-data android:name="android.service.wallpaper" android:resource="@xml/wallpaper" />
+        </service>
+        <service android:name=".LivelyDreamService" android:label="Lively screensaver" android:permission="android.permission.BIND_DREAM_SERVICE" android:exported="true">
+            <intent-filter><action android:name="android.service.dreams.DreamService" /><category android:name="android.intent.category.DEFAULT" /></intent-filter>
+            <meta-data android:name="android.service.dream" android:resource="@xml/dream" />
+        </service>
+        <service android:name=".PauseTileService" android:label="Lively playback" android:icon="@drawable/ic_pause" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:exported="true">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
+        <provider android:name=".ShareProvider" android:authorities="io.lively.android.share" android:exported="false" android:grantUriPermissions="true" />
+    </application>
+</manifest>

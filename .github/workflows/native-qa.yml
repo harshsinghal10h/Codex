@@ -1,0 +1,45 @@
+name: Android native QA
+on:
+  workflow_dispatch:
+  push:
+    branches: [lively-android]
+    paths: ['app/**', 'tests/**', 'tools/**', '.github/workflows/native-qa.yml']
+permissions:
+  contents: read
+jobs:
+  emulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Build app and separate native tests
+        env:
+          LIVELY_KEY_PASSWORD: ci-native-tests-only
+        run: |
+          keytool -genkeypair -keystore "$RUNNER_TEMP/qa.jks" -alias lively -storepass:env LIVELY_KEY_PASSWORD -keypass:env LIVELY_KEY_PASSWORD -keyalg RSA -keysize 2048 -validity 1 -dname "CN=Lively QA"
+          python3 tools/build.py --keystore "$RUNNER_TEMP/qa.jks"
+          python3 tools/build-tests.py --sdk "$ANDROID_HOME" --keystore "$RUNNER_TEMP/qa.jks"
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: default
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install -r build/Lively-Android-0.1.0.apk
+            adb install -r build/native-tests/native-tests.apk
+            adb shell input keyevent 82
+            adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests | tee build/native-test-result.txt
+            grep -q 'PASS: .* native assertions' build/native-test-result.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-qa-results
+          path: build/native-test-result.txt

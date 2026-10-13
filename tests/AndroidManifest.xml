@@ -1,0 +1,1 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="io.lively.android.tests"><uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35"/><instrumentation android:name="io.lively.android.NativeTests" android:targetPackage="io.lively.android" android:label="Lively native QA"/><application android:label="Lively QA"/></manifest>
