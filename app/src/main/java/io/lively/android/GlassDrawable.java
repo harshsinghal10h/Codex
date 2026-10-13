@@ -15,6 +15,7 @@ final class GlassDrawable extends Drawable {
   private final float radius;
   private Bitmap backdrop;
   private RuntimeShader lens;
+  private int alpha = 255;
 
   GlassDrawable(boolean light, float radius, boolean glass) {
     this.light = light;
@@ -45,6 +46,8 @@ final class GlassDrawable extends Drawable {
   public void draw(Canvas canvas) {
     rect.set(getBounds());
     if (rect.width() <= 0 || rect.height() <= 0) return;
+    paint.setStyle(Paint.Style.FILL);
+    paint.setAlpha(alpha);
     if (Build.VERSION.SDK_INT >= 33
         && lens != null
         && canvas.isHardwareAccelerated()
@@ -81,7 +84,7 @@ final class GlassDrawable extends Drawable {
     }
     paint.setStyle(Paint.Style.STROKE);
     paint.setStrokeWidth(1);
-    paint.setColor(light ? 0x44ffffff : 0x40ffffff);
+    paint.setColor((((light ? 0x44 : 0x40) * alpha / 255) << 24) | 0x00ffffff);
     canvas.drawRoundRect(
         rect.left + .5f,
         rect.top + .5f,
@@ -94,7 +97,12 @@ final class GlassDrawable extends Drawable {
   }
 
   public void setAlpha(int a) {
-    paint.setAlpha(a);
+    alpha = Math.max(0, Math.min(255, a));
+    invalidateSelf();
+  }
+
+  public int getAlpha() {
+    return alpha;
   }
 
   public void setColorFilter(ColorFilter f) {

@@ -818,6 +818,7 @@ public final class MainActivity extends Activity {
     add(body, info, -1, -2);
     add(body, button("Set wallpaper", () -> apply(w), true), -1, 48);
     LinearLayout actions = row();
+    actions.setGravity(Gravity.TOP);
     Button custom = button("Customise", () -> customise(w), false),
         more = button("More options", () -> wallpaperMenu(w, actions), false);
     LinearLayout.LayoutParams a = new LinearLayout.LayoutParams(0, dp(48), 1);

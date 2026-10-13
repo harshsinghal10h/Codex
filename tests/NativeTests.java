@@ -72,7 +72,9 @@ public final class NativeTests extends Instrumentation {
 
   private View described(View view, String description) {
     if (description.contentEquals(
-        view.getContentDescription() == null ? "" : view.getContentDescription())) return view;
+            view.getContentDescription() == null ? "" : view.getContentDescription())
+        || (view instanceof android.widget.Button
+            && description.contentEquals(((android.widget.Button) view).getText()))) return view;
     if (view instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) view;
       for (int i = 0; i < group.getChildCount(); i++) {
@@ -113,6 +115,30 @@ public final class NativeTests extends Instrumentation {
                   .remove("last_error")
                   .commit());
       check(store.all().size() >= 8, "Built-in library initialises");
+      for (boolean light : new boolean[] {false, true}) {
+        GlassDrawable material = new GlassDrawable(light, 8, true);
+        material.setBounds(0, 0, 96, 48);
+        Bitmap pixels = Bitmap.createBitmap(96, 48, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(pixels);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        int opaque = pixels.getPixel(48, 24);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        check(
+            pixels.getPixel(48, 24) == opaque,
+            "Glass fill stays stable after outline redraw: " + (light ? "light" : "dark"));
+        material.setAlpha(128);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        int partial = pixels.getPixel(48, 24);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        check(
+            partial != opaque && pixels.getPixel(48, 24) == partial,
+            "Glass preserves partial opacity on redraw: " + (light ? "light" : "dark"));
+        pixels.recycle();
+      }
       File cache = new File(c.getCacheDir(), "exports");
       cache.mkdirs();
       File pkg = new File(cache, "qa-image.lively.zip");
@@ -219,7 +245,25 @@ public final class NativeTests extends Instrumentation {
         call("showDetail", new Class[] {Wallpaper.class}, w);
         waitMs(2500);
         check(Metrics.frames.get() > frames, "GPU scene renders: " + w.id);
-        if (w.scene == 0) shot("preview-r1");
+        if (w.scene == 0) {
+          boolean[] fullButton = {false};
+          main(
+              () -> {
+                View action =
+                    described(
+                        ((AlertDialog) safeField(activity, "detailDialog"))
+                            .getWindow()
+                            .getDecorView(),
+                        "Customise");
+                Rect visible = new Rect();
+                fullButton[0] =
+                    action != null
+                        && action.getGlobalVisibleRect(visible)
+                        && visible.height() >= action.getHeight() - 1;
+              });
+          check(fullButton[0], "Preview secondary action retains its full touch bounds");
+          shot("preview-r1");
+        }
         RendererController controller = (RendererController) field(activity, "preview");
         main(() -> controller.visible(false));
         waitMs(300);
@@ -315,6 +359,11 @@ public final class NativeTests extends Instrumentation {
       call("navigate", new Class[] {String.class}, "Library");
       waitMs(1200);
       shot("light-r1");
+      android.widget.GridView lightGrid =
+          typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+      main(() -> lightGrid.setSelection(lightGrid.getCount() - 1));
+      waitMs(700);
+      shot("light-bottom-r3");
       main(() -> Settings.of(c).edit().putString("theme", "dark").commit());
       check(Settings.of(c).getString("last_error", "").isEmpty(), "No accumulated playback errors");
       store.delete(imported);
