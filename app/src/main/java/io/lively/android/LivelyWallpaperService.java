@@ -132,7 +132,8 @@ public final class LivelyWallpaperService extends WallpaperService {
     }
 
     public void onSharedPreferenceChanged(android.content.SharedPreferences p, String key) {
-      if ("resolution".equals(key) && surfaceReady) size(getSurfaceHolder());
+      if (("resolution".equals(key) || "active".equals(key)) && surfaceReady)
+        size(getSurfaceHolder());
       if ("parallax".equals(key)) setOffsetNotificationsEnabled(p.getBoolean("parallax", true));
     }
   }

@@ -136,7 +136,7 @@ final class RendererController
         fixedWallpaper == null
             ? new LibraryStore(context).find(Settings.active(context))
             : fixedWallpaper;
-    if (renderer != null && !currentId.equals(w.id)) {
+    if (renderer != null && (!currentId.equals(w.id) || renderer.failed())) {
       renderer.release();
       renderer = null;
     }

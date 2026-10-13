@@ -98,6 +98,10 @@ final class VideoRenderer implements Renderer {
 
   public void touch(float x, float y) {}
 
+  public boolean failed() {
+    return released;
+  }
+
   public void release() {
     released = true;
     running = false;

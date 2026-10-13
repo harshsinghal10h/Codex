@@ -19,6 +19,7 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   private Movie movie;
   private Bitmap bitmap;
   private long started;
+  private float focusX = .5f, focusY = .5f;
   private final ExecutorService worker = Executors.newSingleThreadExecutor();
 
   ImageRenderer(Context c, Wallpaper w, Surface s, int width, int height) {
@@ -108,7 +109,9 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
       float scale = fit.equals("crop") ? Math.max(sx, sy) : Math.min(sx, sy);
       if (!fit.equals("stretch")) sx = sy = scale;
       c.save();
-      c.translate((c.getWidth() - sw * sx) * .5f, (c.getHeight() - sh * sy) * .5f);
+      c.translate(
+          (c.getWidth() - sw * sx) * (fit.equals("crop") ? focusX : .5f),
+          (c.getHeight() - sh * sy) * (fit.equals("crop") ? focusY : .5f));
       c.scale(sx, sy);
       if (drawable != null) {
         drawable.setBounds(0, 0, sw, sh);
@@ -163,7 +166,11 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
     draw();
   }
 
-  public void touch(float x, float y) {}
+  public void touch(float x, float y) {
+    focusX = Math.max(0, Math.min(1, x));
+    focusY = Math.max(0, Math.min(1, y));
+    draw();
+  }
 
   public void invalidateDrawable(Drawable d) {
     main.removeCallbacks(tick);

@@ -464,13 +464,20 @@ public final class MainActivity extends Activity {
           });
     }
 
+    @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+      int width = View.MeasureSpec.getSize(widthSpec);
+      if (width > 0) art.getLayoutParams().height = Math.round(width * 9f / 16f);
+      super.onMeasure(widthSpec, heightSpec);
+    }
+
     void bind(Wallpaper w) {
       wallpaper = w;
       image.setTag(w.id);
       title.setText(w.title);
       description.setText(w.description);
       String active = Settings.active(MainActivity.this);
-      badge.setText(active.equals(w.id) ? "Active" : w.typeLabel());
+      badge.setText(isLivelyActive() && active.equals(w.id) ? "Active" : w.typeLabel());
       setContentDescription(
           w.title
               + ", "
@@ -752,6 +759,9 @@ public final class MainActivity extends Activity {
     }
     texture.setSurfaceTextureListener(
         new TextureView.SurfaceTextureListener() {
+          private RendererController owner;
+          private Surface ownerSurface;
+
           public void onSurfaceTextureAvailable(SurfaceTexture s, int width, int height) {
             int[] target = EnginePolicy.dimensions(width, height, Settings.cap(MainActivity.this));
             s.setDefaultBufferSize(target[0], target[1]);
@@ -759,13 +769,18 @@ public final class MainActivity extends Activity {
             preview =
                 new RendererController(
                     MainActivity.this, w, previewSurface, target[0], target[1], true);
+            owner = preview;
+            ownerSurface = previewSurface;
             preview.visible(true);
           }
 
           public void onSurfaceTextureSizeChanged(SurfaceTexture s, int width, int height) {}
 
           public boolean onSurfaceTextureDestroyed(SurfaceTexture s) {
-            closePreview();
+            if (owner != null) owner.close();
+            if (ownerSurface != null) ownerSurface.release();
+            if (preview == owner) preview = null;
+            if (previewSurface == ownerSurface) previewSurface = null;
             return true;
           }
 
@@ -1076,38 +1091,29 @@ public final class MainActivity extends Activity {
           1.6f,
           Settings.value(this, w, "intensity", 1),
           value -> Settings.of(this).edit().putFloat(w.id + ".intensity", value).apply());
-      add(
-          options,
-          button(
-              "Accent colour",
-              () ->
-                  choose(
-                      "Accent colour",
-                      new String[] {"Blue", "Teal", "Rose", "Amber", "White"},
-                      0,
-                      index ->
-                          Settings.of(this)
-                              .edit()
-                              .putInt(
-                                  w.id + ".accent",
-                                  new int[] {
-                                        0xff59a8fa, 0xff61c8b1, 0xfff19ab0, 0xffefbd7c, 0xffe3e7ec
-                                      }
-                                      [index])
-                              .apply()),
-              false),
-          -1,
-          48);
-      add(
-          options,
-          text(
-              "Accent colour affects Gradient and Starfield scenes. Other scenes keep their"
-                  + " original palettes.",
-              12,
-              muted,
-              false),
-          -1,
-          66);
+      if (w.scene >= 6)
+        add(
+            options,
+            button(
+                "Accent colour",
+                () ->
+                    choose(
+                        "Accent colour",
+                        new String[] {"Blue", "Teal", "Rose", "Amber", "White"},
+                        0,
+                        index ->
+                            Settings.of(this)
+                                .edit()
+                                .putInt(
+                                    w.id + ".accent",
+                                    new int[] {
+                                          0xff59a8fa, 0xff61c8b1, 0xfff19ab0, 0xffefbd7c, 0xffe3e7ec
+                                        }
+                                        [index])
+                                .apply()),
+                false),
+            -1,
+            48);
     }
     JSONObject props = library.properties(w);
     Iterator<String> keys = props.keys();
@@ -1198,7 +1204,7 @@ public final class MainActivity extends Activity {
           text(
               w.kind.equals("web")
                   ? "This wallpaper has no LivelyProperties controls. Display and web settings are"
-                        + " in Settings."
+                      + " in Settings."
                   : "Use Settings → Wallpaper to change the image fit.",
               14,
               muted,

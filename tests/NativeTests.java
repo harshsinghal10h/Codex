@@ -62,7 +62,7 @@ public final class NativeTests extends Instrumentation {
   private void shot(String name) throws Exception {
     Bitmap b = getUiAutomation().takeScreenshot();
     if (b != null) {
-      File f = new File(getTargetContext().getFilesDir(), "qa-" + name + ".png");
+      File f = new File(getTargetContext().getExternalFilesDir(null), "qa-" + name + ".png");
       try (OutputStream out = new FileOutputStream(f)) {
         b.compress(Bitmap.CompressFormat.PNG, 100, out);
       }

@@ -16,7 +16,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: 12266719
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Build app and separate native tests
         env:
@@ -25,6 +29,8 @@ jobs:
           keytool -genkeypair -keystore "$RUNNER_TEMP/qa.jks" -alias lively -storepass:env LIVELY_KEY_PASSWORD -keypass:env LIVELY_KEY_PASSWORD -keyalg RSA -keysize 2048 -validity 1 -dname "CN=Lively QA"
           python3 tools/build.py --keystore "$RUNNER_TEMP/qa.jks"
           python3 tools/build-tests.py --sdk "$ANDROID_HOME" --keystore "$RUNNER_TEMP/qa.jks"
+      - name: Enable emulator acceleration
+        run: sudo chmod a+rw /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -37,9 +43,14 @@ jobs:
             adb install -r build/native-tests/native-tests.apk
             adb shell input keyevent 82
             adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests | tee build/native-test-result.txt
+            adb logcat -d > build/native-logcat.txt
+            adb pull /sdcard/Android/data/io.lively.android/files/ build/native-screenshots || true
             grep -q 'PASS: .* native assertions' build/native-test-result.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: native-qa-results
-          path: build/native-test-result.txt
+          path: |
+            build/native-test-result.txt
+            build/native-logcat.txt
+            build/native-screenshots

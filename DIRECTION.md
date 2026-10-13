@@ -6,7 +6,7 @@ The selected direction is native Lively glass: neutral dark content, real scene 
 
 Typography: Android's native sans with deliberate 24/20/16/14/12/11 sp hierarchy. Buttons have 48 dp touch targets. Cards retain the original thumbnail/title/description relationship; long titles truncate accessibly. Header chrome samples a bounded 192×64 backing texture and uses an AGSL edge lens on Android 13+, with a static native material fallback below that version. There is no full-screen blur or WebView hosting the application UI.
 
-Arc informs short native state changes, accessible controls, and the process-memory chart. The chart samples actual app PSS; it makes no battery or CPU claims. Anatomy provides a small display/decoder/memory assembly with 50+ seated solids, rendered as a native image so settings do not need a browser engine.
+Arc informs short native state changes, accessible controls, and the process-memory chart. The chart samples actual app PSS; it makes no battery or CPU claims. Anatomy provides a small display/decoder/memory assembly with 48 seated solids, rendered as a native image so settings do not need a browser engine.
 
 Signature interaction: an offline scene opens into a touch-responsive live preview; applying it invokes Android's wallpaper preview. Choosing another scene and cancelling the system picker preserves the current wallpaper. Reduced-motion preferences keep the interface still; animation of the selected live wallpaper remains a separate user choice.
 

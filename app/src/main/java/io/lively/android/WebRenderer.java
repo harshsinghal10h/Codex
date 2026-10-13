@@ -162,6 +162,10 @@ final class WebRenderer implements Renderer {
     if (presentation != null) presentation.hide();
   }
 
+  public boolean failed() {
+    return released;
+  }
+
   public void release() {
     if (released) return;
     released = true;

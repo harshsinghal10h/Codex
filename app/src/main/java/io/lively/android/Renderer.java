@@ -10,4 +10,8 @@ interface Renderer {
   void touch(float x, float y);
 
   void configure();
+
+  default boolean failed() {
+    return false;
+  }
 }
