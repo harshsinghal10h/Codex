@@ -46,6 +46,8 @@ adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests
 
 The native test APK is a separate development artifact. It is not bundled into the installed release. Physical-device HDR output, manufacturer-specific lock-screen behavior, and real battery consumption require device testing.
 
+[Release validation](docs/VALIDATION.md) records the completed checks and their limits. [Design review](docs/CRITIQUE.md) records the native screenshot review.
+
 ## Design and licensing
 
 The upstream source/layout review uses commit `25a0a5f4ed1988ff42117d3a17feb321062237fe`. The native renderer is new Android code; it does not embed the Windows C#/WinUI runtime. Included scene artwork is generated from this project's own shaders.
