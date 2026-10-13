@@ -60,6 +60,7 @@ public final class NativeTests extends Instrumentation {
   }
 
   private void shot(String name) throws Exception {
+    dismissLauncherDialog();
     Bitmap b = getUiAutomation().takeScreenshot();
     if (b != null) {
       File f = new File(getTargetContext().getExternalFilesDir(null), "qa-" + name + ".png");
@@ -67,6 +68,26 @@ public final class NativeTests extends Instrumentation {
         b.compress(Bitmap.CompressFormat.PNG, 100, out);
       }
       b.recycle();
+    }
+  }
+
+  private void dismissLauncherDialog() {
+    for (int attempt = 0; attempt < 3; attempt++) {
+      android.view.accessibility.AccessibilityNodeInfo root =
+          getUiAutomation().getRootInActiveWindow();
+      if (root == null || root.findAccessibilityNodeInfosByText("Quickstep").isEmpty()) return;
+      boolean closed = false;
+      for (android.view.accessibility.AccessibilityNodeInfo text :
+          root.findAccessibilityNodeInfosByText("Close app")) {
+        android.view.accessibility.AccessibilityNodeInfo action = text;
+        while (action != null && !action.isClickable()) action = action.getParent();
+        if (action != null)
+          closed |=
+              action.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK);
+      }
+      if (!closed)
+        throw new IllegalStateException("Could not dismiss emulator launcher error dialog");
+      waitMs(500);
     }
   }
 
