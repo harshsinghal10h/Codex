@@ -360,6 +360,9 @@ public final class WallpaperFlowTests extends Instrumentation {
       android.media.MediaPlayer player =
           (android.media.MediaPlayer) field(installedRenderer(), "player");
       check(player.getVideoWidth() == 3840, "Home-screen wallpaper decodes the original 4K source");
+      check(
+          Settings.of(c).getString("last_error", "").isEmpty(),
+          "4K wallpaper prepares without surface or decoder errors");
       shot("home-video");
       bringApp();
       waitMs(400);

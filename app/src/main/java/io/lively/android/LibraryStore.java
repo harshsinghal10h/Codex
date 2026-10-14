@@ -263,7 +263,26 @@ public final class LibraryStore {
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
           r.setDataSource(source.getPath());
-          b = r.getScaledFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 512, 288);
+          if (android.os.Build.VERSION.SDK_INT >= 27)
+            b = r.getScaledFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 512, 288);
+          else {
+            // Android 8.0 has no scaled-frame API. Avoid a full 4K/8K allocation
+            // just for a library thumbnail; the native media tile is the fallback.
+            int width =
+                Integer.parseInt(
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+            int height =
+                Integer.parseInt(
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+            if (width <= 0 || height <= 0 || (long) width * height > 1920L * 1080) return;
+            b = r.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            if (b != null) {
+              int[] target = EnginePolicy.dimensions(b.getWidth(), b.getHeight(), 512);
+              Bitmap small = Bitmap.createScaledBitmap(b, target[0], target[1], true);
+              if (small != b) b.recycle();
+              b = small;
+            }
+          }
         } finally {
           r.release();
         }
@@ -291,7 +310,7 @@ public final class LibraryStore {
           b.compress(Bitmap.CompressFormat.JPEG, 85, out);
         }
       }
-    } catch (Exception ignored) {
+    } catch (Exception | OutOfMemoryError ignored) {
     } finally {
       if (b != null) b.recycle();
     }
