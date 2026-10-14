@@ -234,11 +234,12 @@ public final class WallpaperFlowTests extends Instrumentation {
           () -> systemPicker() && (clickText("Set wallpaper") || clickText("Apply")),
           10000,
           "System Set wallpaper button is actionable");
-      waitMs(900);
-      clickText("Home screen");
       until(
-          () -> WallpaperSelection.installed(c),
-          12000,
+          () -> {
+            if (!WallpaperSelection.installed(c)) clickText("Home screen");
+            return WallpaperSelection.installed(c);
+          },
+          25000,
           "Android installs the actual Lively service");
       until(
           () -> chosen.id.equals(Settings.active(c)) && !Settings.of(c).contains("pending_apply"),

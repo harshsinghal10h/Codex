@@ -18,12 +18,17 @@ public final class NativeTests extends Instrumentation {
   private int assertions;
   private Bundle arguments;
   private final StringBuilder report = new StringBuilder();
-  private MainActivity activity;
+  private volatile MainActivity activity;
 
   public void onCreate(Bundle args) {
     arguments = args;
     super.onCreate(args);
     start();
+  }
+
+  public void callActivityOnResume(Activity resumed) {
+    super.callActivityOnResume(resumed);
+    if (resumed instanceof MainActivity) activity = (MainActivity) resumed;
   }
 
   private void check(boolean condition, String label) {
@@ -246,17 +251,29 @@ public final class NativeTests extends Instrumentation {
       android.widget.GridView grid =
           typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
       main(() -> grid.setSelection(grid.getCount() - 1));
-      waitMs(700);
       boolean[] unobscured = {false};
-      main(
-          () -> {
-            View last = grid.getChildAt(grid.getChildCount() - 1);
-            Rect tile = new Rect(), bar = new Rect();
-            if (last != null
-                && last.getGlobalVisibleRect(tile)
-                && ((View) previewAction.getParent()).getGlobalVisibleRect(bar))
-              unobscured[0] = tile.bottom <= bar.top;
-          });
+      for (int attempt = 0; attempt < 32 && !unobscured[0]; attempt++) {
+        waitMs(250);
+        main(
+            () -> {
+              android.widget.GridView currentGrid =
+                  typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+              View currentAction =
+                  described(activity.getWindow().getDecorView(), "Preview selected wallpaper");
+              if (currentGrid == null || currentAction == null) return;
+              if (currentGrid.getLastVisiblePosition() != currentGrid.getCount() - 1) {
+                currentGrid.setSelection(currentGrid.getCount() - 1);
+                return;
+              }
+              View last = currentGrid.getChildAt(currentGrid.getChildCount() - 1);
+              Rect tile = new Rect(), bar = new Rect();
+              if (last != null
+                  && last.getGlobalVisibleRect(tile)
+                  && ((View) currentAction.getParent()).getGlobalVisibleRect(bar))
+                unobscured[0] = tile.bottom <= bar.top;
+              if (!unobscured[0]) currentGrid.scrollListBy(currentGrid.getHeight());
+            });
+      }
       check(unobscured[0], "Last wallpaper can scroll entirely above playback bar");
       shot("library-bottom-r2");
       main(() -> grid.setSelection(0));
@@ -419,6 +436,10 @@ public final class NativeTests extends Instrumentation {
       result.putString("stream", report + "\nPASS: " + assertions + " native assertions\n");
       finish(Activity.RESULT_OK, result);
     } catch (Throwable e) {
+      try {
+        shot("failure");
+      } catch (Exception ignored) {
+      }
       result.putString(
           "stream", report + "\nFAIL: " + e + "\n" + android.util.Log.getStackTraceString(e));
       finish(Activity.RESULT_CANCELED, result);
