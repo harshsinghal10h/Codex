@@ -1,0 +1,549 @@
+package io.lively.android;
+
+import android.app.*;
+import android.content.*;
+import android.graphics.*;
+import android.net.Uri;
+import android.os.*;
+import android.view.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.security.MessageDigest;
+import java.util.*;
+import java.util.zip.*;
+import org.json.*;
+
+/** Real framework tests, run with am instrument. Not part of the installed release. */
+public final class NativeTests extends Instrumentation {
+  private int assertions;
+  private Bundle arguments;
+  private final StringBuilder report = new StringBuilder();
+  private volatile MainActivity activity;
+
+  public void onCreate(Bundle args) {
+    arguments = args;
+    super.onCreate(args);
+    start();
+  }
+
+  public void callActivityOnResume(Activity resumed) {
+    super.callActivityOnResume(resumed);
+    if (resumed instanceof MainActivity) activity = (MainActivity) resumed;
+  }
+
+  private void check(boolean condition, String label) {
+    assertions++;
+    if (!condition) throw new AssertionError(label);
+    report.append("PASS ").append(label).append('\n');
+  }
+
+  private void until(java.util.function.BooleanSupplier condition, long timeout, String label) {
+    long end = SystemClock.uptimeMillis() + timeout;
+    while (SystemClock.uptimeMillis() < end) {
+      if (condition.getAsBoolean()) {
+        check(true, label);
+        return;
+      }
+      waitMs(100);
+    }
+    check(false, label);
+  }
+
+  private boolean clickText(String label) {
+    android.view.accessibility.AccessibilityNodeInfo root =
+        getUiAutomation().getRootInActiveWindow();
+    if (root == null) return false;
+    for (android.view.accessibility.AccessibilityNodeInfo node :
+        root.findAccessibilityNodeInfosByText(label)) {
+      if (node.getText() != null && !label.equalsIgnoreCase(node.getText().toString())) continue;
+      android.view.accessibility.AccessibilityNodeInfo action = node;
+      while (action != null && !action.isClickable()) action = action.getParent();
+      if (action != null
+          && action.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))
+        return true;
+    }
+    return false;
+  }
+
+  private void main(Runnable action) {
+    runOnMainSync(action);
+  }
+
+  private static void waitMs(long millis) {
+    android.os.SystemClock.sleep(millis);
+  }
+
+  private Object field(Object target, String name) throws Exception {
+    Field f = target.getClass().getDeclaredField(name);
+    f.setAccessible(true);
+    return f.get(target);
+  }
+
+  private void call(String name, Class<?>[] types, Object... args) throws Exception {
+    Method m = MainActivity.class.getDeclaredMethod(name, types);
+    m.setAccessible(true);
+    main(
+        () -> {
+          try {
+            m.invoke(activity, args);
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        });
+  }
+
+  private void shot(String name) throws Exception {
+    dismissLauncherDialog();
+    Bitmap b = getUiAutomation().takeScreenshot();
+    if (b != null) {
+      File f = new File(getTargetContext().getExternalFilesDir(null), "qa-" + name + ".png");
+      try (OutputStream out = new FileOutputStream(f)) {
+        b.compress(Bitmap.CompressFormat.PNG, 100, out);
+      }
+      b.recycle();
+    }
+  }
+
+  private void dismissLauncherDialog() {
+    for (int attempt = 0; attempt < 3; attempt++) {
+      android.view.accessibility.AccessibilityNodeInfo root =
+          getUiAutomation().getRootInActiveWindow();
+      if (root == null || root.findAccessibilityNodeInfosByText("Quickstep").isEmpty()) return;
+      boolean closed = false;
+      for (android.view.accessibility.AccessibilityNodeInfo text :
+          root.findAccessibilityNodeInfosByText("Close app")) {
+        android.view.accessibility.AccessibilityNodeInfo action = text;
+        while (action != null && !action.isClickable()) action = action.getParent();
+        if (action != null)
+          closed |=
+              action.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK);
+      }
+      if (!closed)
+        throw new IllegalStateException("Could not dismiss emulator launcher error dialog");
+      waitMs(500);
+    }
+  }
+
+  private View described(View view, String description) {
+    if (description.contentEquals(
+            view.getContentDescription() == null ? "" : view.getContentDescription())
+        || (view instanceof android.widget.Button
+            && description.contentEquals(((android.widget.Button) view).getText()))) return view;
+    if (view instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) view;
+      for (int i = 0; i < group.getChildCount(); i++) {
+        View match = described(group.getChildAt(i), description);
+        if (match != null) return match;
+      }
+    }
+    return null;
+  }
+
+  private <T extends View> T typed(View view, Class<T> type) {
+    if (type.isInstance(view)) return type.cast(view);
+    if (view instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) view;
+      for (int i = 0; i < group.getChildCount(); i++) {
+        T match = typed(group.getChildAt(i), type);
+        if (match != null) return match;
+      }
+    }
+    return null;
+  }
+
+  public void onStart() {
+    Bundle result = new Bundle();
+    try {
+      Context c = getTargetContext();
+      LibraryStore store = new LibraryStore(c);
+      main(
+          () ->
+              Settings.of(c)
+                  .edit()
+                  .putString("theme", "dark")
+                  .putInt("fps", 15)
+                  .putInt("resolution", 720)
+                  .putInt("low_battery", 0)
+                  .putBoolean("pause_saver", false)
+                  .putBoolean("pause_thermal", false)
+                  .remove("last_error")
+                  .commit());
+      check(store.all().size() >= 8, "Built-in library initialises");
+      for (boolean light : new boolean[] {false, true}) {
+        GlassDrawable material = new GlassDrawable(light, 8, true);
+        material.setBounds(0, 0, 96, 48);
+        Bitmap pixels = Bitmap.createBitmap(96, 48, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(pixels);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        int opaque = pixels.getPixel(48, 24);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        check(
+            pixels.getPixel(48, 24) == opaque,
+            "Glass fill stays stable after outline redraw: " + (light ? "light" : "dark"));
+        material.setAlpha(128);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        int partial = pixels.getPixel(48, 24);
+        pixels.eraseColor(0xffac2538);
+        material.draw(canvas);
+        check(
+            partial != opaque && pixels.getPixel(48, 24) == partial,
+            "Glass preserves partial opacity on redraw: " + (light ? "light" : "dark"));
+        pixels.recycle();
+      }
+      File cache = new File(c.getCacheDir(), "exports");
+      cache.mkdirs();
+      File pkg = new File(cache, "qa-image.lively.zip");
+      Bitmap b = Bitmap.createBitmap(256, 128, Bitmap.Config.ARGB_8888);
+      b.eraseColor(0xffe39540);
+      ByteArrayOutputStream png = new ByteArrayOutputStream();
+      b.compress(Bitmap.CompressFormat.PNG, 100, png);
+      b.recycle();
+      packageFile(pkg, "test.png", 11, png.toByteArray(), null);
+      Wallpaper imported =
+          store.importUri(Uri.parse("content://io.lively.android.share/qa-image.lively.zip"));
+      check(imported.kind.equals("image"), "Lively image import");
+      check(
+          Arrays.equals(
+              hash(png.toByteArray()),
+              hash(java.nio.file.Files.readAllBytes(store.file(imported).toPath()))),
+          "Original image byte preservation");
+      File exported = store.export(imported);
+      try (ZipFile z = new ZipFile(exported)) {
+        check(
+            z.getEntry("LivelyInfo.json") != null && z.getEntry("test.png") != null,
+            "Export is a Lively package");
+      }
+      if (Build.VERSION.SDK_INT >= 34) {
+        Bitmap sdr = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+        sdr.eraseColor(0xff587aa2);
+        Bitmap gain = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+        gain.eraseColor(0xffaaaaaa);
+        Gainmap gm = new Gainmap(gain);
+        gm.setRatioMax(4, 4, 4);
+        gm.setDisplayRatioForFullHdr(4);
+        sdr.setGainmap(gm);
+        ByteArrayOutputStream jpeg = new ByteArrayOutputStream();
+        sdr.compress(Bitmap.CompressFormat.JPEG, 95, jpeg);
+        sdr.recycle();
+        gain.recycle();
+        File hdrPkg = new File(cache, "qa-hdr.lively.zip");
+        packageFile(hdrPkg, "hdr.jpg", 11, jpeg.toByteArray(), null);
+        Wallpaper hdr =
+            store.importUri(Uri.parse("content://io.lively.android.share/qa-hdr.lively.zip"));
+        Bitmap decoded = ImageDecoder.decodeBitmap(ImageDecoder.createSource(store.file(hdr)));
+        check(decoded.hasGainmap(), "Ultra HDR gain map retained after import");
+        decoded.recycle();
+        check(
+            Arrays.equals(
+                hash(jpeg.toByteArray()),
+                hash(java.nio.file.Files.readAllBytes(store.file(hdr).toPath()))),
+            "HDR original bytes unchanged");
+        store.delete(hdr);
+      }
+      File hostile = new File(cache, "qa-hostile.lively.zip");
+      packageFile(hostile, "../escape", 11, new byte[] {1}, null);
+      int before = store.all().size();
+      try {
+        store.importUri(Uri.parse("content://io.lively.android.share/qa-hostile.lively.zip"));
+        throw new AssertionError("Traversal import allowed");
+      } catch (IOException expected) {
+      }
+      check(store.all().size() == before, "Failed imports roll back");
+      File app = new File(cache, "qa-app.lively.zip");
+      packageFile(app, "app.exe", 0, new byte[] {1}, null);
+      try {
+        store.importUri(Uri.parse("content://io.lively.android.share/qa-app.lively.zip"));
+        throw new AssertionError("Windows EXE import allowed");
+      } catch (IOException expected) {
+      }
+      check(store.all().size() == before, "Windows executable rejected without library pollution");
+      Intent intent = new Intent(c, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      activity = (MainActivity) startActivitySync(intent);
+      waitForIdleSync();
+      waitMs(1800);
+      shot("library-r1");
+      View previewAction =
+          described(activity.getWindow().getDecorView(), "Preview selected wallpaper");
+      check(previewAction != null, "Inactive footer offers wallpaper preview");
+      boolean pausedBefore = Settings.of(c).getBoolean("paused", false);
+      main(() -> previewAction.performClick());
+      waitMs(600);
+      check(
+          ((AlertDialog) field(activity, "detailDialog")).isShowing()
+              && Settings.of(c).getBoolean("paused", false) == pausedBefore,
+          "Inactive footer opens preview without changing playback settings");
+      main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+      android.widget.GridView grid =
+          typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+      main(() -> grid.setSelection(grid.getCount() - 1));
+      boolean[] unobscured = {false};
+      for (int attempt = 0; attempt < 32 && !unobscured[0]; attempt++) {
+        waitMs(250);
+        main(
+            () -> {
+              android.widget.GridView currentGrid =
+                  typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+              View currentAction =
+                  described(activity.getWindow().getDecorView(), "Preview selected wallpaper");
+              if (currentGrid == null || currentAction == null) return;
+              if (currentGrid.getLastVisiblePosition() != currentGrid.getCount() - 1) {
+                currentGrid.setSelection(currentGrid.getCount() - 1);
+                return;
+              }
+              View last = currentGrid.getChildAt(currentGrid.getChildCount() - 1);
+              Rect tile = new Rect(), bar = new Rect();
+              if (last != null
+                  && last.getGlobalVisibleRect(tile)
+                  && ((View) currentAction.getParent()).getGlobalVisibleRect(bar))
+                unobscured[0] = tile.bottom <= bar.top;
+              if (!unobscured[0]) currentGrid.scrollListBy(currentGrid.getHeight());
+            });
+      }
+      check(unobscured[0], "Last wallpaper can scroll entirely above playback bar");
+      shot("library-bottom-r2");
+      main(() -> grid.setSelection(0));
+      waitMs(300);
+      for (Wallpaper w : Wallpaper.BUILTINS) {
+        long frames = Metrics.frames.get();
+        call("showDetail", new Class[] {Wallpaper.class}, w);
+        waitMs(2500);
+        check(Metrics.frames.get() > frames, "GPU scene renders: " + w.id);
+        if (w.scene == 0) {
+          boolean[] fullButton = {false};
+          main(
+              () -> {
+                View action =
+                    described(
+                        ((AlertDialog) safeField(activity, "detailDialog"))
+                            .getWindow()
+                            .getDecorView(),
+                        "Customise");
+                Rect visible = new Rect();
+                fullButton[0] =
+                    action != null
+                        && action.getGlobalVisibleRect(visible)
+                        && visible.height() >= action.getHeight() - 1;
+              });
+          check(fullButton[0], "Preview secondary action retains its full touch bounds");
+          shot("preview-r1");
+        }
+        RendererController controller = (RendererController) field(activity, "preview");
+        main(() -> controller.visible(false));
+        waitMs(300);
+        long stopped = Metrics.frames.get();
+        waitMs(600);
+        check(Metrics.frames.get() == stopped, "GPU idle while hidden: " + w.id);
+        main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+        waitMs(300);
+      }
+      String web =
+          "<!doctype"
+              + " html><html><style>body{margin:0;background:#22dd88}canvas{width:100vw;height:100vh}</style><canvas"
+              + " id='c'></canvas><script>window.livelyPropertyListener=(n,v)=>{document.body.dataset[n]=v};let"
+              + " g=c.getContext('2d');function"
+              + " frame(t){g.fillStyle='#22dd88';g.fillRect(0,0,300,150);requestAnimationFrame(frame)}frame(0)</script></html>";
+      File webPkg = new File(cache, "qa-web.lively.zip");
+      packageFile(
+          webPkg,
+          "wallpaper.html",
+          1,
+          web.getBytes("UTF-8"),
+          "{\"amount\":{\"type\":\"slider\",\"text\":\"Amount\",\"min\":0,\"max\":10,\"value\":3}}");
+      Wallpaper webW =
+          store.importUri(Uri.parse("content://io.lively.android.share/qa-web.lively.zip"));
+      call("showDetail", new Class[] {Wallpaper.class}, webW);
+      waitMs(5000);
+      check(
+          Settings.of(c).getString("last_error", "").isEmpty(),
+          "Web presentation starts without permission or renderer errors");
+      RendererController rc = (RendererController) field(activity, "preview");
+      Renderer rr = (Renderer) field(rc, "renderer");
+      check(rr instanceof WebRenderer, "Web package uses native WebView surface path");
+      android.webkit.WebView webView = (android.webkit.WebView) field(rr, "view");
+      check(webView != null, "Private-display WebView created");
+      main(() -> Settings.of(c).edit().putString(webW.id + ".property.amount", "6").commit());
+      waitMs(500);
+      String[] propertyValue = {null};
+      java.util.concurrent.CountDownLatch propertyRead = new java.util.concurrent.CountDownLatch(1);
+      main(
+          () ->
+              webView.evaluateJavascript(
+                  "document.body.dataset.amount",
+                  value -> {
+                    propertyValue[0] = value;
+                    propertyRead.countDown();
+                  }));
+      propertyRead.await(3, java.util.concurrent.TimeUnit.SECONDS);
+      check("\"6\"".equals(propertyValue[0]), "Web property control updates the running wallpaper");
+      check(
+          field(rc, "renderer") == rr && field(rr, "view") == webView,
+          "Web properties update without reloading the renderer or creating another display");
+      shot("web-preview");
+      main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+      waitMs(300);
+      call("showDetail", new Class[] {Wallpaper.class}, imported);
+      waitMs(1800);
+      shot("image-preview");
+      check(
+          Settings.of(c).getString("last_error", "").isEmpty(),
+          "Image preview renders without errors");
+      main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+      {
+        ByteArrayOutputStream vb = new ByteArrayOutputStream();
+        try (InputStream vin = getContext().getAssets().open("video-4k.mp4")) {
+          byte[] buf = new byte[8192];
+          int n;
+          while ((n = vin.read(buf)) != -1) vb.write(buf, 0, n);
+        }
+        byte[] video = vb.toByteArray();
+        File vidPkg = new File(cache, "qa-video.lively.zip");
+        packageFile(vidPkg, "video.mp4", 7, video, null);
+        Wallpaper v =
+            store.importUri(Uri.parse("content://io.lively.android.share/qa-video.lively.zip"));
+        call("showDetail", new Class[] {Wallpaper.class}, v);
+        waitMs(4500);
+        check(
+            Settings.of(c).getString("last_error", "").isEmpty(),
+            "4K video preview starts without decoder errors");
+        RendererController cv = (RendererController) field(activity, "preview");
+        VideoRenderer vr = (VideoRenderer) field(cv, "renderer");
+        android.media.MediaPlayer player = (android.media.MediaPlayer) field(vr, "player");
+        check(
+            player != null && player.getVideoWidth() == 3840, "Original 3840-pixel video decoded");
+        shot("video-preview");
+        main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
+        store.delete(v);
+      }
+      call("navigate", new Class[] {String.class}, "Settings");
+      waitMs(1000);
+      shot("settings-r1");
+      main(
+          () -> {
+            try {
+              Field f = MainActivity.class.getDeclaredField("settingCategory");
+              f.setAccessible(true);
+              f.set(activity, "Performance");
+            } catch (Exception e) {
+              throw new RuntimeException(e);
+            }
+          });
+      call("build", new Class[] {});
+      waitMs(1600);
+      shot("performance-r1");
+      int previousCap = Settings.cap(c), previousFps = Settings.fps(c);
+      until(() -> clickText("Wallpaper quality"), 5000, "Quality preset row opens its selector");
+      until(() -> clickText("Cancel"), 5000, "Quality chooser can be cancelled");
+      check(
+          Settings.cap(c) == previousCap && Settings.fps(c) == previousFps,
+          "Cancelling quality selection preserves both saved settings");
+      until(() -> clickText("Wallpaper quality"), 5000, "Quality chooser reopens");
+      until(
+          () -> clickText("1080p · 60 FPS"), 5000, "1080p 60 FPS can be selected in the native UI");
+      until(
+          () -> Settings.cap(c) == 1920 && Settings.fps(c) == 60,
+          5000,
+          "Preset atomically applies resolution and frame rate");
+      MainActivity oldActivity = activity;
+      main(oldActivity::recreate);
+      until(
+          () ->
+              activity != oldActivity
+                  && !activity.isDestroyed()
+                  && activity.getWindow().getDecorView().hasWindowFocus()
+                  && "Performance".equals(safeField(activity, "settingCategory"))
+                  && Settings.cap(c) == 1920
+                  && Settings.fps(c) == 60,
+          10000,
+          "Activity recreation preserves quality and its settings category");
+      shot("quality-1080p60");
+      android.widget.ScrollView qualityScroll =
+          typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class);
+      main(
+          () ->
+              qualityScroll.scrollTo(
+                  0, Math.round(100 * c.getResources().getDisplayMetrics().density)));
+      waitMs(300);
+      int qualityPosition = qualityScroll.getScrollY();
+      until(() -> clickText("Scene frame rate"), 5000, "Advanced FPS selector opens");
+      until(() -> clickText("15 FPS"), 5000, "Custom frame rate can be selected");
+      until(
+          () ->
+              Settings.fps(c) == 15
+                  && typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class)
+                          .getScrollY()
+                      == qualityPosition,
+          5000,
+          "Custom quality keeps the settings scroll position");
+      android.widget.ScrollView performanceScroll =
+          typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class);
+      main(() -> performanceScroll.fullScroll(View.FOCUS_DOWN));
+      waitMs(1500);
+      shot("memory-r2");
+      main(() -> Settings.of(c).edit().putString("theme", "light").commit());
+      call("navigate", new Class[] {String.class}, "Library");
+      waitMs(1200);
+      shot("light-r1");
+      android.widget.GridView lightGrid =
+          typed(activity.getWindow().getDecorView(), android.widget.GridView.class);
+      main(() -> lightGrid.setSelection(lightGrid.getCount() - 1));
+      waitMs(700);
+      shot("light-bottom-r3");
+      main(() -> Settings.of(c).edit().putString("theme", "dark").commit());
+      check(Settings.of(c).getString("last_error", "").isEmpty(), "No accumulated playback errors");
+      store.delete(imported);
+      store.delete(webW);
+      main(
+          () ->
+              Settings.of(c)
+                  .edit()
+                  .putInt("fps", 30)
+                  .putInt("resolution", 1920)
+                  .putInt("low_battery", 15)
+                  .putBoolean("pause_saver", true)
+                  .putBoolean("pause_thermal", true)
+                  .commit());
+      result.putString("stream", report + "\nPASS: " + assertions + " native assertions\n");
+      finish(Activity.RESULT_OK, result);
+    } catch (Throwable e) {
+      try {
+        shot("failure");
+      } catch (Exception ignored) {
+      }
+      result.putString(
+          "stream", report + "\nFAIL: " + e + "\n" + android.util.Log.getStackTraceString(e));
+      finish(Activity.RESULT_CANCELED, result);
+    }
+  }
+
+  private Object safeField(Object target, String name) {
+    try {
+      return field(target, name);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private byte[] hash(byte[] data) throws Exception {
+    return MessageDigest.getInstance("SHA-256").digest(data);
+  }
+
+  private void packageFile(File file, String name, int type, byte[] data, String properties)
+      throws Exception {
+    try (ZipOutputStream z = new ZipOutputStream(new FileOutputStream(file))) {
+      JSONObject meta =
+          new JSONObject().put("Title", "QA " + name).put("FileName", name).put("Type", type);
+      entry(z, "LivelyInfo.json", meta.toString().getBytes("UTF-8"));
+      entry(z, name, data);
+      if (properties != null) entry(z, "LivelyProperties.json", properties.getBytes("UTF-8"));
+    }
+  }
+
+  private void entry(ZipOutputStream z, String path, byte[] data) throws Exception {
+    z.putNextEntry(new ZipEntry(path));
+    z.write(data);
+    z.closeEntry();
+  }
+}
