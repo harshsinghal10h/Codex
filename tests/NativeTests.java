@@ -55,7 +55,7 @@ public final class NativeTests extends Instrumentation {
     if (root == null) return false;
     for (android.view.accessibility.AccessibilityNodeInfo node :
         root.findAccessibilityNodeInfosByText(label)) {
-      if (node.getText() != null && !label.contentEquals(node.getText())) continue;
+      if (node.getText() != null && !label.equalsIgnoreCase(node.getText().toString())) continue;
       android.view.accessibility.AccessibilityNodeInfo action = node;
       while (action != null && !action.isClickable()) action = action.getParent();
       if (action != null
