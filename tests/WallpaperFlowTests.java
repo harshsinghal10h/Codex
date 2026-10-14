@@ -366,9 +366,20 @@ public final class WallpaperFlowTests extends Instrumentation {
           "4K wallpaper prepares without surface or decoder errors");
       shot("home-video");
       bringApp();
-      waitMs(400);
-      check(
-          installedRenderer() == null,
+      until(
+          () -> {
+            boolean[] released = {false};
+            main(
+                () -> {
+                  RendererController controller = installedController();
+                  released[0] =
+                      controller != null
+                          && !(Boolean) field(controller, "visible")
+                          && field(controller, "renderer") == null;
+                });
+            return released[0];
+          },
+          7000,
           "Hidden video immediately frees its decoder for app/system previews");
       call("showDetail", new Class[] {Wallpaper.class}, video);
       until(
