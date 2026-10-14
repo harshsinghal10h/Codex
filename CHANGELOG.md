@@ -1,5 +1,16 @@
 # Changes
 
+## 0.3.0 — 2026-10-14
+
+- Add a **Wallpaper quality** selector in Settings → Performance, with 720p/30, 1080p/30, 1080p/60, 1440p/30, 1440p/60, 4K UHD/30 and 4K UHD/60 presets. Resolution and FPS apply together; separate controls remain available for custom combinations.
+- Show the aspect-preserving render budget for the current display and explain source-media timing, device limits and power cost. Presets name conventional 16:9 sizes; other screen shapes preserve their aspect ratio, and rendering never upscales beyond the surface.
+- Pace native scenes with Android's display callbacks, refresh the surface frame-rate hint after a settings change, and clear the hint when playback stops. Cache scene colour instead of reading preferences on every frame.
+- Apply a group of settings changes once, avoiding duplicate image/web renderer recreation when selecting a preset. Ignore cancelled image decoding after its renderer has been released.
+- Bound invalid saved FPS/resolution values, show custom values correctly without falsely selecting the first option, preserve settings scroll position after choosing a value, and restore the settings category after activity recreation.
+- Add native quality selector, cancellation, saved setting, custom FPS and recreation tests, plus live GPU resize and FPS changes through the installed home-screen wallpaper service.
+
+Imported videos keep their original encoding, resolution and frame rate. Presets do not synthesize 60 FPS frames, transcode a video, or add HDR to SDR media. The APK uses the existing release signing key.
+
 ## 0.2.0 — 2026-10-14
 
 - Repair the real Android live-wallpaper service: stop requesting fixed surface sizes, which Android forbids for wallpapers. Resolution limits now use a bounded internal GPU render target.

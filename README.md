@@ -6,15 +6,22 @@ An independent native Android adaptation inspired by [Lively Wallpaper](https://
 
 ## Install
 
-Download [Lively-Android-0.2.0.apk](releases/Lively-Android-0.2.0.apk), allow installation from the app you downloaded it with, and install on Android 8.0 or newer. Version 0.2.0 uses the same signing key as 0.1.0 and can be installed over it.
+Download [Lively-Android-0.3.0.apk](releases/Lively-Android-0.3.0.apk), allow installation from the app you downloaded it with, and install on Android 8.0 or newer. Version 0.3.0 uses the same signing key as 0.1.0 and 0.2.0 and can be installed over them.
 
 To add your own wallpaper, tap **+**, choose a video, GIF, image, HTML file or compatible Lively ZIP, and open the imported tile. Select **Set wallpaper** and confirm **Home screen** in Android's picker the first time. Once Lively is installed as your live wallpaper, selecting another scene switches it directly. Cancelling the first installation keeps the previous wallpaper. Android and your device manufacturer decide whether live wallpapers can also appear on the lock screen.
 
 The APK is signed with this project's independent release key. Updates must use the same key. The private signing backup is distributed separately and is never included in the source repository.
 
+## Choose quality
+
+Open **Settings → Performance → Wallpaper quality** and select a preset: **720p · 30 FPS**, **1080p · 30 or 60 FPS**, **1440p · 30 or 60 FPS**, or **4K UHD · 30 or 60 FPS**. The separate frame-rate and resolution controls let you choose a custom combination. Changes apply to the running wallpaper without reinstalling it.
+
+Preset names use conventional 16:9 dimensions. Other aspect ratios are preserved within the selected maximum edge; the settings show the budget for your display. Native scenes target the selected FPS, and image/web resolution follows the size budget. Imported videos retain their original resolution and FPS; GIFs and web pages keep their own animation timing. Display refresh, device load and power/thermal rules can limit achieved FPS. Higher quality uses more power and memory.
+
 ## Features
 
 - Eight offline GPU scenes with live preview, touch response, brightness and speed controls.
+- Combined quality presets, including 1080p at 60 FPS, with custom controls, live application and display-synchronized native scene pacing.
 - Original video playback, without transcoding, through Android MediaPlayer and device decoders. 4K works only where the device supports the codec and source profile.
 - Images, GIFs and animated WebP. Original Ultra HDR JPEG bytes and gain maps are retained. HDR image preview uses Android's native ImageView and requests HDR only for gain-map images on Android 14+. Wallpaper output is controlled by the OS compositor.
 - Import videos, images, HTML and compatible Lively ZIP packages through Android's document picker. Import streaming uses a bounded buffer and preserves a local original.
@@ -42,7 +49,7 @@ The SDK build path compiles Java, links Android resources, desugars to DEX, alig
 ```sh
 python3 tools/test-core.py
 python3 tools/build-tests.py --sdk "$ANDROID_HOME" --keystore /private/path/lively-release.jks
-adb install -r build/Lively-Android-0.2.0.apk
+adb install -r build/Lively-Android-0.3.0.apk
 adb install -r build/native-tests/native-tests.apk
 adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests
 ```
@@ -55,7 +62,7 @@ adb shell am instrument -w io.lively.android.tests/io.lively.android.WallpaperFl
 
 The native test APK is a separate development artifact. It is not bundled into the installed release. The wallpaper suite changes the emulator's wallpaper, so use a test device. Physical-device HDR output, manufacturer-specific lock-screen behavior, and real battery consumption require device testing.
 
-[Release validation](docs/VALIDATION.md) records the completed checks and their limits. [Changes](CHANGELOG.md) lists the 0.2.0 fixes. [Design review](docs/CRITIQUE.md) records the native screenshot review.
+[Release validation](docs/VALIDATION.md) records the completed checks and their limits. [Changes](CHANGELOG.md) lists the fixes and quality controls. [Design review](docs/CRITIQUE.md) records the native screenshot review.
 
 ## Design and licensing
 

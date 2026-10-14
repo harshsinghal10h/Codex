@@ -13,7 +13,8 @@
 | Shadertoy | Included native GPU scenes are supported. Direct Shadertoy URL conversion / API credentials are not implemented; an exported self-contained WebGL page can be imported if Android WebView supports it. |
 | Application / Unity / Godot / BizHawk wallpapers | Windows executables are rejected. Android would require a separately implemented and licensed runtime for each engine. |
 | Performance rules | Pause when hidden, screen off, manually paused, Battery Saver, low battery, battery power or severe heat. Foreground Windows app rules map to wallpaper visibility on Android. |
-| Frame rate | Native scene pacing and surface hints. Video retains source timing; a web page controls its own JavaScript animation timing. Web/GIF frame rate is not falsely presented as a decoder-level cap. |
+| Quality presets | Settings → Performance offers 720p/30, 1080p/30 or 60, 1440p/30 or 60, and 4K UHD/30 or 60. Resolution and FPS apply together. Names use conventional 16:9 sizes; other aspect ratios are preserved within the maximum edge. No rendering beyond the surface's native size. |
+| Frame rate | Native scenes use display-synchronized pacing and live surface hints. FPS is a target subject to display refresh, GPU load, Battery Saver and thermal limits. Videos retain source timing; GIFs and web pages keep their native animation timing. Android 8's GIF fallback is sampled at the requested rate. |
 | Fit | Images: crop, fit, stretch. Video: crop and fit. Web: its own responsive page. |
 | Rotation | Cycles favourites, or the library when fewer than two favourites exist. Evaluated only while visible; no hidden alarms or wake locks. |
 | Screensavers | Android DreamService, on devices which expose screensaver settings. |
@@ -24,4 +25,6 @@
 | UI motion | Native SVG paths animate in the display panel. Tap pauses/resumes the illustration; Reduce motion and Android animator settings are respected. No WebView is used for the app UI. |
 | Online account gallery / Windows ML depth generation | Not included. The build has offline scenes and local imports. No fake sign-in, subscription, depth inference or download controls. |
 
-Default quality is 1920 pixels on the longest edge at 30 fps for native scenes. Imported videos retain their original encoding; these settings do not secretly downscale or transcode them. Preview and live service instances are separate, and canceling the wallpaper picker does not update the active preference.
+Default quality is 1080p/30, implemented as a 1920-pixel maximum edge and a 30 FPS target for native scenes. Existing custom settings survive the update. Image decode size and web display size follow the resolution budget; video decoding retains the original source. Presets do not interpolate extra video frames, transcode media or change its HDR format. Preview and live service instances are separate, and canceling the wallpaper picker does not update the active preference.
+
+Native scenes use Android's [Choreographer](https://developer.android.com/reference/android/view/Choreographer) to align work with display callbacks. A [surface frame-rate request](https://developer.android.com/media/optimize/performance/frame-rate) is a system hint and does not guarantee achieved FPS or change an imported video's frame rate.
