@@ -319,6 +319,23 @@ public final class NativeTests extends Instrumentation {
       check(rr instanceof WebRenderer, "Web package uses native WebView surface path");
       android.webkit.WebView webView = (android.webkit.WebView) field(rr, "view");
       check(webView != null, "Private-display WebView created");
+      main(() -> Settings.of(c).edit().putString(webW.id + ".property.amount", "6").commit());
+      waitMs(500);
+      String[] propertyValue = {null};
+      java.util.concurrent.CountDownLatch propertyRead = new java.util.concurrent.CountDownLatch(1);
+      main(
+          () ->
+              webView.evaluateJavascript(
+                  "document.body.dataset.amount",
+                  value -> {
+                    propertyValue[0] = value;
+                    propertyRead.countDown();
+                  }));
+      propertyRead.await(3, java.util.concurrent.TimeUnit.SECONDS);
+      check("\"6\"".equals(propertyValue[0]), "Web property control updates the running wallpaper");
+      check(
+          field(rc, "renderer") == rr && field(rr, "view") == webView,
+          "Web properties update without reloading the renderer or creating another display");
       shot("web-preview");
       main(() -> ((AlertDialog) safeField(activity, "detailDialog")).dismiss());
       waitMs(300);

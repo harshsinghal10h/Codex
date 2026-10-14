@@ -35,7 +35,7 @@ final class ShaderRenderer implements Renderer {
   ShaderRenderer(Context c, Wallpaper w, Surface s, int width, int height) {
     context = c;
     wallpaper = w;
-    surface = s;
+    surface = SurfaceLease.copy(s);
     this.width = width;
     this.height = height;
     quad = ByteBuffer.allocateDirect(8 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -76,7 +76,8 @@ final class ShaderRenderer implements Renderer {
     window =
         EGL14.eglCreateWindowSurface(display, configs[0], surface, new int[] {EGL14.EGL_NONE}, 0);
     if (window == EGL14.EGL_NO_SURFACE) throw new IOException("Wallpaper surface is unavailable");
-    EGL14.eglMakeCurrent(display, window, window, egl);
+    if (egl == EGL14.EGL_NO_CONTEXT || !EGL14.eglMakeCurrent(display, window, window, egl))
+      throw new IOException("Cannot attach the scene's GPU context");
     int[] actual = new int[1];
     EGL14.eglQuerySurface(display, window, EGL14.EGL_WIDTH, actual, 0);
     outputWidth = Math.max(1, actual[0]);
@@ -261,8 +262,10 @@ final class ShaderRenderer implements Renderer {
                 this, Math.max(1, 1000 / fps - (SystemClock.uptimeMillis() - frameStarted)));
           } catch (Exception e) {
             running = false;
-            failure = "Scene renderer: " + e.getMessage();
-            Metrics.error(context, failure);
+            if (!released && surface.isValid()) {
+              failure = "Scene renderer: " + e.getMessage();
+              Metrics.error(context, failure);
+            }
             cleanup();
           }
         }
@@ -333,6 +336,7 @@ final class ShaderRenderer implements Renderer {
             handler.removeCallbacks(frame);
             cleanup();
           } finally {
+            surface.release();
             closed.countDown();
             thread.quitSafely();
           }

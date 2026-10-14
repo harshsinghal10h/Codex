@@ -10,7 +10,7 @@ final class EglRuntime {
   private static int clients;
 
   static synchronized EGLDisplay acquire() throws IOException {
-    if (clients == 0) {
+    if (display == EGL14.EGL_NO_DISPLAY) {
       display = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
       int[] version = new int[2];
       if (!EGL14.eglInitialize(display, version, 0, version, 1)) {
@@ -24,9 +24,8 @@ final class EglRuntime {
 
   static synchronized void release() {
     if (clients <= 0) return;
-    if (--clients == 0) {
-      EGL14.eglTerminate(display);
-      display = EGL14.EGL_NO_DISPLAY;
-    }
+    clients--;
+    // Android's RenderThread also uses the process's default EGL display.
+    // Release each context/window/texture, but never terminate that shared display.
   }
 }

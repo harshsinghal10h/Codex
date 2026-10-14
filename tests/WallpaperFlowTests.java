@@ -17,12 +17,17 @@ import java.util.function.BooleanSupplier;
 public final class WallpaperFlowTests extends Instrumentation {
   private int assertions;
   private final StringBuilder report = new StringBuilder();
-  private MainActivity activity;
+  private volatile MainActivity activity;
   private Context c;
 
   public void onCreate(Bundle args) {
     super.onCreate(args);
     start();
+  }
+
+  public void callActivityOnResume(Activity resumed) {
+    super.callActivityOnResume(resumed);
+    if (resumed instanceof MainActivity) activity = (MainActivity) resumed;
   }
 
   private void check(boolean pass, String label) {
@@ -101,13 +106,21 @@ public final class WallpaperFlowTests extends Instrumentation {
   }
 
   private void bringApp() {
-    main(
+    try (ParcelFileDescriptor command =
+            getUiAutomation().executeShellCommand("am start -n io.lively.android/.MainActivity");
+        InputStream in = new ParcelFileDescriptor.AutoCloseInputStream(command)) {
+      byte[] data = new byte[1024];
+      while (in.read(data) != -1) {}
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    until(
         () ->
-            c.startActivity(
-                new Intent(c, MainActivity.class)
-                    .addFlags(
-                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)));
-    waitMs(700);
+            activity != null
+                && !activity.isDestroyed()
+                && activity.getWindow().getDecorView().hasWindowFocus(),
+        10000,
+        "App returns to foreground");
   }
 
   private RendererController installedController() {
@@ -187,6 +200,15 @@ public final class WallpaperFlowTests extends Instrumentation {
               startActivitySync(
                   new Intent(c, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
       waitMs(1000);
+      MainActivity initial = activity;
+      main(initial::recreate);
+      until(
+          () ->
+              activity != initial
+                  && !activity.isDestroyed()
+                  && activity.getWindow().getDecorView().hasWindowFocus(),
+          10000,
+          "Activity recreation preserves a drawable glass surface");
       check(!WallpaperSelection.installed(c), "Fresh emulator starts without Lively installed");
       String original = Settings.active(c);
       set(Wallpaper.BUILTINS[3]);

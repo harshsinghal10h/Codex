@@ -21,13 +21,14 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   private volatile String failure = "";
   private boolean presented;
   private long started;
+  private long elapsed;
   private float focusX = .5f, focusY = .5f;
   private final ExecutorService worker = Executors.newSingleThreadExecutor();
 
   ImageRenderer(Context c, Wallpaper w, Surface s, int width, int height) {
     context = c;
     wallpaper = w;
-    surface = s;
+    surface = SurfaceLease.copy(s);
     this.width = width;
     this.height = height;
     worker.execute(
@@ -121,7 +122,8 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
         drawable.draw(c);
       } else if (movie != null) {
         movie.setTime(
-            (int) ((SystemClock.uptimeMillis() - started) % Math.max(1, movie.duration())));
+            (int)
+                ((elapsed + SystemClock.uptimeMillis() - started) % Math.max(1, movie.duration())));
         movie.draw(c, 0, 0);
         main.postDelayed(tick, 1000 / Settings.fps(context));
       }
@@ -140,7 +142,7 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   }
 
   public void start() {
-    if (released) return;
+    if (released || running) return;
     running = true;
     started = SystemClock.uptimeMillis();
     if (Build.VERSION.SDK_INT >= 28 && drawable instanceof AnimatedImageDrawable)
@@ -149,6 +151,7 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   }
 
   public void pause() {
+    if (running) elapsed += SystemClock.uptimeMillis() - started;
     running = false;
     main.removeCallbacks(tick);
     if (Build.VERSION.SDK_INT >= 28 && drawable instanceof AnimatedImageDrawable)
@@ -164,6 +167,8 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
     movie = null;
     if (bitmap != null) bitmap.recycle();
     bitmap = null;
+    // Tears down this wrapper's HWUI producer, allowing video/GL to attach next.
+    surface.release();
   }
 
   public void configure() {

@@ -60,7 +60,7 @@ public final class MainActivity extends Activity {
     } else if (Settings.of(this).contains("pending_apply"))
       pendingApply = Settings.of(this).getString("pending_apply", null);
     build();
-    if (Intent.ACTION_SEND.equals(getIntent().getAction())) {
+    if (state == null && Intent.ACTION_SEND.equals(getIntent().getAction())) {
       Uri u = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
       if (u != null) importFile(u);
     }
@@ -536,6 +536,10 @@ public final class MainActivity extends Activity {
           final Bitmap result = b;
           main.post(
               () -> {
+                if (isDestroyed() || isFinishing()) {
+                  if (result != null) result.recycle();
+                  return;
+                }
                 thumbPending.remove(w.id);
                 if (result != null) {
                   thumbs.put(w.id, result);
@@ -547,13 +551,16 @@ public final class MainActivity extends Activity {
   }
 
   private void captureGlass() {
-    if (!Settings.of(this).getBoolean("glass", true)
+    if (isDestroyed()
+        || isFinishing()
+        || !Settings.of(this).getBoolean("glass", true)
         || header == null
         || content == null
         || content.getWidth() == 0
         || android.os.SystemClock.uptimeMillis() - lastGlass < 80) return;
     lastGlass = android.os.SystemClock.uptimeMillis();
-    if (backdrop == null) backdrop = Bitmap.createBitmap(192, 64, Bitmap.Config.ARGB_8888);
+    if (backdrop == null || backdrop.isRecycled())
+      backdrop = Bitmap.createBitmap(192, 64, Bitmap.Config.ARGB_8888);
     Canvas c = new Canvas(backdrop);
     c.drawColor(bg);
     c.save();
@@ -1770,7 +1777,7 @@ public final class MainActivity extends Activity {
             .setView(scroll)
             .setPositiveButton("Done", null)
             .show();
-    scroll.setOnScrollChangeListener((v,x,y,ox,oy) -> figure.refreshMotion());
+    scroll.setOnScrollChangeListener((v, x, y, ox, oy) -> figure.refreshMotion());
   }
 
   private String deviceInfo() {
@@ -1930,7 +1937,10 @@ public final class MainActivity extends Activity {
     main.removeCallbacksAndMessages(null);
     if (operation != null) operation.cancel(true);
     work.shutdownNow();
-    if (backdrop != null) backdrop.recycle();
+    if (glass != null) glass.backdrop(null);
+    // RenderThread may still own a recorded BitmapShader. Let Android free its
+    // tiny bitmap with the drawable instead of recycling it under pending draws.
+    backdrop = null;
     super.onDestroy();
   }
 }

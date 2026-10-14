@@ -233,8 +233,7 @@ final class RendererController
         || key.equals("reduce_motion")) return;
     handler.post(
         () -> {
-          if (renderer instanceof WebRenderer
-              && (key.equals("web_network") || key.contains(".property."))) {
+          if (renderer instanceof WebRenderer && key.equals("web_network")) {
             renderer.release();
             renderer = null;
           }

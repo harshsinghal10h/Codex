@@ -51,7 +51,8 @@ final class GlassDrawable extends Drawable {
     if (Build.VERSION.SDK_INT >= 33
         && lens != null
         && canvas.isHardwareAccelerated()
-        && backdrop != null) {
+        && backdrop != null
+        && !backdrop.isRecycled()) {
       canvas.save();
       canvas.translate(rect.left, rect.top);
       BitmapShader sample =

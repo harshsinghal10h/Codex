@@ -16,7 +16,7 @@ final class VideoRenderer implements Renderer {
   VideoRenderer(Context c, Wallpaper w, Surface s) {
     context = c;
     wallpaper = w;
-    surface = s;
+    surface = SurfaceLease.copy(s);
   }
 
   public void start() {
@@ -121,5 +121,6 @@ final class VideoRenderer implements Renderer {
       player.release();
       player = null;
     }
+    surface.release();
   }
 }

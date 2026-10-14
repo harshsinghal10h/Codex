@@ -29,7 +29,7 @@ final class WebRenderer implements Renderer {
   WebRenderer(Context c, Wallpaper w, Surface s, int width, int height) {
     context = c;
     wallpaper = w;
-    surface = s;
+    surface = SurfaceLease.copy(s);
     this.width = width;
     this.height = height;
   }
@@ -137,7 +137,7 @@ final class WebRenderer implements Renderer {
   }
 
   public void start() {
-    if (released) return;
+    if (released || (running && view != null)) return;
     running = true;
     try {
       if (view == null) init();
@@ -200,6 +200,7 @@ final class WebRenderer implements Renderer {
       display.release();
       display = null;
     }
+    surface.release();
   }
 
   public void configure() {
