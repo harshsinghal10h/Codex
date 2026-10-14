@@ -29,3 +29,9 @@ The strict rubric target (nine of twelve scores at least four) was not met: eigh
 
 [Final native captures and runtime results](https://github.com/harshsinghal10h/Codex/actions/runs/38432897849).
 
+## 0.2.0 motion verification
+
+The Library/Gallery layout is preserved. The display panel now uses 432 native paths compiled from the supplied SVG, with chip scan and heat-sink motion, touch feedback, tap pause/resume and Reduce motion support. A paired Android 15 capture of the illustration changed 3,576 pixels within the SVG region. Runtime tests also verify that the illustration stops when dismissed. The figure is labelled as an illustration and does not pretend to show measured GPU telemetry.
+
+These checks add motion evidence to the earlier layout review; they are not an additional critic score round. [System wallpaper and motion tests](https://github.com/harshsinghal10h/Codex/actions/runs/38568252026).
+

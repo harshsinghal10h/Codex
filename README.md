@@ -6,7 +6,9 @@ An independent native Android adaptation inspired by [Lively Wallpaper](https://
 
 ## Install
 
-Download [Lively-Android-0.1.0.apk](releases/Lively-Android-0.1.0.apk), allow installation from the app you downloaded it with, and install on Android 8.0 or newer. Open any scene, select **Set wallpaper**, and confirm in Android's wallpaper picker. Choosing a different scene and cancelling the picker keeps the current choice.
+Download [Lively-Android-0.2.0.apk](releases/Lively-Android-0.2.0.apk), allow installation from the app you downloaded it with, and install on Android 8.0 or newer. Version 0.2.0 uses the same signing key as 0.1.0 and can be installed over it.
+
+To add your own wallpaper, tap **+**, choose a video, GIF, image, HTML file or compatible Lively ZIP, and open the imported tile. Select **Set wallpaper** and confirm **Home screen** in Android's picker the first time. Once Lively is installed as your live wallpaper, selecting another scene switches it directly. Cancelling the first installation keeps the previous wallpaper. Android and your device manufacturer decide whether live wallpapers can also appear on the lock screen.
 
 The APK is signed with this project's independent release key. Updates must use the same key. The private signing backup is distributed separately and is never included in the source repository.
 
@@ -19,8 +21,9 @@ The APK is signed with this project's independent release key. Updates must use 
 - Web wallpapers on an app-owned virtual display; the app UI is fully native. No bitmap capture of a WebView, screen-recording permission, overlay permission or JavaScript-to-native bridge.
 - LivelyProperties sliders, checkboxes, dropdowns, text and colour values, and package sharing with current property values.
 - Search, favourites, imported-wallpaper rename/delete, rotation and double tap to change.
-- Visibility, screen, battery, Battery Saver and thermal rules. Hidden playback stops; hidden renderer resources are released after 15 seconds. No background polling while hidden.
+- Visibility, screen, battery, Battery Saver and thermal rules. Hidden playback stops; video decoders and web displays release immediately after Android reports the wallpaper hidden, and GPU resources release after 15 seconds. No background polling while hidden.
 - Native Liquid Glass navigation on Android 13+, with a static material fallback on older systems; light, dark and system appearance.
+- Native animated SVG display illustration, touch feedback, tap to pause/resume, and Reduce motion support. Animation stops when its panel is hidden or dismissed.
 - Android screensaver integration and a Quick Settings pause/resume tile.
 - Device display/codec diagnostics and a real app-process PSS memory chart.
 
@@ -39,14 +42,20 @@ The SDK build path compiles Java, links Android resources, desugars to DEX, alig
 ```sh
 python3 tools/test-core.py
 python3 tools/build-tests.py --sdk "$ANDROID_HOME" --keystore /private/path/lively-release.jks
-adb install -r build/Lively-Android-0.1.0.apk
+adb install -r build/Lively-Android-0.2.0.apk
 adb install -r build/native-tests/native-tests.apk
 adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests
 ```
 
-The native test APK is a separate development artifact. It is not bundled into the installed release. Physical-device HDR output, manufacturer-specific lock-screen behavior, and real battery consumption require device testing.
+On a separate clean emulator, exercise Android's real wallpaper picker and home-screen service with:
 
-[Release validation](docs/VALIDATION.md) records the completed checks and their limits. [Design review](docs/CRITIQUE.md) records the native screenshot review.
+```sh
+adb shell am instrument -w io.lively.android.tests/io.lively.android.WallpaperFlowTests
+```
+
+The native test APK is a separate development artifact. It is not bundled into the installed release. The wallpaper suite changes the emulator's wallpaper, so use a test device. Physical-device HDR output, manufacturer-specific lock-screen behavior, and real battery consumption require device testing.
+
+[Release validation](docs/VALIDATION.md) records the completed checks and their limits. [Changes](CHANGELOG.md) lists the 0.2.0 fixes. [Design review](docs/CRITIQUE.md) records the native screenshot review.
 
 ## Design and licensing
 

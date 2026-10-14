@@ -6,7 +6,7 @@
 | Video | Original file played by Android's codec stack. MP4/H.264 is the broadest baseline; HEVC, WebM, AV1 and HDR profiles depend on device decoders. No automatic transcoding. |
 | 4K | Native sources up to 3840×2160 and a 3840-pixel render cap. The phone's screen remains its physical resolution. 4K increases GPU and decoder memory use. |
 | Ultra HDR images | Original gain-map JPEG is preserved, native HDR preview on Android 14+, and original static image application through WallpaperManager. Live wallpaper HDR output depends on the Android compositor and device. |
-| GIF / animated WebP | Native ImageDecoder / AnimatedImageDrawable on Android 9+. Android 8 uses Movie for GIF; very large GIFs are rejected on that fallback. |
+| GIF / animated WebP | Native ImageDecoder / AnimatedImageDrawable on Android 9+. Android 8 uses Movie for GIF; very large GIFs are rejected on that fallback. Animated WebP appears as a static image on Android 8. |
 | Web / WebGL / HTML packages | Android System WebView on a private virtual display. Full wallpaper behavior depends on Android WebView support, the package's WebGL requirements and the device's compositor. |
 | LivelyProperties | Slider, checkbox, dropdown, textbox and colour values. File selectors, buttons needing Windows APIs and arbitrary desktop process calls are not implemented. |
 | Audio / desktop visualisers | Video audio is available, muted by default. Capturing other apps' audio, reading their music sessions or desktop hardware telemetry is not implemented. |
@@ -21,6 +21,7 @@
 | Home / lock screen | Android's native live wallpaper picker determines available destinations. Static images can be applied explicitly to home, lock or both. Manufacturer restrictions can differ. |
 | Tray / command-line / remote desktop rules | Quick Settings tile replaces tray playback control. Windows CLI, registry and remote-desktop hooks are not ported. |
 | Startup | Android owns the selected WallpaperService lifecycle. No boot receiver or persistent foreground service is needed. |
+| UI motion | Native SVG paths animate in the display panel. Tap pauses/resumes the illustration; Reduce motion and Android animator settings are respected. No WebView is used for the app UI. |
 | Online account gallery / Windows ML depth generation | Not included. The build has offline scenes and local imports. No fake sign-in, subscription, depth inference or download controls. |
 
 Default quality is 1920 pixels on the longest edge at 30 fps for native scenes. Imported videos retain their original encoding; these settings do not secretly downscale or transcode them. Preview and live service instances are separate, and canceling the wallpaper picker does not update the active preference.
