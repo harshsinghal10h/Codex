@@ -26,11 +26,15 @@ public final class EnginePolicy {
   public static int[] dimensions(int width, int height, int cap) {
     width = Math.max(1, width);
     height = Math.max(1, height);
-    cap = Math.max(240, Math.min(3840, cap));
+    cap = resolutionCap(cap);
     double scale = Math.min(1.0, cap / (double) Math.max(width, height));
     return new int[] {
       Math.max(1, (int) Math.round(width * scale)), Math.max(1, (int) Math.round(height * scale))
     };
+  }
+
+  public static int resolutionCap(int requested) {
+    return Math.max(240, Math.min(3840, requested));
   }
 
   public static int frameRate(int requested, boolean saver, boolean thermal) {

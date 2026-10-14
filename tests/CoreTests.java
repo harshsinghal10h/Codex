@@ -71,6 +71,19 @@ public final class CoreTests {
         "Thermal opt out");
     expect(EnginePolicy.frameRate(60, true, false) == 24, "Saver frame cap");
     expect(EnginePolicy.frameRate(60, false, true) == 24, "Thermal frame cap");
+    expect(
+        EnginePolicy.frameRate(0, false, false) == 15, "Invalid zero FPS cannot stop scheduling");
+    expect(
+        EnginePolicy.frameRate(120, false, false) == 60,
+        "Imported preferences respect the FPS ceiling");
+    expect(
+        EnginePolicy.resolutionCap(-1) == 240
+            && EnginePolicy.resolutionCap(Integer.MAX_VALUE) == 3840,
+        "Resolution preferences are bounded");
+    int[] quality = EnginePolicy.dimensions(3840, 2160, 1280);
+    expect(quality[0] == 1280 && quality[1] == 720, "720p retains the correct 16:9 dimensions");
+    quality = EnginePolicy.dimensions(3840, 2160, 1920);
+    expect(quality[0] == 1920 && quality[1] == 1080, "1080p retains the correct 16:9 dimensions");
     int[] d = EnginePolicy.dimensions(2160, 3840, 1920);
     expect(d[0] == 1080 && d[1] == 1920, "Portrait aspect and cap");
     d = EnginePolicy.dimensions(3840, 2160, 3840);

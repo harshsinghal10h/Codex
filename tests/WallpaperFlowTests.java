@@ -260,6 +260,37 @@ public final class WallpaperFlowTests extends Instrumentation {
           "Capped scene fills the larger system surface");
       shot("home-ribbons");
 
+      long qualityFrames = sceneFrames();
+      main(() -> Settings.quality(c, 2));
+      until(
+          () ->
+              (Integer) field(shader, "fps") == 60
+                  && (Integer) field(shader, "cap") == 1920
+                  && sceneFrames() > qualityFrames + 3,
+          10000,
+          "1080p 60 FPS preset reaches the running home-screen renderer");
+      check(
+          installedRenderer() == shader,
+          "Quality changes preserve the installed renderer and service");
+      until(
+          () ->
+              Math.max(
+                      (Integer) field(shader, "targetWidth"),
+                      (Integer) field(shader, "targetHeight"))
+                  == 1920,
+          7000,
+          "1080p quality resizes the actual GPU target while preserving the system surface");
+      main(() -> Settings.of(c).edit().putInt("resolution", 720).putInt("fps", 15).apply());
+      until(
+          () ->
+              (Integer) field(shader, "fps") == 15
+                  && Math.max(
+                          (Integer) field(shader, "targetWidth"),
+                          (Integer) field(shader, "targetHeight"))
+                      == 720,
+          7000,
+          "Custom lower quality applies without restarting the wallpaper");
+
       bringApp();
       set(Wallpaper.BUILTINS[4]);
       check(

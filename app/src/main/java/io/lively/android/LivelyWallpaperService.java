@@ -2,7 +2,6 @@ package io.lively.android;
 
 import android.content.*;
 import android.graphics.Point;
-import android.os.Build;
 import android.service.wallpaper.WallpaperService;
 import android.view.*;
 import java.util.*;
@@ -59,15 +58,6 @@ public final class LivelyWallpaperService extends WallpaperService {
     public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
       super.onSurfaceChanged(holder, format, width, height);
       if (controller != null) controller.close();
-      if (Build.VERSION.SDK_INT >= 30)
-        try {
-          holder
-              .getSurface()
-              .setFrameRate(
-                  Settings.fps(LivelyWallpaperService.this),
-                  Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
-        } catch (Exception ignored) {
-        }
       Wallpaper fixed =
           isPreview()
               ? new LibraryStore(LivelyWallpaperService.this)

@@ -55,6 +55,7 @@ public final class MainActivity extends Activity {
     library = new LibraryStore(this);
     if (state != null) {
       page = state.getString("page", "Library");
+      settingCategory = state.getString("settingCategory", "General");
       query = state.getString("query", "");
       pendingApply = state.getString("pendingApply");
     } else if (Settings.of(this).contains("pending_apply"))
@@ -68,6 +69,7 @@ public final class MainActivity extends Activity {
 
   public void onSaveInstanceState(Bundle state) {
     state.putString("page", page);
+    state.putString("settingCategory", settingCategory);
     state.putString("query", query);
     state.putString("pendingApply", pendingApply);
     super.onSaveInstanceState(state);
@@ -1355,7 +1357,7 @@ public final class MainActivity extends Activity {
         .setTitle(title)
         .setSingleChoiceItems(
             options,
-            Math.max(0, Math.min(options.length - 1, current)),
+            Math.max(-1, Math.min(options.length - 1, current)),
             (d, w) -> {
               change.set(w);
               d.dismiss();
@@ -1436,6 +1438,31 @@ public final class MainActivity extends Activity {
                   "Edit your Quick Settings tiles and drag Lively playback into your panel.");
           });
     } else if (settingCategory.equals("Performance")) {
+      section(body, "Quality");
+      qualityRow(body);
+      intChoice(
+          body,
+          "Scene frame rate",
+          "Native scenes target this rate. Videos, GIFs and web pages keep their source timing.",
+          new String[] {"15 FPS", "24 FPS", "30 FPS", "60 FPS"},
+          new int[] {15, 24, 30, 60},
+          "fps",
+          30);
+      intChoice(
+          body,
+          "Render resolution",
+          "Maximum edge, with aspect ratio kept. No upscaling or video transcoding.",
+          new String[] {
+            "720 px • economy",
+            "1080 px",
+            "1280 px • 720p",
+            "1920 px • 1080p",
+            "2560 px • 1440p",
+            "3840 px • 4K UHD"
+          },
+          new int[] {720, 1080, 1280, 1920, 2560, 3840},
+          "resolution",
+          1920);
       section(body, "Playback rules");
       toggle(
           body,
@@ -1466,25 +1493,6 @@ public final class MainActivity extends Activity {
           new int[] {0, 5, 10, 15, 20, 30},
           "low_battery",
           15);
-      section(body, "Rendering");
-      intChoice(
-          body,
-          "Scene frame rate",
-          "Native scenes. Videos retain their source frame rate.",
-          new String[] {"15 fps", "24 fps", "30 fps", "60 fps"},
-          new int[] {15, 24, 30, 60},
-          "fps",
-          30);
-      intChoice(
-          body,
-          "Render resolution",
-          "Longest edge for scenes, images and web. Video decoding retains the source.",
-          new String[] {
-            "720 px • economy", "1080 px", "1920 px • balanced", "2560 px", "3840 px • 4K"
-          },
-          new int[] {720, 1080, 1920, 2560, 3840},
-          "resolution",
-          1920);
       section(body, "Live memory");
       memoryText = text("Sampling app process memory…", 14, fg, true);
       add(body, memoryText, -1, 44);
@@ -1494,8 +1502,8 @@ public final class MainActivity extends Activity {
           body,
           text(
               "Process PSS, sampled once per second while this page is open. System decoder and"
-                  + " WebView child processes are separate. Hidden wallpaper resources are released"
-                  + " after 15 seconds.",
+                  + " WebView child processes are separate. Hidden video/web resources release"
+                  + " immediately; hidden GPU resources release after 15 seconds.",
               12,
               muted,
               false),
@@ -1713,13 +1721,19 @@ public final class MainActivity extends Activity {
       int[] values,
       String key,
       int fallback) {
-    int current = Settings.of(this).getInt(key, fallback), at = 0;
+    int current =
+        key.equals("fps")
+            ? Settings.fps(this)
+            : key.equals("resolution")
+                ? Settings.cap(this)
+                : Settings.of(this).getInt(key, fallback);
+    int at = -1;
     for (int i = 0; i < values.length; i++) if (current == values[i]) at = i;
     final int selected = at;
     actionRow(
         body,
         title,
-        labels[at] + "\n" + desc,
+        (at >= 0 ? labels[at] : "Custom • " + current) + "\n" + desc,
         () ->
             choose(
                 title,
@@ -1732,8 +1746,59 @@ public final class MainActivity extends Activity {
   }
 
   private void settingsRebuild() {
+    ScrollView previous =
+        content.getChildCount() == 0
+            ? null
+            : content.getChildAt(0) instanceof ScrollView
+                ? (ScrollView) content.getChildAt(0)
+                : null;
+    int position = previous == null ? 0 : previous.getScrollY();
     content.removeAllViews();
     settings();
+    View next = content.getChildAt(0);
+    if (next instanceof ScrollView) next.post(() -> ((ScrollView) next).scrollTo(0, position));
+  }
+
+  private void qualityRow(LinearLayout body) {
+    int cap = Settings.cap(this), fps = Settings.fps(this);
+    actionRow(
+        body,
+        "Wallpaper quality",
+        QualityPreset.label(cap, fps)
+            + "\n"
+            + "Scenes, images and web keep their aspect ratio within the selected size. Videos"
+            + " retain their original resolution and frame rate. Higher quality uses more power.",
+        this::chooseQuality);
+    android.graphics.Point display = new android.graphics.Point();
+    getWindowManager().getDefaultDisplay().getRealSize(display);
+    int[] dimensions = EnginePolicy.dimensions(display.x, display.y, cap);
+    add(
+        body,
+        text(
+            "On this display: up to "
+                + dimensions[0]
+                + " × "
+                + dimensions[1]
+                + " px for native scenes. "
+                + fps
+                + " FPS is a target; display refresh, heat and Battery Saver can limit playback."
+                + " Use the controls below for a custom combination.",
+            12,
+            muted,
+            false),
+        -1,
+        -2);
+  }
+
+  private void chooseQuality() {
+    choose(
+        "Wallpaper quality",
+        QualityPreset.LABELS,
+        QualityPreset.index(Settings.cap(this), Settings.fps(this)),
+        index -> {
+          Settings.quality(this, index);
+          settingsRebuild();
+        });
   }
 
   private void controlPanel() {

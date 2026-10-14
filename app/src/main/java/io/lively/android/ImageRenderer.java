@@ -88,8 +88,10 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
                   }
                 });
           } catch (Throwable e) {
-            failure = "Image: " + e.getMessage();
-            Metrics.error(context, failure);
+            if (!released) {
+              failure = "Image: " + e.getMessage();
+              Metrics.error(context, failure);
+            }
           } finally {
             worker.shutdown();
           }

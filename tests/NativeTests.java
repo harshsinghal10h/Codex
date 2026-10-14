@@ -37,6 +37,34 @@ public final class NativeTests extends Instrumentation {
     report.append("PASS ").append(label).append('\n');
   }
 
+  private void until(java.util.function.BooleanSupplier condition, long timeout, String label) {
+    long end = SystemClock.uptimeMillis() + timeout;
+    while (SystemClock.uptimeMillis() < end) {
+      if (condition.getAsBoolean()) {
+        check(true, label);
+        return;
+      }
+      waitMs(100);
+    }
+    check(false, label);
+  }
+
+  private boolean clickText(String label) {
+    android.view.accessibility.AccessibilityNodeInfo root =
+        getUiAutomation().getRootInActiveWindow();
+    if (root == null) return false;
+    for (android.view.accessibility.AccessibilityNodeInfo node :
+        root.findAccessibilityNodeInfosByText(label)) {
+      if (node.getText() != null && !label.contentEquals(node.getText())) continue;
+      android.view.accessibility.AccessibilityNodeInfo action = node;
+      while (action != null && !action.isClickable()) action = action.getParent();
+      if (action != null
+          && action.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))
+        return true;
+    }
+    return false;
+  }
+
   private void main(Runnable action) {
     runOnMainSync(action);
   }
@@ -405,6 +433,50 @@ public final class NativeTests extends Instrumentation {
       call("build", new Class[] {});
       waitMs(1600);
       shot("performance-r1");
+      int previousCap = Settings.cap(c), previousFps = Settings.fps(c);
+      until(() -> clickText("Wallpaper quality"), 5000, "Quality preset row opens its selector");
+      until(() -> clickText("Cancel"), 5000, "Quality chooser can be cancelled");
+      check(
+          Settings.cap(c) == previousCap && Settings.fps(c) == previousFps,
+          "Cancelling quality selection preserves both saved settings");
+      until(() -> clickText("Wallpaper quality"), 5000, "Quality chooser reopens");
+      until(
+          () -> clickText("1080p · 60 FPS"), 5000, "1080p 60 FPS can be selected in the native UI");
+      until(
+          () -> Settings.cap(c) == 1920 && Settings.fps(c) == 60,
+          5000,
+          "Preset atomically applies resolution and frame rate");
+      MainActivity oldActivity = activity;
+      main(oldActivity::recreate);
+      until(
+          () ->
+              activity != oldActivity
+                  && !activity.isDestroyed()
+                  && activity.getWindow().getDecorView().hasWindowFocus()
+                  && "Performance".equals(safeField(activity, "settingCategory"))
+                  && Settings.cap(c) == 1920
+                  && Settings.fps(c) == 60,
+          10000,
+          "Activity recreation preserves quality and its settings category");
+      shot("quality-1080p60");
+      android.widget.ScrollView qualityScroll =
+          typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class);
+      main(
+          () ->
+              qualityScroll.scrollTo(
+                  0, Math.round(100 * c.getResources().getDisplayMetrics().density)));
+      waitMs(300);
+      int qualityPosition = qualityScroll.getScrollY();
+      until(() -> clickText("Scene frame rate"), 5000, "Advanced FPS selector opens");
+      until(() -> clickText("15 FPS"), 5000, "Custom frame rate can be selected");
+      until(
+          () ->
+              Settings.fps(c) == 15
+                  && typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class)
+                          .getScrollY()
+                      == qualityPosition,
+          5000,
+          "Custom quality keeps the settings scroll position");
       android.widget.ScrollView performanceScroll =
           typed(activity.getWindow().getDecorView(), android.widget.ScrollView.class);
       main(() -> performanceScroll.fullScroll(View.FOCUS_DOWN));

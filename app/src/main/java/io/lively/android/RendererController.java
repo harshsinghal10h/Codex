@@ -19,6 +19,7 @@ final class RendererController
   private int battery = 100, thermal;
   private String currentId = "";
   private boolean stagingStill;
+  private boolean resizeRequested, networkRequested;
   private long stillStarted;
   private final BroadcastReceiver receiver =
       new BroadcastReceiver() {
@@ -231,21 +232,25 @@ final class RendererController
         || key.equals("theme")
         || key.equals("glass")
         || key.equals("reduce_motion")) return;
-    handler.post(
-        () -> {
-          if (renderer instanceof WebRenderer && key.equals("web_network")) {
-            renderer.release();
-            renderer = null;
-          }
-          if ("resolution".equals(key)
-              && renderer != null
-              && (renderer instanceof ImageRenderer || renderer instanceof WebRenderer)) {
-            renderer.release();
-            renderer = null;
-          }
-          update();
-        });
+    if ("resolution".equals(key)) resizeRequested = true;
+    if ("web_network".equals(key)) networkRequested = true;
+    // A preset writes resolution and FPS together. Apply their final values once.
+    handler.removeCallbacks(refreshSettings);
+    handler.post(refreshSettings);
   }
+
+  private final Runnable refreshSettings =
+      () -> {
+        if (closed) return;
+        if ((networkRequested && renderer instanceof WebRenderer)
+            || (resizeRequested
+                && (renderer instanceof ImageRenderer || renderer instanceof WebRenderer))) {
+          renderer.release();
+          renderer = null;
+        }
+        resizeRequested = networkRequested = false;
+        update();
+      };
 
   void close() {
     if (closed) return;

@@ -9,11 +9,20 @@ public final class Settings {
   }
 
   public static int cap(Context c) {
-    return of(c).getInt("resolution", 1920);
+    return EnginePolicy.resolutionCap(of(c).getInt("resolution", 1920));
   }
 
   public static int fps(Context c) {
-    return of(c).getInt("fps", 30);
+    return EnginePolicy.frameRate(of(c).getInt("fps", 30), false, false);
+  }
+
+  static void quality(Context c, int index) {
+    if (index < 0 || index >= QualityPreset.CAPS.length) return;
+    of(c)
+        .edit()
+        .putInt("resolution", QualityPreset.CAPS[index])
+        .putInt("fps", QualityPreset.RATES[index])
+        .apply();
   }
 
   public static float value(Context c, Wallpaper w, String key, float fallback) {

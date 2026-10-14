@@ -3,6 +3,7 @@ package io.lively.android;
 import android.content.Context;
 import android.opengl.*;
 import android.os.*;
+import android.view.Choreographer;
 import android.view.Surface;
 import java.io.*;
 import java.nio.*;
@@ -29,6 +30,9 @@ final class ShaderRenderer implements Renderer {
   private volatile boolean released, running;
   private volatile float touchX = .5f, touchY = .5f, speed = 1, intensity = 1;
   private volatile int fps = 30;
+  private volatile int accent = 0xff59a8fa;
+  private Choreographer choreographer;
+  private long nextFrameNanos;
   private long elapsed, startTime;
   private int timeLoc, resLoc, touchLoc, intensityLoc, accentLoc;
 
@@ -234,11 +238,18 @@ final class ShaderRenderer implements Renderer {
     return s;
   }
 
-  private final Runnable frame =
-      new Runnable() {
-        public void run() {
+  private final Choreographer.FrameCallback frame =
+      new Choreographer.FrameCallback() {
+        public void doFrame(long frameTimeNanos) {
           if (released || !running) return;
-          long frameStarted = SystemClock.uptimeMillis();
+          if (nextFrameNanos != 0 && frameTimeNanos + 1000000L < nextFrameNanos) {
+            scheduleFrame();
+            return;
+          }
+          long interval = 1000000000L / fps;
+          if (nextFrameNanos == 0 || frameTimeNanos - nextFrameNanos > interval * 2)
+            nextFrameNanos = frameTimeNanos + interval;
+          else nextFrameNanos += interval;
           try {
             if (program == 0) init();
             renderTarget();
@@ -246,7 +257,7 @@ final class ShaderRenderer implements Renderer {
             GLES20.glUniform1f(timeLoc, t);
             GLES20.glUniform2f(touchLoc, touchX, 1 - touchY);
             GLES20.glUniform1f(intensityLoc, intensity);
-            int color = Settings.of(context).getInt(wallpaper.id + ".accent", 0xff59a8fa);
+            int color = accent;
             GLES20.glUniform3f(
                 accentLoc,
                 ((color >> 16) & 255) / 255f,
@@ -258,8 +269,7 @@ final class ShaderRenderer implements Renderer {
               throw new IOException("Wallpaper surface closed");
             Metrics.frame(context);
             renderedFrames++;
-            handler.postDelayed(
-                this, Math.max(1, 1000 / fps - (SystemClock.uptimeMillis() - frameStarted)));
+            scheduleFrame();
           } catch (Exception e) {
             running = false;
             if (!released && surface.isValid()) {
@@ -271,13 +281,31 @@ final class ShaderRenderer implements Renderer {
         }
       };
 
+  private void scheduleFrame() {
+    if (released || !running) return;
+    // Align presentation to display vsync while retaining phase for 24/30/60 FPS.
+    long delay = Math.max(0, (nextFrameNanos - System.nanoTime()) / 1000000L - 2);
+    choreographer.postFrameCallbackDelayed(frame, delay);
+  }
+
+  private void frameHint(float rate) {
+    if (Build.VERSION.SDK_INT >= 30 && surface.isValid())
+      try {
+        surface.setFrameRate(rate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
+      } catch (Exception ignored) {
+      }
+  }
+
   public void start() {
     handler.post(
         () -> {
           if (released || running) return;
           running = true;
           startTime = SystemClock.elapsedRealtime();
-          handler.post(frame);
+          nextFrameNanos = 0;
+          if (choreographer == null) choreographer = Choreographer.getInstance();
+          frameHint(fps);
+          choreographer.postFrameCallback(frame);
         });
   }
 
@@ -286,13 +314,15 @@ final class ShaderRenderer implements Renderer {
         () -> {
           if (running) elapsed += SystemClock.elapsedRealtime() - startTime;
           running = false;
-          handler.removeCallbacks(frame);
+          if (choreographer != null) choreographer.removeFrameCallback(frame);
+          frameHint(0);
         });
   }
 
   public void configure() {
     cap = Settings.cap(context);
     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+    int previousRate = fps;
     fps =
         EnginePolicy.frameRate(
             Settings.fps(context),
@@ -301,6 +331,17 @@ final class ShaderRenderer implements Renderer {
                 && pm.getCurrentThermalStatus() >= PowerManager.THERMAL_STATUS_MODERATE);
     speed = Settings.value(context, wallpaper, "speed", 1);
     intensity = Settings.value(context, wallpaper, "intensity", 1);
+    accent = Settings.of(context).getInt(wallpaper.id + ".accent", 0xff59a8fa);
+    handler.post(
+        () -> {
+          if (released || !running) return;
+          frameHint(fps);
+          if (previousRate != fps && choreographer != null) {
+            nextFrameNanos = 0;
+            choreographer.removeFrameCallback(frame);
+            choreographer.postFrameCallback(frame);
+          }
+        });
   }
 
   public void touch(float x, float y) {
@@ -333,7 +374,8 @@ final class ShaderRenderer implements Renderer {
         () -> {
           try {
             running = false;
-            handler.removeCallbacks(frame);
+            if (choreographer != null) choreographer.removeFrameCallback(frame);
+            frameHint(0);
             cleanup();
           } finally {
             surface.release();

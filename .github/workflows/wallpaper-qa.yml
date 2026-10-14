@@ -43,7 +43,7 @@ jobs:
           profile: pixel_6
           disable-animations: false
           script: |
-            adb install -r build/Lively-Android-0.2.0.apk
+            adb install -r build/Lively-Android-0.3.0.apk
             adb install -r build/native-tests/native-tests.apk
             adb shell input keyevent 82
             adb shell am instrument -w io.lively.android.tests/io.lively.android.WallpaperFlowTests | tee build/wallpaper-test-result.txt
