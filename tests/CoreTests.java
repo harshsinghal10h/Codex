@@ -81,6 +81,21 @@ public final class CoreTests {
     expect(d[0] > 0 && d[1] > 0, "Invalid dimensions bounded");
     expect(EnginePolicy.kind("MOVIE.MP4").equals("video"), "Case-insensitive video");
     expect(EnginePolicy.kind("game.exe").isEmpty(), "No executable loading");
+    expect(EnginePolicy.kind(null).isEmpty(), "Missing provider filename");
+    expect(EnginePolicy.kind("clip.M4V").equals("video"), "M4V video import");
+    expect(
+        EnginePolicy.kind(EnginePolicy.mimeExtension("image/gif")).equals("gif"),
+        "Unnamed GIF stays animated");
+    expect(
+        EnginePolicy.kind(EnginePolicy.mimeExtension("image/webp")).equals("gif"),
+        "Unnamed WebP stays animated");
+    expect(
+        EnginePolicy.mimeExtension("application/x-zip-compressed").equals(".zip"),
+        "OEM ZIP MIME alias");
+    expect(EnginePolicy.mimeExtension(null).isEmpty(), "Absent provider MIME");
+    expect(
+        EnginePolicy.shouldRun(true, true, false, false, true, false, false, 0, 0, false, true),
+        "Off disables the low-battery threshold at zero percent");
     File root = Files.createTempDirectory("lively-sandbox").toFile();
     reject(() -> ZipSandbox.resolve(root, "../escape"), "Traversal");
     reject(() -> ZipSandbox.resolve(root, "/absolute"), "Absolute path");

@@ -39,7 +39,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
-            adb install -r build/Lively-Android-0.1.0.apk
+            adb install -r build/Lively-Android-0.2.0.apk
             adb install -r build/native-tests/native-tests.apk
             adb shell input keyevent 82
             adb shell am instrument -w io.lively.android.tests/io.lively.android.NativeTests | tee build/native-test-result.txt

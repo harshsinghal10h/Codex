@@ -4,15 +4,16 @@ import argparse, os, pathlib, subprocess, sys, zipfile, shutil
 P=pathlib.Path(__file__).resolve().parents[1]
 def run(*args): subprocess.run([str(x) for x in args], check=True)
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--sdk',default=os.environ.get('ANDROID_HOME'));parser.add_argument('--keystore',required=True);parser.add_argument('--alias',default='lively');parser.add_argument('--out',default=str(P/'build/Lively-Android-0.1.0.apk'));parser.add_argument('--test',action='store_true');a=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--sdk',default=os.environ.get('ANDROID_HOME'));parser.add_argument('--keystore',required=True);parser.add_argument('--alias',default='lively');parser.add_argument('--out',default=str(P/'build/Lively-Android-0.2.0.apk'));parser.add_argument('--test',action='store_true');a=parser.parse_args()
     sdk=pathlib.Path(a.sdk or '');platform=sdk/'platforms/android-35/android.jar'
     if not platform.exists():raise SystemExit('Install platforms;android-35 and build-tools;35.0.0, then set ANDROID_HOME.')
     candidates=[x for x in (sdk/'build-tools').iterdir() if (x/'aapt2').exists()];bt=next((x for x in candidates if x.name=='35.0.0'),sorted(candidates)[-1])
     build=P/'build';build.mkdir(exist_ok=True);classes=build/'classes';shutil.rmtree(classes,ignore_errors=True);classes.mkdir()
     manifest=build/'AndroidManifest.xml';resources=P/'app/src/main/res';assets=P/'app/src/main/assets'
+    run(sys.executable,P/'tools/compile-figure.py')
     manifest.write_text((P/'app/src/main/AndroidManifest.xml').read_text().replace('<manifest ', '<manifest package="io.lively.android" ',1))
     run(bt/'aapt2','compile','--dir',resources,'-o',build/'resources.zip')
-    run(bt/'aapt2','link','-o',build/'base.apk','-I',platform,'--manifest',manifest,'--java',build/'generated','--min-sdk-version','26','--target-sdk-version','35','--version-code','1','--version-name','0.1.0','--auto-add-overlay','-A',assets,build/'resources.zip')
+    run(bt/'aapt2','link','-o',build/'base.apk','-I',platform,'--manifest',manifest,'--java',build/'generated','--min-sdk-version','26','--target-sdk-version','35','--version-code','2','--version-name','0.2.0','--auto-add-overlay','-A',assets,build/'resources.zip')
     sources=list((P/'app/src/main/java').rglob('*.java'))+list((build/'generated').rglob('*.java'))
     run('java','com.sun.tools.javac.Main','-encoding','UTF-8','--release','8','-classpath',platform,'-d',classes,*sources)
     with zipfile.ZipFile(build/'classes.jar','w',compression=zipfile.ZIP_DEFLATED) as z:

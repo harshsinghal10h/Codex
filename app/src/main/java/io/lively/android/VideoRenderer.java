@@ -11,6 +11,7 @@ final class VideoRenderer implements Renderer {
   private final Surface surface;
   private MediaPlayer player;
   private boolean running, prepared, released;
+  private String failure = "";
 
   VideoRenderer(Context c, Wallpaper w, Surface s) {
     context = c;
@@ -43,19 +44,20 @@ final class VideoRenderer implements Renderer {
             });
         player.setOnErrorListener(
             (p, what, extra) -> {
-              Metrics.error(
-                  context,
+              failure =
                   "Video cannot play on this device ("
                       + what
                       + " / "
                       + extra
-                      + "). Try an H.264 MP4 or a supported HEVC file.");
+                      + "). Try an H.264 MP4 or a supported HEVC file.";
+              Metrics.error(context, failure);
               release();
               return true;
             });
         player.prepareAsync();
       } catch (Exception e) {
-        Metrics.error(context, "Video: " + e.getMessage());
+        failure = "Video: " + e.getMessage();
+        Metrics.error(context, failure);
         release();
       }
     else if (prepared)
@@ -100,6 +102,14 @@ final class VideoRenderer implements Renderer {
 
   public boolean failed() {
     return released;
+  }
+
+  public boolean ready() {
+    return prepared && player != null && player.getVideoWidth() > 0;
+  }
+
+  public String error() {
+    return failure;
   }
 
   public void release() {

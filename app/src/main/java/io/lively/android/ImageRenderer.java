@@ -18,6 +18,8 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   private Drawable drawable;
   private Movie movie;
   private Bitmap bitmap;
+  private volatile String failure = "";
+  private boolean presented;
   private long started;
   private float focusX = .5f, focusY = .5f;
   private final ExecutorService worker = Executors.newSingleThreadExecutor();
@@ -85,7 +87,8 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
                   }
                 });
           } catch (Throwable e) {
-            Metrics.error(context, "Image: " + e.getMessage());
+            failure = "Image: " + e.getMessage();
+            Metrics.error(context, failure);
           } finally {
             worker.shutdown();
           }
@@ -124,6 +127,7 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
       }
       c.restore();
       Metrics.frame(context);
+      presented = true;
     } catch (Exception e) {
       Metrics.error(context, "Image surface: " + e.getMessage());
     } finally {
@@ -178,10 +182,22 @@ final class ImageRenderer implements Renderer, Drawable.Callback {
   }
 
   public void scheduleDrawable(Drawable d, Runnable r, long time) {
-    main.postAtTime(r, time);
+    if (running && !released) main.postAtTime(r, time);
   }
 
   public void unscheduleDrawable(Drawable d, Runnable r) {
     main.removeCallbacks(r);
+  }
+
+  public boolean failed() {
+    return !failure.isEmpty();
+  }
+
+  public boolean ready() {
+    return presented;
+  }
+
+  public String error() {
+    return failure;
   }
 }

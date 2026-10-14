@@ -14,4 +14,12 @@ interface Renderer {
   default boolean failed() {
     return false;
   }
+
+  default boolean ready() {
+    return true;
+  }
+
+  default String error() {
+    return "";
+  }
 }

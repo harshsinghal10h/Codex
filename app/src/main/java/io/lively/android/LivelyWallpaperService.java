@@ -9,6 +9,15 @@ import java.util.*;
 
 public final class LivelyWallpaperService extends WallpaperService {
   private final Set<LivelyEngine> engines = new HashSet<>();
+  private static final Set<LivelyEngine> installedEngines = new HashSet<>();
+
+  static boolean hasInstalledEngine() {
+    return !installedEngines.isEmpty();
+  }
+
+  static LivelyEngine installedEngine() {
+    return installedEngines.isEmpty() ? null : installedEngines.iterator().next();
+  }
 
   public Engine onCreateEngine() {
     return new LivelyEngine();
@@ -25,38 +34,30 @@ public final class LivelyWallpaperService extends WallpaperService {
     RendererController controller;
     private boolean visible;
     private long lastTouch;
-    private boolean surfaceReady;
 
     public void onCreate(SurfaceHolder holder) {
       super.onCreate(holder);
       engines.add(this);
+      if (!isPreview()) {
+        installedEngines.add(this);
+        // The framework only creates this non-preview engine after installation.
+        // Commit before its first frame, even if the picker killed our activity.
+        WallpaperSelection.finish(LivelyWallpaperService.this, false);
+      }
       setTouchEventsEnabled(true);
       setOffsetNotificationsEnabled(
           Settings.of(LivelyWallpaperService.this).getBoolean("parallax", true));
       Settings.of(LivelyWallpaperService.this).registerOnSharedPreferenceChangeListener(this);
     }
 
-    private void size(SurfaceHolder holder) {
-      Wallpaper w =
-          new LibraryStore(LivelyWallpaperService.this)
-              .find(
-                  isPreview()
-                      ? Settings.candidate(LivelyWallpaperService.this)
-                      : Settings.active(LivelyWallpaperService.this));
-      Point p = new Point();
-      ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealSize(p);
-      int[] d =
-          EnginePolicy.dimensions(
-              p.x, p.y, w.kind.equals("video") ? 3840 : Settings.cap(LivelyWallpaperService.this));
-      holder.setFixedSize(d[0], d[1]);
-    }
-
     public void onSurfaceCreated(SurfaceHolder holder) {
-      surfaceReady = true;
-      size(holder);
+      super.onSurfaceCreated(holder);
+      // Wallpaper surfaces are sized by Android. setFixedSize() throws for normal apps.
+      // Scenes use an internal capped render target instead of a hidden platform API.
     }
 
     public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+      super.onSurfaceChanged(holder, format, width, height);
       if (controller != null) controller.close();
       if (Build.VERSION.SDK_INT >= 30)
         try {
@@ -84,11 +85,11 @@ public final class LivelyWallpaperService extends WallpaperService {
     }
 
     public void onSurfaceDestroyed(SurfaceHolder h) {
-      surfaceReady = false;
       if (controller != null) {
         controller.close();
         controller = null;
       }
+      super.onSurfaceDestroyed(h);
     }
 
     public void onTouchEvent(MotionEvent event) {
@@ -128,12 +129,11 @@ public final class LivelyWallpaperService extends WallpaperService {
       if (controller != null) controller.close();
       Settings.of(LivelyWallpaperService.this).unregisterOnSharedPreferenceChangeListener(this);
       engines.remove(this);
+      installedEngines.remove(this);
       super.onDestroy();
     }
 
     public void onSharedPreferenceChanged(android.content.SharedPreferences p, String key) {
-      if (("resolution".equals(key) || "active".equals(key)) && surfaceReady)
-        size(getSurfaceHolder());
       if ("parallax".equals(key)) setOffsetNotificationsEnabled(p.getBoolean("parallax", true));
     }
   }

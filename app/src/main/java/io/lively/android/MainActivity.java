@@ -36,6 +36,7 @@ public final class MainActivity extends Activity {
   private ImageView imagePreview;
   private Wallpaper detail;
   private AlertDialog detailDialog;
+  private AlertDialog controlDialog;
   private RendererController preview;
   private Surface previewSurface;
   private String pendingApply;
@@ -45,6 +46,8 @@ public final class MainActivity extends Activity {
   private long lastGlass;
   private Future<?> operation;
   private AlertDialog progress;
+  private int jobGeneration;
+  private TextView previewStatus;
   private static final int IMPORT = 10, APPLY = 11;
 
   public void onCreate(Bundle state) {
@@ -130,6 +133,7 @@ public final class MainActivity extends Activity {
           v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
           action.run();
         });
+    UiMotion.press(box);
     return box;
   }
 
@@ -157,6 +161,7 @@ public final class MainActivity extends Activity {
           v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
           run.run();
         });
+    UiMotion.press(b);
     return b;
   }
 
@@ -608,8 +613,7 @@ public final class MainActivity extends Activity {
   }
 
   private boolean isLivelyActive() {
-    WallpaperInfo info = WallpaperManager.getInstance(this).getWallpaperInfo();
-    return info != null && info.getPackageName().equals(getPackageName());
+    return WallpaperSelection.installed(this);
   }
 
   private void wallpaperMenu(Wallpaper w, View anchor) {
@@ -816,6 +820,11 @@ public final class MainActivity extends Activity {
     TextView info = text(w.typeLabel() + " • " + w.author + "\n" + w.description, 13, muted, false);
     info.setPadding(0, dp(12), 0, dp(12));
     add(body, info, -1, -2);
+    previewStatus = text("Loading preview…", 12, muted, false);
+    previewStatus.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+    add(body, previewStatus, -1, -2);
+    main.removeCallbacks(updatePreviewStatus);
+    main.post(updatePreviewStatus);
     add(body, button("Set wallpaper", () -> apply(w), true), -1, 48);
     LinearLayout actions = row();
     actions.setGravity(Gravity.TOP);
@@ -847,6 +856,8 @@ public final class MainActivity extends Activity {
   }
 
   private void closePreview() {
+    main.removeCallbacks(updatePreviewStatus);
+    previewStatus = null;
     if (imagePreview != null) {
       imagePreview.setImageDrawable(null);
       imagePreview = null;
@@ -906,21 +917,52 @@ public final class MainActivity extends Activity {
   }
 
   private void applyLive(Wallpaper w) {
+    WallpaperManager manager = WallpaperManager.getInstance(this);
+    if (!manager.isWallpaperSupported() || !manager.isSetWallpaperAllowed()) {
+      message(
+          "Wallpaper changes unavailable",
+          "Android has disabled wallpaper changes for this user or profile. Check your device or"
+              + " work-profile settings.");
+      return;
+    }
+    if (isLivelyActive()) {
+      WallpaperSelection.select(this, w.id);
+      pendingApply = null;
+      if (detailDialog != null) detailDialog.dismiss();
+      build();
+      toast("Wallpaper changed • return to your home screen");
+      return;
+    }
     pendingApply = w.id;
-    Settings.of(this).edit().putString("candidate", w.id).putString("pending_apply", w.id).apply();
+    WallpaperSelection.begin(this, w.id);
     Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
     intent.putExtra(
         WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
         new ComponentName(this, LivelyWallpaperService.class));
     try {
       startActivityForResult(intent, APPLY);
-    } catch (ActivityNotFoundException e) {
-      pendingApply = null;
-      Settings.of(this).edit().remove("pending_apply").apply();
-      message(
-          "Wallpaper picker unavailable",
-          "This Android device has no live wallpaper picker. Enable live wallpaper support in the"
-              + " system or launcher.");
+    } catch (ActivityNotFoundException | SecurityException e) {
+      openWallpaperChooser();
+    }
+  }
+
+  private void openWallpaperChooser() {
+    Settings.of(this).edit().putBoolean("pending_direct", false).commit();
+    try {
+      startActivityForResult(new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER), APPLY);
+      toast("Choose Lively Wallpaper, then tap Set wallpaper");
+    } catch (ActivityNotFoundException | SecurityException e) {
+      try {
+        startActivityForResult(new Intent(Intent.ACTION_SET_WALLPAPER), APPLY);
+        toast("Open Live wallpapers and choose Lively Wallpaper");
+      } catch (ActivityNotFoundException | SecurityException unavailable) {
+        WallpaperSelection.cancel(this);
+        pendingApply = null;
+        message(
+            "Open Android wallpaper settings",
+            "Open your device's Settings → Wallpaper → Live wallpapers and choose Lively Wallpaper."
+                + " This device did not expose a wallpaper picker to apps.");
+      }
     }
   }
 
@@ -929,17 +971,12 @@ public final class MainActivity extends Activity {
     if (request == IMPORT && result == RESULT_OK && data != null && data.getData() != null)
       importFile(data.getData());
     if (request == APPLY) {
-      if (result == RESULT_OK && pendingApply != null) {
-        Settings.of(this)
-            .edit()
-            .putString("active", pendingApply)
-            .putBoolean("paused", false)
-            .remove("pending_apply")
-            .apply();
-        toast("Wallpaper set");
-      } else {
-        Settings.of(this).edit().remove("pending_apply").apply();
-      }
+      boolean applied = WallpaperSelection.finish(this, result == RESULT_OK);
+      if (applied
+          || (pendingApply != null
+              && isLivelyActive()
+              && pendingApply.equals(Settings.active(this))))
+        toast("Wallpaper set • return to your home screen");
       pendingApply = null;
       if (detailDialog != null) detailDialog.dismiss();
       build();
@@ -959,7 +996,18 @@ public final class MainActivity extends Activity {
               if (n == 0) {
                 Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 i.setType("*/*");
+                i.putExtra(
+                    Intent.EXTRA_MIME_TYPES,
+                    new String[] {
+                      "video/*",
+                      "image/*",
+                      "application/zip",
+                      "application/x-zip-compressed",
+                      "application/octet-stream",
+                      "text/html"
+                    });
                 i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 try {
                   startActivityForResult(i, IMPORT);
                 } catch (Exception e) {
@@ -1035,6 +1083,7 @@ public final class MainActivity extends Activity {
     TextView hint = text(label, 15, fg, false);
     hint.setPadding(dp(16), 0, 0, 0);
     add(body, hint, -1, 48);
+    final int generation = ++jobGeneration;
     progress =
         new AlertDialog.Builder(this)
             .setView(body)
@@ -1042,10 +1091,13 @@ public final class MainActivity extends Activity {
             .setNegativeButton(
                 "Cancel",
                 (d, w) -> {
+                  jobGeneration++;
                   if (operation != null) operation.cancel(true);
+                  progress = null;
                 })
             .create();
     progress.show();
+    final AlertDialog jobDialog = progress;
     operation =
         work.submit(
             () -> {
@@ -1054,13 +1106,18 @@ public final class MainActivity extends Activity {
                 if (Thread.currentThread().isInterrupted()) return;
                 main.post(
                     () -> {
-                      if (progress != null) progress.dismiss();
+                      if (generation != jobGeneration) return;
+                      jobDialog.dismiss();
+                      progress = null;
                       if (!isFinishing() && !isDestroyed()) callback.done(value);
                     });
               } catch (Exception e) {
+                if (Thread.currentThread().isInterrupted()) return;
                 main.post(
                     () -> {
-                      if (progress != null) progress.dismiss();
+                      if (generation != jobGeneration) return;
+                      jobDialog.dismiss();
+                      progress = null;
                       if (!isFinishing() && !isDestroyed()) error(e);
                     });
               }
@@ -1540,7 +1597,7 @@ public final class MainActivity extends Activity {
                   new Intent(
                       android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                       Uri.parse("package:" + getPackageName()))));
-      actionRow(body, "About Lively Android", "Version 0.1.0 • GPL-3.0", this::about);
+      actionRow(body, "About Lively Android", "Version 0.2.0 • GPL-3.0", this::about);
     }
   }
 
@@ -1673,17 +1730,13 @@ public final class MainActivity extends Activity {
   }
 
   private void controlPanel() {
+    if (controlDialog != null) controlDialog.dismiss();
     Wallpaper active = library.find(Settings.active(this));
     LinearLayout body = column();
     body.setPadding(dp(22), dp(10), dp(22), dp(20));
-    ImageView figure = new ImageView(this);
-    try (InputStream in = getAssets().open("display-engine.png")) {
-      figure.setImageBitmap(BitmapFactory.decodeStream(in));
-    } catch (Exception ignored) {
-    }
-    figure.setContentDescription("Isometric display, decoder and memory modules");
-    figure.setScaleType(ImageView.ScaleType.FIT_CENTER);
+    EngineFigureView figure = new EngineFigureView(this, light);
     add(body, figure, -1, 160);
+    add(body, text("Rendering illustration • tap to pause animation", 12, muted, false), -1, 32);
     add(body, text(active.title, 24, fg, true), -1, 44);
     add(
         body,
@@ -1696,6 +1749,7 @@ public final class MainActivity extends Activity {
         32);
     add(body, text(deviceInfo(), 13, muted, false), -1, -2);
     add(body, button("Preview active wallpaper", () -> showDetail(active), true), -1, 48);
+    add(body, button("Set active wallpaper", () -> apply(active), false), -1, 56);
     add(
         body,
         button(
@@ -1709,11 +1763,14 @@ public final class MainActivity extends Activity {
         56);
     ScrollView scroll = new ScrollView(this);
     scroll.addView(body);
-    new AlertDialog.Builder(this)
-        .setTitle("Active wallpapers")
-        .setView(scroll)
-        .setPositiveButton("Done", null)
-        .show();
+    controlDialog =
+        // Keep the illustration's bounded animation in sync with scroll visibility.
+        new AlertDialog.Builder(this)
+            .setTitle("Active wallpapers")
+            .setView(scroll)
+            .setPositiveButton("Done", null)
+            .show();
+    scroll.setOnScrollChangeListener((v,x,y,ox,oy) -> figure.refreshMotion());
   }
 
   private String deviceInfo() {
@@ -1830,15 +1887,43 @@ public final class MainActivity extends Activity {
 
   protected void onPause() {
     super.onPause();
-    if (preview != null) preview.visible(false);
+    if (preview != null) {
+      preview.visible(false);
+      preview.trim();
+    }
     main.removeCallbacks(sampleMemory);
+    main.removeCallbacks(updatePreviewStatus);
   }
 
   protected void onResume() {
     super.onResume();
     if (preview != null) preview.visible(true);
     if (chart != null) main.post(sampleMemory);
+    if (previewStatus != null) main.post(updatePreviewStatus);
+    if (pendingApply != null && WallpaperSelection.installed(this)) {
+      WallpaperSelection.finish(this, false);
+      if (pendingApply.equals(Settings.active(this))) {
+        pendingApply = null;
+        if (detailDialog != null) detailDialog.dismiss();
+        build();
+      }
+    }
   }
+
+  private final Runnable updatePreviewStatus =
+      new Runnable() {
+        public void run() {
+          if (previewStatus == null || detail == null || isFinishing() || isDestroyed()) return;
+          String value =
+              detail.kind.equals("image")
+                  ? (imagePreview != null && imagePreview.getDrawable() != null
+                      ? "Original image ready"
+                      : "Loading image…")
+                  : preview == null ? "Loading preview…" : preview.status();
+          if (!value.contentEquals(previewStatus.getText())) previewStatus.setText(value);
+          main.postDelayed(this, 500);
+        }
+      };
 
   protected void onDestroy() {
     closePreview();

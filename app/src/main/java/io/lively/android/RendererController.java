@@ -18,6 +18,8 @@ final class RendererController
   private boolean visible, closed, charging;
   private int battery = 100, thermal;
   private String currentId = "";
+  private boolean stagingStill;
+  private long stillStarted;
   private final BroadcastReceiver receiver =
       new BroadcastReceiver() {
         public void onReceive(Context c, Intent i) {
@@ -68,6 +70,7 @@ final class RendererController
             renderer.release();
             renderer = null;
           }
+          stagingStill = false;
           if (!preview) Metrics.state = "Paused • resources released";
         }
       };
@@ -112,26 +115,21 @@ final class RendererController
     if (closed) return;
     android.content.SharedPreferences p = Settings.of(context);
     boolean run =
-        EnginePolicy.shouldRun(
-            visible,
-            preview || power.isInteractive(),
-            !preview && p.getBoolean("paused", false),
-            power.isPowerSaveMode(),
-            p.getBoolean("pause_saver", true),
-            charging,
-            !preview && p.getBoolean("pause_battery", false),
-            battery,
-            p.getInt("low_battery", 15),
-            thermal >= PowerManager.THERMAL_STATUS_SEVERE,
-            p.getBoolean("pause_thermal", true));
+        preview
+            ? visible
+            : EnginePolicy.shouldRun(
+                visible,
+                power.isInteractive(),
+                p.getBoolean("paused", false),
+                power.isPowerSaveMode(),
+                p.getBoolean("pause_saver", true),
+                charging,
+                p.getBoolean("pause_battery", false),
+                battery,
+                p.getInt("low_battery", 15),
+                thermal >= PowerManager.THERMAL_STATUS_SEVERE,
+                p.getBoolean("pause_thermal", true));
     handler.removeCallbacks(discard);
-    if (!run) {
-      if (renderer != null) renderer.pause();
-      if (!preview)
-        Metrics.state = !visible ? "Paused • wallpaper hidden" : "Paused • power or playback rule";
-      handler.postDelayed(discard, 15000);
-      return;
-    }
     Wallpaper w =
         fixedWallpaper == null
             ? new LibraryStore(context).find(Settings.active(context))
@@ -139,17 +137,71 @@ final class RendererController
     if (renderer != null && (!currentId.equals(w.id) || renderer.failed())) {
       renderer.release();
       renderer = null;
+      stagingStill = false;
+      handler.removeCallbacks(settleStill);
     }
+    if (!run) {
+      if (!visible && (renderer instanceof VideoRenderer || renderer instanceof WebRenderer)) {
+        renderer.release();
+        renderer = null;
+      }
+      // Decode a first frame for a newly attached visible wallpaper while paused.
+      // Keep that frame, but never start rendering while hidden or screen-off.
+      if (visible && power.isInteractive() && (renderer == null || !renderer.ready())) {
+        ensureRenderer(w);
+        if (!stagingStill && !renderer.failed()) {
+          stagingStill = true;
+          stillStarted = SystemClock.uptimeMillis();
+          renderer.configure();
+          renderer.start();
+          handler.postDelayed(settleStill, 100);
+        }
+      } else {
+        stagingStill = false;
+        handler.removeCallbacks(settleStill);
+        if (renderer != null) renderer.pause();
+      }
+      if (!preview)
+        Metrics.state = !visible ? "Paused • wallpaper hidden" : "Paused • power or playback rule";
+      if (!visible || !power.isInteractive()) handler.postDelayed(discard, 15000);
+      return;
+    }
+    stagingStill = false;
+    handler.removeCallbacks(settleStill);
+    ensureRenderer(w);
+    renderer.configure();
+    renderer.start();
+    if (!preview) Metrics.state = "Playing • " + w.typeLabel();
+  }
+
+  private void ensureRenderer(Wallpaper w) {
     if (renderer == null) {
       currentId = w.id;
       if (w.builtin()) renderer = new ShaderRenderer(context, w, surface, width, height);
       else if (w.kind.equals("video")) renderer = new VideoRenderer(context, w, surface);
-      else if (w.kind.equals("web")) renderer = new WebRenderer(context, w, surface, width, height);
-      else renderer = new ImageRenderer(context, w, surface, width, height);
+      else if (w.kind.equals("web")) {
+        int[] d = EnginePolicy.dimensions(width, height, Settings.cap(context));
+        renderer = new WebRenderer(context, w, surface, d[0], d[1]);
+      } else renderer = new ImageRenderer(context, w, surface, width, height);
     }
-    renderer.configure();
-    renderer.start();
-    if (!preview) Metrics.state = "Playing • " + w.typeLabel();
+  }
+
+  private final Runnable settleStill =
+      new Runnable() {
+        public void run() {
+          if (closed || !stagingStill || renderer == null) return;
+          long elapsed = SystemClock.uptimeMillis() - stillStarted;
+          if ((renderer.ready() && elapsed >= 300) || renderer.failed() || elapsed >= 10000) {
+            renderer.pause();
+            stagingStill = false;
+          } else handler.postDelayed(this, 100);
+        }
+      };
+
+  String status() {
+    if (renderer != null && !renderer.error().isEmpty()) return renderer.error();
+    if (!visible) return "Preview paused";
+    return renderer != null && renderer.ready() ? "Live preview ready" : "Loading preview…";
   }
 
   void touch(float x, float y, int action) {
@@ -161,6 +213,8 @@ final class RendererController
 
   void trim() {
     handler.removeCallbacks(discard);
+    handler.removeCallbacks(settleStill);
+    stagingStill = false;
     if (renderer != null) {
       renderer.release();
       renderer = null;
@@ -180,7 +234,13 @@ final class RendererController
     handler.post(
         () -> {
           if (renderer instanceof WebRenderer
-              && (key.equals("web_network") || key.endsWith("property."))) {
+              && (key.equals("web_network") || key.contains(".property."))) {
+            renderer.release();
+            renderer = null;
+          }
+          if ("resolution".equals(key)
+              && renderer != null
+              && (renderer instanceof ImageRenderer || renderer instanceof WebRenderer)) {
             renderer.release();
             renderer = null;
           }

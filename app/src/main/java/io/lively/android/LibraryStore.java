@@ -57,114 +57,148 @@ public final class LibraryStore {
 
   public synchronized Wallpaper importUri(Uri uri) throws Exception {
     String name = "wallpaper";
-    String mime = context.getContentResolver().getType(uri);
+    String mime = null;
+    try {
+      mime = context.getContentResolver().getType(uri);
+    } catch (RuntimeException ignored) {
+    }
     try (Cursor cur =
         context
             .getContentResolver()
             .query(uri, new String[] {OpenableColumns.DISPLAY_NAME}, null, null, null)) {
-      if (cur != null && cur.moveToFirst()) name = cur.getString(0);
+      if (cur != null && cur.moveToFirst() && !cur.isNull(0)) name = cur.getString(0);
+    } catch (RuntimeException ignored) {
+      // Cloud/share providers may omit display-name metadata; bytes remain readable.
     }
-    boolean zip = name.toLowerCase(Locale.ROOT).endsWith(".zip") || "application/zip".equals(mime);
+    if (name == null || name.trim().isEmpty()) name = "wallpaper";
+    String suffix = EnginePolicy.mimeExtension(mime);
+    boolean zip = name.toLowerCase(Locale.ROOT).endsWith(".zip") || suffix.equals(".zip");
     String kind = EnginePolicy.kind(name);
-    if (!zip && kind.isEmpty()) {
-      if (mime != null && mime.startsWith("video/")) {
-        kind = "video";
-        name += ".mp4";
-      } else if (mime != null && mime.startsWith("image/")) {
-        kind = "image";
-        name += ".jpg";
-      } else throw new IOException("Choose a video, image, GIF, HTML file or Lively ZIP package.");
-    }
     String id = UUID.randomUUID().toString();
     File dir = new File(root, id);
     dir.mkdirs();
     try {
       Wallpaper w;
-      InputStream in = context.getContentResolver().openInputStream(uri);
-      if (in == null) throw new IOException("File cannot be opened");
-      if (zip) {
-        ZipSandbox.extract(in, dir);
-        File meta = new File(dir, "LivelyInfo.json");
-        if (!meta.exists()) meta = new File(dir, "livelyinfo.json");
-        if (!meta.exists()) {
-          File[] children = dir.listFiles();
-          if (children != null && children.length == 1 && children[0].isDirectory()) {
-            File child = children[0];
-            for (File f : child.listFiles())
-              if (!f.renameTo(new File(dir, f.getName())))
-                throw new IOException("Cannot unpack folder");
-            child.delete();
-            meta = new File(dir, "LivelyInfo.json");
-            if (!meta.exists()) meta = new File(dir, "livelyinfo.json");
+      InputStream opened = context.getContentResolver().openInputStream(uri);
+      if (opened == null) throw new IOException("File cannot be opened");
+      try (BufferedInputStream in = new BufferedInputStream(opened)) {
+        in.mark(32);
+        byte[] header = new byte[16];
+        int headerSize = in.read(header);
+        in.reset();
+        if (headerSize >= 4
+            && header[0] == 'P'
+            && header[1] == 'K'
+            && header[2] == 3
+            && header[3] == 4) zip = true;
+        if (!zip && kind.isEmpty()) {
+          if (suffix.isEmpty()) {
+            if (headerSize >= 3 && header[0] == 'G' && header[1] == 'I' && header[2] == 'F')
+              suffix = ".gif";
+            else if (headerSize >= 12 && header[0] == 'R' && header[8] == 'W' && header[9] == 'E')
+              suffix = ".webp";
+            else if (headerSize >= 4 && header[1] == 'P' && header[2] == 'N' && header[3] == 'G')
+              suffix = ".png";
+            else if (headerSize >= 2 && (header[0] & 255) == 255 && (header[1] & 255) == 216)
+              suffix = ".jpg";
+            else if (headerSize >= 12
+                && header[4] == 'f'
+                && header[5] == 't'
+                && header[6] == 'y'
+                && header[7] == 'p') suffix = ".mp4";
           }
+          kind = EnginePolicy.kind(suffix);
+          if (kind.isEmpty())
+            throw new IOException("Choose a video, image, GIF, HTML file or Lively ZIP package.");
+          name += suffix;
         }
-        if (!meta.exists()) throw new IOException("This ZIP does not contain LivelyInfo.json");
-        JSONObject j = new JSONObject(read(meta, 1024 * 1024));
-        int type = j.optInt("Type", 1);
-        if (type == 0 || type == 4 || type == 5 || type == 6 || type == 9)
-          throw new IOException(
-              "This package needs a Windows application or game runtime. Choose a web, video or"
-                  + " image package.");
-        String source = j.optString("FileName");
-        kind = EnginePolicy.kind(source);
-        if (type == 3 || type == 10) {
-          if (!validUrl(source)) throw new IOException("Wallpaper links must use HTTPS");
-          kind = type == 10 ? "video" : "web";
-        } else {
-          File f = ZipSandbox.resolve(dir, source);
-          if (!f.isFile() || kind.isEmpty())
-            throw new IOException("Unsupported or missing wallpaper media");
-        }
-        String thumb = j.optString("Thumbnail");
-        if (!thumb.isEmpty() && !ZipSandbox.resolve(dir, thumb).isFile()) thumb = "";
-        w =
-            new Wallpaper(
-                id,
-                trim(j.optString("Title", "Imported wallpaper"), 120),
-                trim(j.optString("Desc", "Lively wallpaper package"), 500),
-                trim(j.optString("Author", "Unknown author"), 120),
-                kind,
-                source,
-                thumb,
-                0);
-      } else {
-        String safe = name.replaceAll("[^a-zA-Z0-9._-]", "_");
-        if (safe.length() > 120) safe = safe.substring(safe.length() - 120);
-        if (safe.isEmpty()) safe = "wallpaper";
-        File output = new File(dir, safe);
-        copyLimited(in, new FileOutputStream(output), 1024L * 1024 * 1024);
-        if (kind.equals("web")) {
-        } else if (kind.equals("video")) {
-          MediaMetadataRetriever r = new MediaMetadataRetriever();
-          try {
-            r.setDataSource(output.getPath());
-            if (r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) == null)
-              throw new IOException("File contains no playable video");
-          } finally {
-            r.release();
+        if (zip) {
+          ZipSandbox.extract(in, dir);
+          File meta = new File(dir, "LivelyInfo.json");
+          if (!meta.exists()) meta = new File(dir, "livelyinfo.json");
+          if (!meta.exists()) {
+            File[] children = dir.listFiles();
+            if (children != null && children.length == 1 && children[0].isDirectory()) {
+              File child = children[0];
+              for (File f : child.listFiles())
+                if (!f.renameTo(new File(dir, f.getName())))
+                  throw new IOException("Cannot unpack folder");
+              child.delete();
+              meta = new File(dir, "LivelyInfo.json");
+              if (!meta.exists()) meta = new File(dir, "livelyinfo.json");
+            }
           }
+          if (!meta.exists()) throw new IOException("This ZIP does not contain LivelyInfo.json");
+          JSONObject j = new JSONObject(read(meta, 1024 * 1024));
+          int type = j.optInt("Type", 1);
+          if (type == 0 || type == 4 || type == 5 || type == 6 || type == 9)
+            throw new IOException(
+                "This package needs a Windows application or game runtime. Choose a web, video or"
+                    + " image package.");
+          String source = j.optString("FileName").replace('\\', '/');
+          kind = EnginePolicy.kind(source);
+          if (type == 3 || type == 10) {
+            if (!validUrl(source)) throw new IOException("Wallpaper links must use HTTPS");
+            kind = type == 10 ? "video" : "web";
+          } else {
+            File f = ZipSandbox.resolve(dir, source);
+            if (!f.isFile() || kind.isEmpty())
+              throw new IOException("Unsupported or missing wallpaper media");
+          }
+          String thumb = j.optString("Thumbnail").replace('\\', '/');
+          if (!thumb.isEmpty() && !ZipSandbox.resolve(dir, thumb).isFile()) thumb = "";
+          w =
+              new Wallpaper(
+                  id,
+                  trim(j.optString("Title", "Imported wallpaper"), 120),
+                  trim(j.optString("Desc", "Lively wallpaper package"), 500),
+                  trim(j.optString("Author", "Unknown author"), 120),
+                  kind,
+                  source,
+                  thumb,
+                  0);
         } else {
-          BitmapFactory.Options o = new BitmapFactory.Options();
-          o.inJustDecodeBounds = true;
-          BitmapFactory.decodeFile(output.getPath(), o);
-          if (o.outWidth <= 0)
-            throw new IOException("Image format is not supported by this Android version");
+          String safe = name.replaceAll("[^a-zA-Z0-9._-]", "_");
+          if (safe.length() > 120) safe = safe.substring(safe.length() - 120);
+          if (safe.isEmpty()) safe = "wallpaper";
+          File output = new File(dir, safe);
+          copyLimited(in, new FileOutputStream(output), 1024L * 1024 * 1024);
+          if (kind.equals("web")) {
+          } else if (kind.equals("video")) {
+            MediaMetadataRetriever r = new MediaMetadataRetriever();
+            try {
+              r.setDataSource(output.getPath());
+              if (r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) == null)
+                throw new IOException("File contains no playable video");
+            } finally {
+              r.release();
+            }
+          } else {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(output.getPath(), o);
+            if (o.outWidth <= 0)
+              throw new IOException("Image format is not supported by this Android version");
+          }
+          String title =
+              name.lastIndexOf('.') > 0 ? name.substring(0, name.lastIndexOf('.')) : name;
+          w =
+              new Wallpaper(
+                  id,
+                  trim(title, 120),
+                  kind.equals("video")
+                      ? "Original video • no transcoding"
+                      : "Original media • stored locally",
+                  "You",
+                  kind,
+                  safe,
+                  "",
+                  0);
         }
-        String title = name.lastIndexOf('.') > 0 ? name.substring(0, name.lastIndexOf('.')) : name;
-        w =
-            new Wallpaper(
-                id,
-                trim(title, 120),
-                kind.equals("video")
-                    ? "Original video • no transcoding"
-                    : "Original media • stored locally",
-                "You",
-                kind,
-                safe,
-                "",
-                0);
       }
+      if (Thread.currentThread().isInterrupted()) throw new IOException("Import cancelled");
       makeThumb(w);
+      if (Thread.currentThread().isInterrupted()) throw new IOException("Import cancelled");
       save(w);
       return w;
     } catch (Throwable e) {

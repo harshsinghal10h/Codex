@@ -27,4 +27,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: lively-ci-apk
-          path: build/Lively-Android-0.1.0.apk
+          path: build/Lively-Android-0.2.0.apk

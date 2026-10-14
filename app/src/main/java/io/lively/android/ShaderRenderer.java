@@ -19,6 +19,12 @@ final class ShaderRenderer implements Renderer {
   private EGLContext egl = EGL14.EGL_NO_CONTEXT;
   private EGLSurface window = EGL14.EGL_NO_SURFACE;
   private int program;
+  private int blitProgram, targetTexture, targetBuffer, targetWidth, targetHeight;
+  private int outputWidth, outputHeight;
+  private boolean scaledFrame;
+  private volatile int cap;
+  private volatile long renderedFrames;
+  private volatile String failure = "";
   private final FloatBuffer quad;
   private volatile boolean released, running;
   private volatile float touchX = .5f, touchY = .5f, speed = 1, intensity = 1;
@@ -40,13 +46,12 @@ final class ShaderRenderer implements Renderer {
   }
 
   private void init() throws Exception {
-    display = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
-    int[] ver = new int[2];
-    if (!EGL14.eglInitialize(display, ver, 0, ver, 1))
-      throw new IOException("Cannot initialise OpenGL");
+    display = EglRuntime.acquire();
     int[] attrs = {
       EGL14.EGL_RENDERABLE_TYPE,
       EGL14.EGL_OPENGL_ES2_BIT,
+      EGL14.EGL_SURFACE_TYPE,
+      EGL14.EGL_WINDOW_BIT,
       EGL14.EGL_RED_SIZE,
       8,
       EGL14.EGL_GREEN_SIZE,
@@ -72,6 +77,11 @@ final class ShaderRenderer implements Renderer {
         EGL14.eglCreateWindowSurface(display, configs[0], surface, new int[] {EGL14.EGL_NONE}, 0);
     if (window == EGL14.EGL_NO_SURFACE) throw new IOException("Wallpaper surface is unavailable");
     EGL14.eglMakeCurrent(display, window, window, egl);
+    int[] actual = new int[1];
+    EGL14.eglQuerySurface(display, window, EGL14.EGL_WIDTH, actual, 0);
+    outputWidth = Math.max(1, actual[0]);
+    EGL14.eglQuerySurface(display, window, EGL14.EGL_HEIGHT, actual, 0);
+    outputHeight = Math.max(1, actual[0]);
     EGL14.eglSwapInterval(display, 1);
     String frag;
     try (InputStream in = context.getAssets().open("scene.frag")) {
@@ -110,6 +120,105 @@ final class ShaderRenderer implements Renderer {
     GLES20.glUniform2f(resLoc, width, height);
   }
 
+  private void bindQuad(int p) {
+    GLES20.glUseProgram(p);
+    int pos = GLES20.glGetAttribLocation(p, "p");
+    GLES20.glEnableVertexAttribArray(pos);
+    quad.position(0);
+    GLES20.glVertexAttribPointer(pos, 2, GLES20.GL_FLOAT, false, 0, quad);
+  }
+
+  private void renderTarget() throws IOException {
+    int[] dims = EnginePolicy.dimensions(outputWidth, outputHeight, cap);
+    scaledFrame = dims[0] != outputWidth || dims[1] != outputHeight;
+    if (dims[0] == outputWidth && dims[1] == outputHeight) {
+      deleteTarget();
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      GLES20.glViewport(0, 0, outputWidth, outputHeight);
+      bindQuad(program);
+      GLES20.glUniform2f(resLoc, outputWidth, outputHeight);
+      return;
+    }
+    if (blitProgram == 0) {
+      int v =
+          shader(
+              GLES20.GL_VERTEX_SHADER,
+              "attribute vec2 p;varying vec2 uv;void"
+                  + " main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}");
+      int f =
+          shader(
+              GLES20.GL_FRAGMENT_SHADER,
+              "precision mediump float;varying vec2 uv;uniform sampler2D image;void"
+                  + " main(){gl_FragColor=texture2D(image,uv);}");
+      blitProgram = GLES20.glCreateProgram();
+      GLES20.glAttachShader(blitProgram, v);
+      GLES20.glAttachShader(blitProgram, f);
+      GLES20.glLinkProgram(blitProgram);
+      int[] ok = new int[1];
+      GLES20.glGetProgramiv(blitProgram, GLES20.GL_LINK_STATUS, ok, 0);
+      GLES20.glDeleteShader(v);
+      GLES20.glDeleteShader(f);
+      if (ok[0] == 0) throw new IOException("Cannot scale the scene render target");
+    }
+    if (targetWidth != dims[0] || targetHeight != dims[1]) {
+      deleteTarget();
+      int[] id = new int[1];
+      GLES20.glGenTextures(1, id, 0);
+      targetTexture = id[0];
+      GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, targetTexture);
+      GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+      GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+      GLES20.glTexParameteri(
+          GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+      GLES20.glTexParameteri(
+          GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+      GLES20.glTexImage2D(
+          GLES20.GL_TEXTURE_2D,
+          0,
+          GLES20.GL_RGBA,
+          dims[0],
+          dims[1],
+          0,
+          GLES20.GL_RGBA,
+          GLES20.GL_UNSIGNED_BYTE,
+          null);
+      GLES20.glGenFramebuffers(1, id, 0);
+      targetBuffer = id[0];
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, targetBuffer);
+      GLES20.glFramebufferTexture2D(
+          GLES20.GL_FRAMEBUFFER,
+          GLES20.GL_COLOR_ATTACHMENT0,
+          GLES20.GL_TEXTURE_2D,
+          targetTexture,
+          0);
+      if (GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER) != GLES20.GL_FRAMEBUFFER_COMPLETE)
+        throw new IOException("Cannot allocate the requested scene resolution");
+      targetWidth = dims[0];
+      targetHeight = dims[1];
+    }
+    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, targetBuffer);
+    GLES20.glViewport(0, 0, targetWidth, targetHeight);
+    bindQuad(program);
+    GLES20.glUniform2f(resLoc, targetWidth, targetHeight);
+  }
+
+  private void present() {
+    if (!scaledFrame) return;
+    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+    GLES20.glViewport(0, 0, outputWidth, outputHeight);
+    bindQuad(blitProgram);
+    GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, targetTexture);
+    GLES20.glUniform1i(GLES20.glGetUniformLocation(blitProgram, "image"), 0);
+    GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+  }
+
+  private void deleteTarget() {
+    if (targetBuffer != 0) GLES20.glDeleteFramebuffers(1, new int[] {targetBuffer}, 0);
+    if (targetTexture != 0) GLES20.glDeleteTextures(1, new int[] {targetTexture}, 0);
+    targetTexture = targetBuffer = targetWidth = targetHeight = 0;
+  }
+
   private int shader(int type, String source) throws IOException {
     int s = GLES20.glCreateShader(type);
     GLES20.glShaderSource(s, source);
@@ -131,6 +240,7 @@ final class ShaderRenderer implements Renderer {
           long frameStarted = SystemClock.uptimeMillis();
           try {
             if (program == 0) init();
+            renderTarget();
             float t = (elapsed + SystemClock.elapsedRealtime() - startTime) * .001f * speed;
             GLES20.glUniform1f(timeLoc, t);
             GLES20.glUniform2f(touchLoc, touchX, 1 - touchY);
@@ -142,14 +252,17 @@ final class ShaderRenderer implements Renderer {
                 ((color >> 8) & 255) / 255f,
                 (color & 255) / 255f);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+            present();
             if (!EGL14.eglSwapBuffers(display, window))
               throw new IOException("Wallpaper surface closed");
             Metrics.frame(context);
+            renderedFrames++;
             handler.postDelayed(
                 this, Math.max(1, 1000 / fps - (SystemClock.uptimeMillis() - frameStarted)));
           } catch (Exception e) {
             running = false;
-            Metrics.error(context, "Scene renderer: " + e.getMessage());
+            failure = "Scene renderer: " + e.getMessage();
+            Metrics.error(context, failure);
             cleanup();
           }
         }
@@ -175,6 +288,7 @@ final class ShaderRenderer implements Renderer {
   }
 
   public void configure() {
+    cap = Settings.cap(context);
     PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
     fps =
         EnginePolicy.frameRate(
@@ -193,16 +307,19 @@ final class ShaderRenderer implements Renderer {
 
   private void cleanup() {
     if (display != EGL14.EGL_NO_DISPLAY) {
+      deleteTarget();
+      if (blitProgram != 0) GLES20.glDeleteProgram(blitProgram);
       if (program != 0) GLES20.glDeleteProgram(program);
       EGL14.eglMakeCurrent(
           display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
       if (window != EGL14.EGL_NO_SURFACE) EGL14.eglDestroySurface(display, window);
       if (egl != EGL14.EGL_NO_CONTEXT) EGL14.eglDestroyContext(display, egl);
-      EGL14.eglTerminate(display);
+      EglRuntime.release();
       EGL14.eglReleaseThread();
     }
     display = EGL14.EGL_NO_DISPLAY;
     program = 0;
+    blitProgram = 0;
   }
 
   public void release() {
@@ -225,5 +342,17 @@ final class ShaderRenderer implements Renderer {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
+  }
+
+  public boolean failed() {
+    return released || !failure.isEmpty();
+  }
+
+  public boolean ready() {
+    return renderedFrames > 0;
+  }
+
+  public String error() {
+    return failure;
   }
 }

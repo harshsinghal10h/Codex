@@ -22,6 +22,8 @@ final class WebRenderer implements Renderer {
   private Presentation presentation;
   private WebView view;
   private boolean running, released;
+  private boolean loaded;
+  private String failure = "";
   private static final Set<WebRenderer> active = new HashSet<>();
 
   WebRenderer(Context c, Wallpaper w, Surface s, int width, int height) {
@@ -90,16 +92,21 @@ final class WebRenderer implements Renderer {
           }
 
           public void onPageFinished(WebView v, String url) {
+            loaded = true;
             configure();
             if (!running) v.onPause();
           }
 
           public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-            if (r.isForMainFrame()) Metrics.error(context, "Web wallpaper: " + e.getDescription());
+            if (r.isForMainFrame()) {
+              failure = "Web wallpaper: " + e.getDescription();
+              Metrics.error(context, failure);
+            }
           }
 
           public boolean onRenderProcessGone(WebView v, RenderProcessGoneDetail detail) {
-            Metrics.error(context, "Web renderer stopped. Reopen the wallpaper to retry.");
+            failure = "Web renderer stopped. Reopen the wallpaper to retry.";
+            Metrics.error(context, failure);
             release();
             return true;
           }
@@ -143,7 +150,8 @@ final class WebRenderer implements Renderer {
               + " livelyWallpaperPlaybackChanged==='function')livelyWallpaperPlaybackChanged(true)",
           null);
     } catch (Exception e) {
-      Metrics.error(context, "Web engine: " + e.getMessage());
+      failure = "Web engine: " + e.getMessage();
+      Metrics.error(context, failure);
       release();
     }
   }
@@ -163,7 +171,15 @@ final class WebRenderer implements Renderer {
   }
 
   public boolean failed() {
-    return released;
+    return released || !failure.isEmpty();
+  }
+
+  public boolean ready() {
+    return loaded && !failed();
+  }
+
+  public String error() {
+    return failure;
   }
 
   public void release() {
