@@ -53,6 +53,16 @@ public final class Smoke extends Instrumentation {
    while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&s.optLong("time")>=7900&&!s.optBoolean("guardMasked")){clear=true;break;}Thread.sleep(30);}
    ui(()->set(service,"listener",original));
    if(!clear)throw new Exception("The native skip/mask scheduler did not complete: "+s);report.put("synthetic_skip",true).put("mask_applied",maskObserved.get()).put("clear_position_ms",s.optLong("time"));
+   // Exercise real command paths against a synthetic blocked opening.
+   ui(()->{service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"pause",new JSONObject());Class<?> timeline=Class.forName("com.harsh.vlcglass.SafetyTimeline");set(service,"schedule",timeline.getConstructor(long[].class,long[].class,long.class).newInstance(new long[]{0},new long[]{2000},duration));maskObserved.set(false);set(service,"listener",observed);service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"previous",new JSONObject());});
+   until=SystemClock.uptimeMillis()+10000;clear=false;
+   while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&!s.optBoolean("guardMasked")&&s.optLong("time")>=2000){clear=true;break;}Thread.sleep(30);}
+   if(!clear)throw new Exception("Previous exposed or failed to skip the protected opening: "+s);report.put("protected_previous",true);
+   ui(()->{Object engine=field(service,"engine");engine.getClass().getMethod("stop").invoke(engine);maskObserved.set(false);service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"play",new JSONObject());});
+   until=SystemClock.uptimeMillis()+10000;clear=false;
+   while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&!s.optBoolean("guardMasked")&&s.optBoolean("playing")&&s.optLong("time")>=2000){clear=true;break;}Thread.sleep(30);}
+   ui(()->set(service,"listener",original));
+   if(!clear)throw new Exception("Replay exposed or failed to skip the protected opening: "+s);report.put("protected_replay",true);
    js("host('pause');showHUD();true");dismissTutorial();ui(()->activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));Thread.sleep(1500);
    String fits="(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");report.put("responsive_prompt",true).put("portrait_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-portrait.png");
