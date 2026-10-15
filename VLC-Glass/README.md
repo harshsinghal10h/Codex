@@ -50,6 +50,7 @@ These are development builds. Native iOS, Windows ARM64, Android before 9, comme
 
 ```sh
 python3 tools/prepare_dependencies.py
+npm ci
 python3 tools/build.py --keystore /private/path/signing.p12 --universal
 ```
 
@@ -70,3 +71,5 @@ Local library, folders, playlists, favorites, saved positions, queue, tracks and
 ## Notices
 
 Application source retains GPL-3.0. SentrySearch and LAYA retain Apache-2.0. NudeNet's bundled license text is AGPL-3.0, despite conflicting MIT package metadata; the supplied license is included rather than assuming a permissive grant. Full corresponding application/adapter source is provided. See `NOTICE.md` and `licenses/` for dependencies and attribution.
+
+Android packages lower UI JavaScript/CSS syntax for the stock Android 9 WebView and include small API/layout fallbacks. Modern WebViews retain their supported glass effects. macOS uses a LibVLC frame-callback surface by default so video presentation works without an embedded legacy OpenGL context; it keeps only the latest frame and bounds software presentation to 3840×2160. Physical-device frame rate, HDR, and high-resolution energy use remain unmeasured. Source users can opt into native Cocoa output with `VLCGLASS_NATIVE_VIDEO=1`.

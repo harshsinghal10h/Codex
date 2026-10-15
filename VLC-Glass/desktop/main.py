@@ -82,7 +82,12 @@ class Player(QMainWindow):
         self.sentry=SentryAdapter(self.data/'sentry-index',upstream)
         self.vlc=vlc.Instance('--no-plugins-cache','--no-video-title-show','--no-snapshot-preview','--audio-time-stretch');self.player=self.vlc.media_player_new()
         container=QWidget();self.setCentralWidget(container);layout=QStackedLayout(container);layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
-        self.surface=QWidget();self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
+        self.software_video=sys.platform=='darwin' and os.environ.get('VLCGLASS_NATIVE_VIDEO')!='1'
+        if self.software_video:
+            from desktop.video_surface import VideoSurface
+            self.surface=VideoSurface();self.surface.attach(self.player)
+        else:self.surface=QWidget()
+        self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
         self.web=QWebEngineView();self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground);page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
         self.assets=Assets(self.web);page.profile().installUrlSchemeHandler(b'vlcglass',self.assets)
         self.bridge=Bridge();self.bridge.incoming.connect(self.request);channel=QWebChannel(page);channel.registerObject('native',self.bridge);page.setWebChannel(channel);self.channel=channel
@@ -92,7 +97,8 @@ class Player(QMainWindow):
         script.setSourceCode("(()=>{let q=[],bridge;window.GlassHost={request:s=>bridge?bridge.request(s):q.push(s)};"+lib+";new QWebChannel(qt.webChannelTransport,c=>{bridge=c.objects.native;q.forEach(s=>bridge.request(s));q=[];});})();")
         page.scripts().insert(script)
         handle=int(self.surface.winId())
-        if sys.platform=='win32':self.player.set_hwnd(handle)
+        if self.software_video:pass
+        elif sys.platform=='win32':self.player.set_hwnd(handle)
         elif sys.platform=='darwin':self.player.set_nsobject(handle)
         else:self.player.set_xwindow(handle)
         self.worker_event.connect(self.handle_worker_event)
@@ -119,6 +125,7 @@ class Player(QMainWindow):
         status={vlc.State.NothingSpecial:0,vlc.State.Opening:1,vlc.State.Buffering:2,vlc.State.Playing:3,vlc.State.Paused:4,vlc.State.Stopped:5,vlc.State.Ended:6,vlc.State.Error:7}.get(self.player.get_state(),0)
         return {'current':self.current,'item':self.row(),'playing':bool(self.player.is_playing()),'time':max(0,self.player.get_time()),'duration':max(0,self.player.get_length()) or self.guard.get('duration',0),'seekable':bool(self.player.is_seekable()),'status':status,'speed':self.player.get_rate() or 1,'volume':self.player.audio_get_volume(),'queue':self.queue,'cursor':self.cursor,'repeat':self.repeat,'shuffle':self.shuffle,'sleepAt':self.sleep_at,'abA':self.ab_a,'abB':self.ab_b,'guard':self.guard,'details':self.details() if self.current>0 else {},'bookmarks':self.bookmarks.get(str(self.current),[]),'error':self.fault}
     def protect(self,hidden):
+        if self.software_video:self.surface.set_masked(hidden)
         self.surface.setVisible(not hidden);self.player.audio_set_mute(bool(hidden))
     def save_progress(self):
         if self.current>0 and self.player.get_length()>0:
@@ -153,7 +160,9 @@ class Player(QMainWindow):
         if self.schedule:
             start=self.schedule.target(start) or start
             if start>=self.schedule.duration-80:raise ValueError('All remaining video is inside detected sections.')
-        medium=self.vlc.media_new(item['uri']);medium.add_option(':network-caching='+str(self.settings.get('networkCache',1000)))
+        medium=self.vlc.media_new(item['uri'])
+        if self.software_video or self.settings.get('decoder')=='software':medium.add_option(':avcodec-hw=none')
+        medium.add_option(':network-caching='+str(self.settings.get('networkCache',1000)))
         if start>0:medium.add_option(':start-time='+str(start/1000))
         self.player.set_media(medium);medium.release();self.player.audio_set_volume(int(self.settings.get('volume',80)));self.player.set_rate(float(self.settings.get('speed',1)))
         if self.schedule:self.protect(True);self.seek_target=start;self.seek_at=time.monotonic()

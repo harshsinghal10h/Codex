@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "node tools/preview.mjs",
-    "check": "node --check assets/ui/app.js && node --check assets/ui/player.js && node --check assets/ui/glass.js && node --check assets/ui/host.js && node --check assets/ui/deck.js && node --check assets/ui/intelligence.js",
+    "check": "node --check assets/ui/app.js && node --check assets/ui/player.js && node --check assets/ui/glass.js && node --check assets/ui/host.js && node --check assets/ui/deck.js && node --check assets/ui/intelligence.js && node --check assets/ui/compat.js",
     "build:android": "python3 tools/build.py"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

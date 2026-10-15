@@ -11,6 +11,7 @@ for name in ['classes','dex','packed-assets']:
  if name!='packed-assets':(B/name).mkdir()
 shutil.copytree(P/'assets',B/'packed-assets',ignore=shutil.ignore_patterns('__qa*'))
 def run(cmd):subprocess.run(list(map(str,cmd)),check=True,cwd=P)
+run(['node',P/'tools/build_ui.mjs',B/'packed-assets/ui'])
 def quote_digest(f):return hashlib.sha256(f.read_bytes()).hexdigest()
 ort=P/'vendor/onnx-android';vlc=P/'vendor/libvlc-aar'
 if not (ort/'classes.jar').exists() or not (vlc/'classes.jar').exists():raise SystemExit('Missing pinned AARs. Run tools/prepare_dependencies.py first.')

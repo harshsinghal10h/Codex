@@ -22,7 +22,9 @@ elif sys.platform=='darwin':
     source=pathlib.Path('/Applications/VLC.app/Contents/MacOS')
     if not source.exists():raise SystemExit('Install the official VLC application first.')
     for name in ['lib','plugins','share']:
-        if (source/name).exists():shutil.copytree(source/name,vlc/name,dirs_exist_ok=True,symlinks=True)
+        if (source/name).exists():
+            if (vlc/name).exists():shutil.rmtree(vlc/name)
+            shutil.copytree(source/name,vlc/name,symlinks=True)
 else:
     source=pathlib.Path('/usr/lib/x86_64-linux-gnu')
     for name in ['libvlc.so.5','libvlccore.so.9']:

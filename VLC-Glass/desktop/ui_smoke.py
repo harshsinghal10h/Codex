@@ -15,14 +15,14 @@ def run(Player,QApplication,QTimer,argv):
     QStandardPaths.setTestModeEnabled(True)
     app=QApplication(argv);app.setOrganizationName('VLCGlassTests');app.setApplicationName('VLC Glass tests')
     window=Player();window.show();started=time.monotonic();last_check=0
-    evidence={'ui_ready':False,'native_playback':False,'scan_complete':False,'synthetic_skip':False,'responsive_prompt':False,'physical_device':False}
+    evidence={'ui_ready':False,'native_playback':False,'video_output':False,'scan_complete':False,'synthetic_skip':False,'responsive_prompt':False,'physical_device':False}
     phase='ui';previous=0;closed=False
     def finish(error=None):
         nonlocal closed
         if closed:return
         closed=True;timer.stop()
         if error:evidence['error']=str(error)
-        evidence['passed']=not error and all(evidence[k] for k in ['ui_ready','native_playback','scan_complete','synthetic_skip','responsive_prompt'])
+        evidence['passed']=not error and all(evidence[k] for k in ['ui_ready','native_playback','scan_complete','synthetic_skip','responsive_prompt','video_output'])
         report.write_text(json.dumps(evidence,indent=2));window.close();app.exit(0 if evidence['passed'] else 1)
     def ready(value):
         nonlocal phase
@@ -43,6 +43,8 @@ def run(Player,QApplication,QTimer,argv):
                 if window.guard.get('error'):finish(window.guard['error']);return
                 if window.guard.get('complete') and window.player.is_playing() and window.player.get_time()>300:
                     evidence['scan_complete']=True;evidence['native_playback']=True
+                    evidence['video_output']=window.surface.paint_count>0 if window.software_video else window.player.has_vout()>0
+                    if not evidence['video_output']:return
                     duration=window.player.get_length()
                     window.schedule=Schedule([{'start':1400,'end':3500}],duration)
                     window.guard['intervals']=[{'start':1400,'end':3500}];phase='skip';previous=window.player.get_time()
