@@ -38,12 +38,19 @@ public final class Smoke extends Instrumentation {
   report.put(label+"_playback",true).put(label+"_video_frame",true);
  }
  private void dismissTutorial(){try{android.view.accessibility.AccessibilityNodeInfo root=getUiAutomation().getRootInActiveWindow();if(root==null)return;for(android.view.accessibility.AccessibilityNodeInfo node:root.findAccessibilityNodeInfosByText("Got it")){android.view.accessibility.AccessibilityNodeInfo target=node;for(int i=0;i<3&&target!=null;i++){if(target.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))break;target=target.getParent();}}root.recycle();}catch(Exception ignored){}}
+ private boolean visibleProbe(Bitmap image,int[] rgb){
+  int count=0;for(int y=0;y<image.getHeight();y+=3)for(int x=0;x<image.getWidth();x+=3){int c=image.getPixel(x,y);if(Math.abs(android.graphics.Color.red(c)-rgb[0])<14&&Math.abs(android.graphics.Color.green(c)-rgb[1])<14&&Math.abs(android.graphics.Color.blue(c)-rgb[2])<14&&++count>=8)return true;}return false;
+ }
  private void screenshot(String name)throws Exception{
   if(!name.equals("android-error.png")){
-   js("showHUD();(()=>{const p=document.createElement('div');p.id='qa-visible-probe';p.style.cssText='position:fixed;left:6px;top:6px;width:24px;height:24px;background:#12ab34;z-index:2147483647;pointer-events:none';document.body.appendChild(p)})();true");
-   Thread.sleep(500);AtomicReference<int[]> origin=new AtomicReference<>();ui(()->{int[] xy=new int[2];web.getLocationOnScreen(xy);origin.set(xy);});float ratio=Float.parseFloat(js("devicePixelRatio"));Bitmap proof=getUiAutomation().takeScreenshot();if(proof==null)throw new Exception("No display capture");
-   try{int[] xy=origin.get();int c=proof.getPixel(xy[0]+Math.round(18*ratio),xy[1]+Math.round(18*ratio));if(Math.abs(android.graphics.Color.red(c)-18)>14||Math.abs(android.graphics.Color.green(c)-171)>14||Math.abs(android.graphics.Color.blue(c)-52)>14)throw new Exception("The glass UI is not visible on the actual display");}finally{proof.recycle();}
-   js("document.getElementById('qa-visible-probe').remove();showHUD();true");Thread.sleep(400);report.put(name.contains("portrait")?"portrait_visible_ui":"landscape_visible_ui",true);
+   final int[] rgb=name.contains("portrait")?new int[]{18,171,52}:new int[]{162,59,209};
+   js("showHUD();(()=>{const old=document.getElementById('qa-visible-probe');if(old)old.remove();const p=document.createElement('div');p.id='qa-visible-probe';p.style.cssText='position:fixed;left:6px;top:6px;width:24px;height:24px;background:rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+");z-index:2147483647;pointer-events:none';document.body.appendChild(p)})();true");
+   // Display rotation and WebView repaint are asynchronous. Check the actual
+   // screen for this orientation's unique marker, independent of DPI/offsets.
+   long until=SystemClock.uptimeMillis()+3000;boolean seen=false;
+   while(SystemClock.uptimeMillis()<until){Thread.sleep(100);Bitmap proof=getUiAutomation().takeScreenshot();if(proof==null)continue;try{seen=visibleProbe(proof,rgb);}finally{proof.recycle();}if(seen)break;}
+   if(!seen)throw new Exception("The glass UI is not visible on the actual display");
+   js("document.getElementById('qa-visible-probe').remove();showHUD();true");Thread.sleep(500);report.put(name.contains("portrait")?"portrait_visible_ui":"landscape_visible_ui",true);
   }
   Bitmap bitmap=getUiAutomation().takeScreenshot();if(bitmap==null)throw new Exception("No screenshot");try(OutputStream out=new FileOutputStream(new File(getTargetContext().getExternalFilesDir(null),name))){bitmap.compress(Bitmap.CompressFormat.PNG,100,out);}finally{bitmap.recycle();}
  }
