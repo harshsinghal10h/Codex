@@ -1,6 +1,6 @@
 """Publish only after the concrete desktop and Android integration checks pass."""
 import json,os,re,subprocess,time
-checks=[('93ecbceb98f14ec04a3268d330961001e5fe2327','Build VLC Glass 0.3.1'),('0ed1bc2481891b2866bf3bd2a79b2dbd68e95de2','Android playback and form-factor checks')]
+checks=[('93ecbceb98f14ec04a3268d330961001e5fe2327','Build VLC Glass 0.3.1'),('767058ef75f94017f9a9aba774487d07529b43fd','Android playback and form-factor checks')]
 repo=os.environ['GITHUB_REPOSITORY']
 for i in range(90):
  pending=[]
