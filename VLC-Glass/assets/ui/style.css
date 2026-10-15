@@ -35,3 +35,5 @@ html.player-open,body.player-open{overflow:hidden;height:100dvh}#player{touch-ac
 body[data-glass="apple"] #playerHUD .glass,body[data-glass="lastwave"] #playerHUD .glass{backdrop-filter:var(--optics);-webkit-backdrop-filter:var(--optics);background:linear-gradient(145deg,#ffffff08,#ffffff01 42%,#00000013 85%),var(--glass-bg)}body.high-contrast #playerHUD .glass{background:#07090dde;border-color:#ffffff65}
 
 .volume-row .icon-button{height:44px;width:44px}.seek-track input{height:44px}.seek-pill{padding-top:2px;padding-bottom:2px}.volume-row .text-button{min-height:44px}
+
+.legacy-ui .volume-row .text-button{margin-left:10px}
