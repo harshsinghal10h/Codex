@@ -1,90 +1,920 @@
 {
   "version": "0.3.1",
-  "source_commit": "f30aebedf72ae26fe88ce99c72d7095a591773e7",
+  "source_commit": "74b8a3e09122792389d63fc3066e94f3b4cd4cf6",
   "files": [
     {
       "name": "VLC-Glass-Android-0.3.1-arm64.apk",
       "bytes": 42125655,
-      "sha256": "41098bc89ea9d9ce9ec182950138094dd10e50921b9c6202c2f0226fbbfbaaa8",
+      "sha256": "16fe598bc7aed2be21574f8df0cc28d3077e8ee9cb5efbcc82baaf3dd193d405",
       "chunks": [
-        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
-        "c4b63bd42c5cb7f51476783d3e189217324021a7",
-        "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
-        "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
-        "f613a83a0cd3ca9913440953dcf64a05c0dae9d5",
-        "91ae0b2cb45f42e8ed94a06ba23c50e0a60befae",
-        "53fdc20a29b8692a14cbe7d23a8ef8e869b62878",
-        "258c35e85c4b21bccd8aa72e043c91359377ec31",
-        "1bf2a22670ba3a2e114036978463f1b4437b2310",
-        "b3c23af6c5224960e318eb005e990eda35b60ebf",
-        "32fe9ed0aafaa18dd6d5c80b57b0584ec5a93a7a"
+        "8da5d83385bab82ecb7776bad53a8fd32420407e",
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 1693,
+          "bytes": 628
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2321,
+          "bytes": 448
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2769,
+          "bytes": 703
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 3472,
+          "bytes": 4190832
+        },
+        {
+          "sha": "c4b63bd42c5cb7f51476783d3e189217324021a7",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 0,
+          "bytes": 2180329
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2180329,
+          "bytes": 370
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2180699,
+          "bytes": 685
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2181384,
+          "bytes": 12180
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2193564,
+          "bytes": 686
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2194250,
+          "bytes": 692
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2194942,
+          "bytes": 986
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2195928,
+          "bytes": 11825
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2207753,
+          "bytes": 829
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2208582,
+          "bytes": 2068
+        },
+        "a8e90761d12f75a4091cc8619f788ca7e572ebf6",
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2226626,
+          "bytes": 370
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2226996,
+          "bytes": 41114
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2268110,
+          "bytes": 39629
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2307739,
+          "bytes": 2791
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2310530,
+          "bytes": 5793
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2316323,
+          "bytes": 2241
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2318564,
+          "bytes": 2883
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2321447,
+          "bytes": 4275
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2325722,
+          "bytes": 4747
+        },
+        "7191a4517eda9b34f869d15c0874596317bcf457",
+        "9cac457c79a2fe2731a09eecd3debafd18f25a72",
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2496828,
+          "bytes": 1697476
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 0,
+          "bytes": 681156
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 681156,
+          "bytes": 25729
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 706885,
+          "bytes": 3487419
+        },
+        {
+          "sha": "f613a83a0cd3ca9913440953dcf64a05c0dae9d5",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "91ae0b2cb45f42e8ed94a06ba23c50e0a60befae",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "53fdc20a29b8692a14cbe7d23a8ef8e869b62878",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "258c35e85c4b21bccd8aa72e043c91359377ec31",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "1bf2a22670ba3a2e114036978463f1b4437b2310",
+          "offset": 0,
+          "bytes": 1553759
+        },
+        {
+          "sha": "1bf2a22670ba3a2e114036978463f1b4437b2310",
+          "offset": 1553759,
+          "bytes": 2640545
+        },
+        {
+          "sha": "b3c23af6c5224960e318eb005e990eda35b60ebf",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "32fe9ed0aafaa18dd6d5c80b57b0584ec5a93a7a",
+          "offset": 0,
+          "bytes": 139823
+        },
+        {
+          "sha": "32fe9ed0aafaa18dd6d5c80b57b0584ec5a93a7a",
+          "offset": 139823,
+          "bytes": 29216
+        },
+        "cfbb0a75669baef6c1fa335294e603f04f47bc03",
+        "159b35560e832213e3262809ada78829b4bec491",
+        "9981875872ef7a24ba641d662de7fb35b2f59bcf",
+        "7b9535805e58c7aab9da5283c322cceef58b92b0"
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.1-armv7.apk",
       "bytes": 37771617,
-      "sha256": "fa16f40dfcca022f9dab13a696d37e0364c9d9142fc824054325a98f7e83d520",
+      "sha256": "d6881ab5c8d56f093ccf4ec4cbf9cf5b53d464bb26bb11cd7f366c4dac7750d4",
       "chunks": [
-        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
-        "c4b63bd42c5cb7f51476783d3e189217324021a7",
-        "e4a73452f2d926590bb199ea2b49599647495efa",
-        "29c8c0384bc2a43bb66e6735593e103e39200c91",
-        "5fb62dad4436ca2fd7de95e3a418ef2efa5fa0dc",
-        "3f72fcc46e840b56c7df5b14c39ffc0206e6b207",
-        "d09082ebc2e140a28c61537d45fe755ccf69126f",
-        "77b408b31d858ec4bf1d9496ca4e907680f528f6",
-        "572465fc1fa74f765707479b2477a88e0f6e8512",
-        "acd4ac52a36d53b3f9506cf5d454edb68353639a"
+        "8da5d83385bab82ecb7776bad53a8fd32420407e",
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 1693,
+          "bytes": 628
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2321,
+          "bytes": 448
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2769,
+          "bytes": 703
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 3472,
+          "bytes": 4190832
+        },
+        {
+          "sha": "c4b63bd42c5cb7f51476783d3e189217324021a7",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 0,
+          "bytes": 2180329
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2180329,
+          "bytes": 370
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2180699,
+          "bytes": 685
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2181384,
+          "bytes": 12180
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2193564,
+          "bytes": 686
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2194250,
+          "bytes": 692
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2194942,
+          "bytes": 986
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2195928,
+          "bytes": 11825
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2207753,
+          "bytes": 829
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2208582,
+          "bytes": 2068
+        },
+        "a8e90761d12f75a4091cc8619f788ca7e572ebf6",
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2226626,
+          "bytes": 370
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2226996,
+          "bytes": 41114
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2268110,
+          "bytes": 39629
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2307739,
+          "bytes": 2791
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2310530,
+          "bytes": 5793
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2316323,
+          "bytes": 2241
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2318564,
+          "bytes": 2883
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2321447,
+          "bytes": 4275
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2325722,
+          "bytes": 4747
+        },
+        "7191a4517eda9b34f869d15c0874596317bcf457",
+        "9cac457c79a2fe2731a09eecd3debafd18f25a72",
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2496828,
+          "bytes": 208612
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2705440,
+          "bytes": 24012
+        },
+        {
+          "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
+          "offset": 2729452,
+          "bytes": 1464852
+        },
+        {
+          "sha": "29c8c0384bc2a43bb66e6735593e103e39200c91",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "5fb62dad4436ca2fd7de95e3a418ef2efa5fa0dc",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "3f72fcc46e840b56c7df5b14c39ffc0206e6b207",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "d09082ebc2e140a28c61537d45fe755ccf69126f",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "77b408b31d858ec4bf1d9496ca4e907680f528f6",
+          "offset": 0,
+          "bytes": 2041324
+        },
+        {
+          "sha": "77b408b31d858ec4bf1d9496ca4e907680f528f6",
+          "offset": 2041324,
+          "bytes": 2152980
+        },
+        {
+          "sha": "572465fc1fa74f765707479b2477a88e0f6e8512",
+          "offset": 0,
+          "bytes": 4178907
+        },
+        {
+          "sha": "572465fc1fa74f765707479b2477a88e0f6e8512",
+          "offset": 4178907,
+          "bytes": 15397
+        },
+        {
+          "sha": "acd4ac52a36d53b3f9506cf5d454edb68353639a",
+          "offset": 0,
+          "bytes": 11003
+        },
+        "0390448b9c7d59e4a58283a442768f0922197042",
+        "d237a775c363301c8c306e3ab207710331d911e8",
+        "0d9fbbee340780bf2a49699e087ab873f9fa83b1",
+        "64e099cc9c1afa5f68ef62f75bfcf47fb12f2ca9"
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.1-universal.apk",
       "bytes": 103246916,
-      "sha256": "3a6832c788d62406612e17a26d35dbc0238efab57b1d6c5b03aac84b7492f1f2",
+      "sha256": "f734cea9e97a496aa06211898fed3bcaed153ed3d76ebabd0b996beb1462f26a",
       "chunks": [
-        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
-        "c4b63bd42c5cb7f51476783d3e189217324021a7",
-        "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
-        "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
-        "f613a83a0cd3ca9913440953dcf64a05c0dae9d5",
-        "91ae0b2cb45f42e8ed94a06ba23c50e0a60befae",
-        "53fdc20a29b8692a14cbe7d23a8ef8e869b62878",
-        "258c35e85c4b21bccd8aa72e043c91359377ec31",
-        "1bf2a22670ba3a2e114036978463f1b4437b2310",
-        "b3c23af6c5224960e318eb005e990eda35b60ebf",
-        "0eca2a01f906e0233a181093f2bbedc770177fd1",
-        "f1549373e60cfae184626113d22babffe55386f7",
-        "833fa5e1530049f4de2fba4bf3d90d0219fd7dca",
-        "aa83e4695b77edfe645ac00e9b054f7fc8a5b8f9",
-        "9a7913c3e69d842cd7f331c3d612874770838780",
-        "e9f870acd9de5a3932bc3744f7969215c39d198c",
-        "f0098e3baf8cf3c7685156911e1675508d07aca8",
-        "3da8ed646ff4f77019038269dd186f5c6e261945",
-        "1ca7dfcfe94f5fad8dffed3fabc07ebb94f37684",
-        "87a55eccf836a59e60c83696990123f3b46459c8",
-        "18138315faf52e8517d1bd4e2a15bb3938b6f37b",
-        "0f8dd6486307c247b998545303a17d81272b1314",
-        "ca19b9434f7d893ba03cb490e6c6fdad9d7901a9",
-        "1ee45122cacd9a1941c8f83997a470cb987edaab",
-        "12e6c570893b8e7b0beec69e913e81d73650d89f"
+        "8da5d83385bab82ecb7776bad53a8fd32420407e",
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 1693,
+          "bytes": 628
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2321,
+          "bytes": 448
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2769,
+          "bytes": 703
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 3472,
+          "bytes": 4190832
+        },
+        {
+          "sha": "c4b63bd42c5cb7f51476783d3e189217324021a7",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 0,
+          "bytes": 2180329
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2180329,
+          "bytes": 370
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2180699,
+          "bytes": 685
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2181384,
+          "bytes": 12180
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2193564,
+          "bytes": 686
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2194250,
+          "bytes": 692
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2194942,
+          "bytes": 986
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2195928,
+          "bytes": 11825
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2207753,
+          "bytes": 829
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2208582,
+          "bytes": 2068
+        },
+        "a8e90761d12f75a4091cc8619f788ca7e572ebf6",
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2226626,
+          "bytes": 370
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2226996,
+          "bytes": 41114
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2268110,
+          "bytes": 39629
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2307739,
+          "bytes": 2791
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2310530,
+          "bytes": 5793
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2316323,
+          "bytes": 2241
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2318564,
+          "bytes": 2883
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2321447,
+          "bytes": 4275
+        },
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2325722,
+          "bytes": 4747
+        },
+        "7191a4517eda9b34f869d15c0874596317bcf457",
+        "9cac457c79a2fe2731a09eecd3debafd18f25a72",
+        {
+          "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
+          "offset": 2496828,
+          "bytes": 1697476
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 0,
+          "bytes": 681156
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 681156,
+          "bytes": 25729
+        },
+        {
+          "sha": "8f6fe5a60f0dfd9755c24104bdf2bc3173e70c9d",
+          "offset": 706885,
+          "bytes": 3487419
+        },
+        {
+          "sha": "f613a83a0cd3ca9913440953dcf64a05c0dae9d5",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "91ae0b2cb45f42e8ed94a06ba23c50e0a60befae",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "53fdc20a29b8692a14cbe7d23a8ef8e869b62878",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "258c35e85c4b21bccd8aa72e043c91359377ec31",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "1bf2a22670ba3a2e114036978463f1b4437b2310",
+          "offset": 0,
+          "bytes": 1553759
+        },
+        {
+          "sha": "1bf2a22670ba3a2e114036978463f1b4437b2310",
+          "offset": 1553759,
+          "bytes": 2640545
+        },
+        {
+          "sha": "b3c23af6c5224960e318eb005e990eda35b60ebf",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "0eca2a01f906e0233a181093f2bbedc770177fd1",
+          "offset": 0,
+          "bytes": 139823
+        },
+        {
+          "sha": "0eca2a01f906e0233a181093f2bbedc770177fd1",
+          "offset": 139823,
+          "bytes": 29216
+        },
+        {
+          "sha": "0eca2a01f906e0233a181093f2bbedc770177fd1",
+          "offset": 169039,
+          "bytes": 208612
+        },
+        {
+          "sha": "0eca2a01f906e0233a181093f2bbedc770177fd1",
+          "offset": 377651,
+          "bytes": 24012
+        },
+        {
+          "sha": "0eca2a01f906e0233a181093f2bbedc770177fd1",
+          "offset": 401663,
+          "bytes": 3792641
+        },
+        {
+          "sha": "f1549373e60cfae184626113d22babffe55386f7",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "833fa5e1530049f4de2fba4bf3d90d0219fd7dca",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "aa83e4695b77edfe645ac00e9b054f7fc8a5b8f9",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "9a7913c3e69d842cd7f331c3d612874770838780",
+          "offset": 0,
+          "bytes": 3907839
+        },
+        {
+          "sha": "9a7913c3e69d842cd7f331c3d612874770838780",
+          "offset": 3907839,
+          "bytes": 286465
+        },
+        {
+          "sha": "e9f870acd9de5a3932bc3744f7969215c39d198c",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "f0098e3baf8cf3c7685156911e1675508d07aca8",
+          "offset": 0,
+          "bytes": 1851118
+        },
+        {
+          "sha": "f0098e3baf8cf3c7685156911e1675508d07aca8",
+          "offset": 1851118,
+          "bytes": 26400
+        },
+        {
+          "sha": "f0098e3baf8cf3c7685156911e1675508d07aca8",
+          "offset": 1877518,
+          "bytes": 2316786
+        },
+        {
+          "sha": "3da8ed646ff4f77019038269dd186f5c6e261945",
+          "offset": 0,
+          "bytes": 72725
+        },
+        {
+          "sha": "3da8ed646ff4f77019038269dd186f5c6e261945",
+          "offset": 72725,
+          "bytes": 27506
+        },
+        {
+          "sha": "3da8ed646ff4f77019038269dd186f5c6e261945",
+          "offset": 100231,
+          "bytes": 4094073
+        },
+        {
+          "sha": "1ca7dfcfe94f5fad8dffed3fabc07ebb94f37684",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "87a55eccf836a59e60c83696990123f3b46459c8",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "18138315faf52e8517d1bd4e2a15bb3938b6f37b",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "0f8dd6486307c247b998545303a17d81272b1314",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "ca19b9434f7d893ba03cb490e6c6fdad9d7901a9",
+          "offset": 0,
+          "bytes": 2647326
+        },
+        {
+          "sha": "ca19b9434f7d893ba03cb490e6c6fdad9d7901a9",
+          "offset": 2647326,
+          "bytes": 1546978
+        },
+        {
+          "sha": "1ee45122cacd9a1941c8f83997a470cb987edaab",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "12e6c570893b8e7b0beec69e913e81d73650d89f",
+          "offset": 0,
+          "bytes": 2541883
+        },
+        {
+          "sha": "12e6c570893b8e7b0beec69e913e81d73650d89f",
+          "offset": 2541883,
+          "bytes": 27435
+        },
+        "38d35a65e34d0126c418904a38d782b24cea18e9",
+        "cde46e684bd2dd076fd2bef7c0643d8d07c2685a",
+        "07db7190c5f5bbcef540e3392a289f4c81dccd6f",
+        "12a869f5bc9b36039a4ee63695ca41f516a092b9"
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.1-x86_64.apk",
       "bytes": 45144392,
-      "sha256": "4592f892a440aef2a320c9f9aa6561aad3d36d7c838a99ebbba02dc0c1825ea4",
+      "sha256": "8ca026a4a7ba5fdc348c04c8952c00bbe4ec8f23ffcbbebe2792ecbe7f531e91",
       "chunks": [
-        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
-        "c4b63bd42c5cb7f51476783d3e189217324021a7",
-        "31562824d7db4591706edae68d082ea2047c0c49",
-        "c098ec947af542afe34d90e94241fd9022fa0521",
-        "da40b0c7eb8b32d9c331114dfc36dc085439a179",
-        "ba53099d90482c3d481d4200f32a55bed0134a2f",
-        "9b6728b95b4440f00f37330427b39dd59b0f4b18",
-        "f9344552b5725ca626eee650aa2030d9cf4e5193",
-        "b0ebfa45375924a42f869021398f407b9637c34e",
-        "ae34dc7b5e2f301f38c205a17b450402d135343d",
-        "d79e9ed4950898d5d0cbf1481872467b8b797244"
+        "8da5d83385bab82ecb7776bad53a8fd32420407e",
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 1693,
+          "bytes": 628
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2321,
+          "bytes": 448
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 2769,
+          "bytes": 703
+        },
+        {
+          "sha": "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+          "offset": 3472,
+          "bytes": 4190832
+        },
+        {
+          "sha": "c4b63bd42c5cb7f51476783d3e189217324021a7",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 0,
+          "bytes": 2180329
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2180329,
+          "bytes": 370
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2180699,
+          "bytes": 685
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2181384,
+          "bytes": 12180
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2193564,
+          "bytes": 686
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2194250,
+          "bytes": 692
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2194942,
+          "bytes": 986
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2195928,
+          "bytes": 11825
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2207753,
+          "bytes": 829
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2208582,
+          "bytes": 2068
+        },
+        "a8e90761d12f75a4091cc8619f788ca7e572ebf6",
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2226626,
+          "bytes": 370
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2226996,
+          "bytes": 41114
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2268110,
+          "bytes": 39629
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2307739,
+          "bytes": 2791
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2310530,
+          "bytes": 5793
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2316323,
+          "bytes": 2241
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2318564,
+          "bytes": 2883
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2321447,
+          "bytes": 4275
+        },
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2325722,
+          "bytes": 4747
+        },
+        "7191a4517eda9b34f869d15c0874596317bcf457",
+        "9cac457c79a2fe2731a09eecd3debafd18f25a72",
+        {
+          "sha": "31562824d7db4591706edae68d082ea2047c0c49",
+          "offset": 2496828,
+          "bytes": 1697476
+        },
+        {
+          "sha": "c098ec947af542afe34d90e94241fd9022fa0521",
+          "offset": 0,
+          "bytes": 692035
+        },
+        {
+          "sha": "c098ec947af542afe34d90e94241fd9022fa0521",
+          "offset": 692035,
+          "bytes": 27506
+        },
+        {
+          "sha": "c098ec947af542afe34d90e94241fd9022fa0521",
+          "offset": 719541,
+          "bytes": 3474763
+        },
+        {
+          "sha": "da40b0c7eb8b32d9c331114dfc36dc085439a179",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "ba53099d90482c3d481d4200f32a55bed0134a2f",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "9b6728b95b4440f00f37330427b39dd59b0f4b18",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "f9344552b5725ca626eee650aa2030d9cf4e5193",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "b0ebfa45375924a42f869021398f407b9637c34e",
+          "offset": 0,
+          "bytes": 3266636
+        },
+        {
+          "sha": "b0ebfa45375924a42f869021398f407b9637c34e",
+          "offset": 3266636,
+          "bytes": 927668
+        },
+        {
+          "sha": "ae34dc7b5e2f301f38c205a17b450402d135343d",
+          "offset": 0,
+          "bytes": 4194304
+        },
+        {
+          "sha": "d79e9ed4950898d5d0cbf1481872467b8b797244",
+          "offset": 0,
+          "bytes": 3161193
+        },
+        {
+          "sha": "d79e9ed4950898d5d0cbf1481872467b8b797244",
+          "offset": 3161193,
+          "bytes": 27435
+        },
+        "56b6d1c485e9444375ea5021a48bb0965f011b31",
+        "b3eca38b6247434f7f35b65df1d48785c9281994",
+        "fe09b93ceed6191df05b9c3fb3bded497bcae2e1",
+        "d67dd8e4d271c38ff57f9403bbf0d66baa7d255c"
       ]
     }
   ]

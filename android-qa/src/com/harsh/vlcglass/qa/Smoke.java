@@ -14,8 +14,10 @@ import org.json.*;
 
 /** Safe synthetic fixture; no recognition-accuracy or physical-device claim. */
 public final class Smoke extends Instrumentation {
- private Activity activity;private Object service;private WebView web;
+ private volatile Activity activity;private volatile Object service;private volatile WebView web;
  private JSONObject report=new JSONObject();
+ public void callActivityOnResume(Activity next){super.callActivityOnResume(next);activity=next;try{web=(WebView)field(next,"web");Object current=field(next,"playback");if(current!=null)service=current;}catch(Exception ignored){}}
+ private void rotate(int orientation)throws Exception{ui(()->activity.setRequestedOrientation(orientation));for(int i=0;i<5;i++){Thread.sleep(400);dismissTutorial();}}
  public void onCreate(Bundle args){super.onCreate(args);start();}
  private static Object field(Object target,String name)throws Exception{Field f=target.getClass().getDeclaredField(name);f.setAccessible(true);return f.get(target);}
  private static void set(Object target,String name,Object value)throws Exception{Field f=target.getClass().getDeclaredField(name);f.setAccessible(true);f.set(target,value);}
@@ -63,10 +65,10 @@ public final class Smoke extends Instrumentation {
    while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&!s.optBoolean("guardMasked")&&s.optBoolean("playing")&&s.optLong("time")>=2000){clear=true;break;}Thread.sleep(30);}
    ui(()->set(service,"listener",original));
    if(!clear)throw new Exception("Replay exposed or failed to skip the protected opening: "+s);report.put("protected_replay",true);
-   js("host('pause');showHUD();true");dismissTutorial();ui(()->activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT));Thread.sleep(1500);
-   String fits="(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
+   js("host('pause');showHUD();true");dismissTutorial();rotate(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+   String fits="(()=>{if(!model.player)return false;showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");report.put("responsive_prompt",true).put("portrait_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-portrait.png");
-   ui(()->activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));Thread.sleep(1500);
+   rotate(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the landscape viewport");report.put("landscape_prompt",true).put("landscape_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-landscape.png");passed=true;
   }catch(Throwable error){try{if(activity!=null)screenshot("android-error.png");}catch(Exception ignored){}try{report.put("error",error.toString());}catch(Exception ignored){}error.printStackTrace();}
   try{report.put("passed",passed);result.putString("stream",report.toString());}catch(Exception ignored){}

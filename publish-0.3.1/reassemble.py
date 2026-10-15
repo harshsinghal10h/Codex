@@ -12,9 +12,15 @@ for f in manifest['files']:
  target=out/f['name']
  if target.name!=f['name'] or target.suffix!='.apk':raise ValueError('Invalid release filename')
  with target.open('wb') as dst:
-  for sha in f['chunks']:
+  for chunk in f['chunks']:
+   sha=chunk if isinstance(chunk,str) else chunk['sha']
+   if len(sha)!=40 or any(c not in '0123456789abcdef' for c in sha):raise ValueError('Invalid blob identifier')
    b=(P/'blobs'/(sha+'.bin')).read_bytes()
    if hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()!=sha:raise ValueError('Corrupt Git blob')
+   if not isinstance(chunk,str):
+    offset=chunk['offset'];length=chunk['bytes']
+    if type(offset)!=int or type(length)!=int or offset<0 or length<=0 or offset+length>len(b):raise ValueError('Invalid blob slice')
+    b=b[offset:offset+length]
    dst.write(b)
  digest=hashlib.sha256(target.read_bytes()).hexdigest()
  if target.stat().st_size!=f['bytes'] or digest!=f['sha256']:raise ValueError('APK checksum mismatch')
