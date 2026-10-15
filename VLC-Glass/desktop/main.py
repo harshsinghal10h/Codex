@@ -88,7 +88,12 @@ class Player(QMainWindow):
             self.surface=VideoSurface();self.surface.attach(self.player)
         else:self.surface=QWidget()
         self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
-        self.web=QWebEngineView();self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground);page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
+        self.web=QWebEngineView(container)
+        self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        # Video owns a native child window. Give the transparent web overlay a
+        # sibling native window so it composes above video on every host.
+        self.web.setAttribute(Qt.WidgetAttribute.WA_NativeWindow)
+        page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
         self.assets=Assets(self.web);page.profile().installUrlSchemeHandler(b'vlcglass',self.assets)
         self.bridge=Bridge();self.bridge.incoming.connect(self.request);channel=QWebChannel(page);channel.registerObject('native',self.bridge);page.setWebChannel(channel);self.channel=channel
         from PySide6.QtCore import QFile
@@ -210,9 +215,14 @@ class Player(QMainWindow):
                 if self.current>0:self.open(self.current)
             elif op in ('toggle','play','pause'):
                 if not self.guard.get('blocked'):
-                    if op=='toggle':self.player.pause()
-                    elif op=='pause':self.player.set_pause(1)
-                    else:self.player.play()
+                    if op=='pause' or op=='toggle' and self.player.is_playing():self.player.set_pause(1)
+                    elif self.schedule and self.seek_target is None and self.player.get_state() in (vlc.State.NothingSpecial,vlc.State.Stopped,vlc.State.Ended):
+                        self.pending_resume=0;self.ended=False;self.begin()
+                    else:
+                        if self.schedule and self.seek_target is None:
+                            target=self.schedule.target(max(0,self.player.get_time()))
+                            if target is not None:self.seek(target)
+                        self.player.play()
             elif op=='seek':self.seek(a['time'])
             elif op=='skip':self.seek(self.player.get_time()+a.get('seconds',10)*1000)
             elif op=='volume':self.settings['volume']=int(a['value']);self.player.audio_set_volume(int(a['value']))
@@ -248,7 +258,13 @@ class Player(QMainWindow):
             elif op=='videoTrack':self.player.video_set_track(int(a['id']))
             elif op=='audioDelay':self.player.audio_set_delay(int(a['ms'])*1000)
             elif op=='subtitleDelay':self.player.video_set_spu_delay(int(a['ms'])*1000)
-            elif op=='chapter':self.player.set_chapter(int(a['index']))
+            elif op=='chapter':
+                # Unknown chapter offsets must never bypass protected seeking.
+                chapters=self.details().get('chapters',[]);index=int(a['index'])
+                if self.schedule:
+                    if not 0<=index<len(chapters):raise ValueError('This chapter has no verified timestamp.')
+                    self.seek(chapters[index]['time'])
+                else:self.player.set_chapter(index)
             elif op=='aspect':self.player.video_set_aspect_ratio(None if a['value']=='auto' else a['value'])
             elif op=='zoom':self.player.video_set_scale(0 if a['value']==1 else float(a['value']))
             elif op=='equalizer':

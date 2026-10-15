@@ -27,9 +27,13 @@ public final class PlaybackService extends Service {
  handler.postDelayed(this,50);}};
  private void protect(boolean hidden){guardMasked=hidden;if(engine!=null)try{VlcEngine.call(engine.player,"setVolume",hidden?0:settings.optInt("volume",80));}catch(Exception ignored){}if(listener!=null)listener.protection(hidden);}
  private void protectedSeek(long target)throws Exception{protect(true);guardSeek=target;guardSeekAt=SystemClock.uptimeMillis();engine.seek(target);}
+ private void guardedSeek(long at)throws Exception{
+  at=Math.max(0,Math.min(schedule.duration,at));long target=schedule.target(at,1);if(target>=0)at=target;
+  if(at>=schedule.duration-80){engine.command("pause",new JSONObject());next(true);}else protectedSeek(at);
+ }
  public IBinder onBind(Intent i){return binder;}
  public void onCreate(){super.onCreate();store=new LibraryStore(this);try{settings=new JSONObject(getSharedPreferences("preferences",0).getString("settings","{}"));engine=new VlcEngine(this);}catch(Exception e){fault="VLC could not start: "+e.getMessage();}
-  audio=(AudioManager)getSystemService(AUDIO_SERVICE);focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MOVIE).build()).setOnAudioFocusChangeListener(change->{if(engine==null)return;try{if(change==AudioManager.AUDIOFOCUS_LOSS||change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT){focusPaused=engine.playing();engine.command("pause",new JSONObject());}else if(change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK){ducked=true;VlcEngine.call(engine.player,"setVolume",Math.max(0,settings.optInt("volume",80)/4));}else if(change==AudioManager.AUDIOFOCUS_GAIN){if(ducked){ducked=false;VlcEngine.call(engine.player,"setVolume",settings.optInt("volume",80));}if(focusPaused){focusPaused=false;engine.command("play",new JSONObject());}}}catch(Exception e){fail(e.getMessage());}},handler).build();
+  audio=(AudioManager)getSystemService(AUDIO_SERVICE);focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MOVIE).build()).setOnAudioFocusChangeListener(change->{if(engine==null)return;try{if(change==AudioManager.AUDIOFOCUS_LOSS||change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT){focusPaused=engine.playing();engine.command("pause",new JSONObject());}else if(change==AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK){ducked=true;VlcEngine.call(engine.player,"setVolume",Math.max(0,settings.optInt("volume",80)/4));}else if(change==AudioManager.AUDIOFOCUS_GAIN){if(ducked){ducked=false;VlcEngine.call(engine.player,"setVolume",settings.optInt("volume",80));}if(focusPaused){focusPaused=false;command("play",new JSONObject());}}}catch(Exception e){fail(e.getMessage());}},handler).build();
   registerReceiver(noisy,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
   NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);nm.createNotificationChannel(new NotificationChannel("playback","Playback",NotificationManager.IMPORTANCE_LOW));
   session=new MediaSession(this,"VLC Glass");session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS|MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);session.setCallback(new MediaSession.Callback(){public void onPlay(){command("play",new JSONObject());}public void onPause(){command("pause",new JSONObject());}public void onStop(){command("stop",new JSONObject());}public void onSkipToNext(){command("next",new JSONObject());}public void onSkipToPrevious(){command("previous",new JSONObject());}public void onSeekTo(long pos){JSONObject a=new JSONObject();try{a.put("time",pos);}catch(Exception ignored){}command("seek",a);}});session.setActive(true);
@@ -40,7 +44,7 @@ public final class PlaybackService extends Service {
  public void settings(JSONObject s){boolean changed=settings.optBoolean("sceneGuard",false)!=s.optBoolean("sceneGuard",false);settings=s;if(changed&&current>0){if(settings.optBoolean("sceneGuard",false))open(current,null);else if(guardBlocked){guardEpoch++;guardBlocked=false;guard=new JSONObject();schedule=null;protect(false);beginCurrent();}else{schedule=null;guard=new JSONObject();guardSeek=-1;protect(false);push();}}}
  public void attach(TextureView view,TextureView subtitles,int w,int h){if(engine!=null)try{engine.attach(view,subtitles,w,h);}catch(Exception e){fail(e.getMessage());}}
  public void open(long id,JSONArray ids){
-  if(engine==null){fail(fault);return;}save();guardEpoch++;guardSeek=-1;schedule=null;guardBlocked=false;guard=new JSONObject();protect(false);
+  if(engine==null){fail(fault);return;}save();guardEpoch++;guardSeek=-1;schedule=null;guardBlocked=false;guard=new JSONObject();protect(settings.optBoolean("sceneGuard",false));
   if(ids!=null){queue.clear();for(int i=0;i<ids.length();i++)if(store.media(ids.optLong(i))!=null)queue.add(ids.optLong(i));}
   if(!queue.contains(id))queue.add(id);cursor=queue.indexOf(id);current=id;JSONObject item=store.media(id);
   if(item==null){fail("This item was removed. Open the file again.");return;}
@@ -69,9 +73,19 @@ public final class PlaybackService extends Service {
   if(op.equals("guardScan")){if(current>0)open(current,null);return;}
   if(guardBlocked&&!op.equals("stop")&&!op.equals("open")&&!op.equals("next")&&!op.equals("previous")){push();return;}
   if(op.equals("renderer")&&a.optInt("id",-1)>=0&&settings.optBoolean("sceneGuard",false))throw new Exception("Scene guard supports local playback. Turn it off before casting.");
-  if(schedule!=null&&(op.equals("seek")||op.equals("skip"))){long at=op.equals("seek")?a.optLong("time"):engine.time()+a.optLong("seconds",10)*1000;at=Math.max(0,Math.min(schedule.duration,at));long target=schedule.target(at,1);if(target>=0)at=target;if(at>=schedule.duration-80){engine.command("pause",new JSONObject());next(true);}else protectedSeek(at);push();return;}
+  if(schedule!=null&&(op.equals("seek")||op.equals("skip"))){guardedSeek(op.equals("seek")?a.optLong("time"):engine.time()+a.optLong("seconds",10)*1000);push();return;}
+  if(schedule!=null&&op.equals("chapter")){
+   JSONArray chapters=engine.details().optJSONArray("chapters");int index=a.optInt("index",-1);
+   if(chapters==null||index<0||index>=chapters.length()||!chapters.getJSONObject(index).has("time"))throw new Exception("This chapter has no verified timestamp.");
+   guardedSeek(chapters.getJSONObject(index).getLong("time"));push();return;
+  }
+  if(schedule!=null&&guardSeek<0&&(op.equals("play")||op.equals("toggle"))&&!engine.playing()){
+   int state=engine.state();
+   if(state==0||state==5||state==6||engine.time()<0){pendingResume=0;beginCurrent();return;}
+   long target=schedule.target(Math.max(0,engine.time()),1);if(target>=0)guardedSeek(target);
+  }
   switch(op){case "open":open(a.optLong("id"),a.optJSONArray("queue"));return;
-  case "next":next(false);return;case "previous":if(engine.time()>3000)engine.seek(0);else if(cursor>0)open(queue.get(cursor-1),null);return;
+  case "next":next(false);return;case "previous":if(engine.time()>3000||cursor<=0){if(schedule!=null)guardedSeek(0);else engine.seek(0);}else open(queue.get(cursor-1),null);return;
   case "repeat":repeat=a.optString("value","off");break;case "shuffle":shuffle=a.optBoolean("value");break;
   case "scanCast":engine.discover(this,()->push());handler.postDelayed(()->engine.stopDiscovery(),12000);break;
   case "renderer":engine.renderer(a.optInt("id",-1));break;
@@ -80,7 +94,7 @@ public final class PlaybackService extends Service {
   case "stop":guardEpoch++;guardBlocked=false;guard=new JSONObject();schedule=null;guardSeek=-1;protect(false);save();engine.stop();current=-1;queue.clear();cursor=-1;if(wake.isHeld())wake.release();session.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_STOPPED,0,0).build());stopForeground(STOP_FOREGROUND_REMOVE);audio.abandonAudioFocusRequest(focus);break;
   case "queueRemove":{int i=a.optInt("index",-1);if(i>=0&&i<queue.size()){queue.remove(i);if(i<cursor)cursor--;else if(i==cursor){if(queue.isEmpty()){command("stop",a);return;}cursor=Math.min(cursor,queue.size()-1);open(queue.get(cursor),null);}}break;}
   case "queueMove":{int i=a.optInt("from",-1),j=a.optInt("to",-1);if(i>=0&&j>=0&&i<queue.size()&&j<queue.size()){long id=queue.remove(i);queue.add(j,id);cursor=queue.indexOf(current);}break;}
-  default:engine.command(op,a);if(op.equals("volume")){settings.put("volume",Math.max(0,Math.min(100,a.optInt("value"))));getSharedPreferences("preferences",0).edit().putString("settings",settings.toString()).apply();}if(op.equals("pause")||op.equals("toggle"))save();if(op.equals("play")||op.equals("toggle"))notifyMedia(true);
+  default:engine.command(op,a);if(op.equals("volume")){settings.put("volume",Math.max(0,Math.min(100,a.optInt("value"))));getSharedPreferences("preferences",0).edit().putString("settings",settings.toString()).apply();}if(guardMasked&&op.equals("volume"))protect(true);if(op.equals("pause")||op.equals("toggle"))save();if(op.equals("play")||op.equals("toggle"))notifyMedia(true);
  }push();}catch(Exception e){fail(e.getMessage());}}
  private void next(boolean ended){if(queue.isEmpty())return;if(ended&&repeat.equals("one")){open(current,null);pendingResume=0;return;}int n=shuffle&&queue.size()>1?random.nextInt(queue.size()-1):cursor+1;if(shuffle&&queue.size()>1&&n>=cursor)n++;if(n>=queue.size()){if(repeat.equals("all"))n=0;else{save();engine.stop();push();return;}}open(queue.get(n),null);pendingResume=0;}
  private void save(){if(engine!=null&&current>0&&engine.length()>0)store.progress(current,engine.time(),engine.length());}

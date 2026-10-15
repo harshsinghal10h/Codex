@@ -4,7 +4,7 @@ An independent LibVLC player for Android and desktop with shared, responsive liq
 
 ## Play and protect a video
 
-Open a local video. Select the shield in the player or **More → Scene guard**, then enable **Automatic scene skipping**. The first scan runs locally before protected playback starts. Reopening an unchanged file reuses a map verified against its complete SHA-256, the detector hash, and the analysis policy.
+Open a local video. Select the shield in the player or **More → Scene guard**, then enable **Automatic scene skipping**. The first scan runs locally before protected playback starts. Thumbnails and image seek previews are hidden while Scene guard is enabled. Replay, chapter navigation and Previous use the same protected seeking path. Reopening an unchanged file reuses a map verified against its complete SHA-256, the detector hash, and the analysis policy.
 
 The bundled NudeNet ONNX detector samples frames every 500 ms, checks near detected boundaries at 100 ms, and adds padding. Playback uses a 50 ms schedule lookup with a speed-adjusted lead, masking and muting during a protected seek. Failed scans keep protected playback paused. This can miss content or skip innocent scenes. It does not guarantee frame-exact recognition, detect every kind of sexual activity, or protect live streams and casting.
 
@@ -73,3 +73,5 @@ Local library, folders, playlists, favorites, saved positions, queue, tracks and
 Application source retains GPL-3.0. SentrySearch and LAYA retain Apache-2.0. NudeNet's bundled license text is AGPL-3.0, despite conflicting MIT package metadata; the supplied license is included rather than assuming a permissive grant. Full corresponding application/adapter source is provided. See `NOTICE.md` and `licenses/` for dependencies and attribution.
 
 Android packages lower UI JavaScript/CSS syntax for the stock Android 9 WebView and include small API/layout fallbacks. Modern WebViews retain their supported glass effects. macOS uses a LibVLC frame-callback surface by default so video presentation works without an embedded legacy OpenGL context; it keeps only the latest frame and bounds software presentation to 3840×2160. Physical-device frame rate, HDR, and high-resolution energy use remain unmeasured. Source users can opt into native Cocoa output with `VLCGLASS_NATIVE_VIDEO=1`.
+
+Low-memory Android devices and software-rendered emulators use the efficient glass fallback instead of live AGSL refraction. This preserves the prompt layout and clear glass controls without repeated full-frame shader work.

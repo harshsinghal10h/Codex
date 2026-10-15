@@ -54,7 +54,7 @@ jobs:
         run: python tools/prepare_dependencies.py --desktop
       - name: Install Linux media libraries
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libegl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb
+        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libegl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb xcompmgr
       - name: Install official macOS VLC
         if: runner.os == 'macOS'
         run: brew install --cask vlc
@@ -79,7 +79,7 @@ jobs:
         env:
           QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu --disable-dev-shm-usage
           QT_OPENGL: software
-        run: xvfb-run -a python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
+        run: xvfb-run -a sh -c 'xcompmgr -a & exec python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4'
       - name: Package desktop app
         run: python tools/build_desktop.py
       - name: Smoke test Windows package
@@ -105,7 +105,7 @@ jobs:
             ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.1.app dist/VLC-Glass-0.3.1-${{ matrix.label }}.zip
           else
             dist/VLC-Glass-0.3.1/VLC-Glass-0.3.1 --smoke-report desktop-smoke.json
-            xvfb-run -a dist/VLC-Glass-0.3.1/VLC-Glass-0.3.1 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4
+            xvfb-run -a sh -c 'xcompmgr -a & exec dist/VLC-Glass-0.3.1/VLC-Glass-0.3.1 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4'
             tar -C dist -czf dist/VLC-Glass-0.3.1-${{ matrix.label }}.tar.gz VLC-Glass-0.3.1
           fi
           cat desktop-smoke.json

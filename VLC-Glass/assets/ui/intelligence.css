@@ -17,3 +17,6 @@
 .legacy-ui #momentDock{width:100%;max-width:630px}.legacy-ui .player-bottom{width:100%;max-width:1150px}.legacy-ui #guardProgress{width:80vw;max-width:280px}.legacy-ui #dialog{max-height:92vh}.legacy-ui #playerHUD{padding:24px 18px}.legacy-ui .media-art{height:145px}.legacy-ui .control-group>*+*{margin-left:4px}.legacy-ui .moment-field input{margin-left:10px}.legacy-ui .moment-field>button{margin-left:10px}.legacy-ui #momentResults{max-height:45vh}
 @supports not (backdrop-filter:blur(1px)){.glass{background-color:rgba(23,27,35,.72)}.moment-field{background-color:rgba(23,27,35,.62)}}
 @media(orientation:landscape) and (max-height:580px){.legacy-ui #momentDock{width:60vw;max-width:440px}.legacy-ui #playerHUD{padding:12px 22px}.legacy-ui .transport{margin-bottom:148px}}
+
+/* Block cached and in-flight preview images while protection is enabled. */
+.scene-guard .media-art img,.scene-guard #seekPreviewImage{display:none!important}
