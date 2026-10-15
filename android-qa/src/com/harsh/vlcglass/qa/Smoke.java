@@ -39,16 +39,25 @@ public final class Smoke extends Instrumentation {
    while(SystemClock.uptimeMillis()<until){s=state();JSONObject guard=s.optJSONObject("guard");if(guard!=null&&guard.has("error"))throw new Exception(guard.optString("error"));if(!s.optString("error").isEmpty())throw new Exception(s.optString("error"));if(guard!=null&&guard.optBoolean("complete")&&s.optBoolean("playing")&&s.optLong("time")>300)break;Thread.sleep(50);}
    if(s==null||!s.optBoolean("playing")||!s.optJSONObject("guard").optBoolean("complete"))throw new Exception("Protected native playback did not start: "+s);
    report.put("scan_complete",true).put("native_playback",true);
-   final long duration=s.optLong("duration");ui(()->{Class<?> timeline=Class.forName("com.harsh.vlcglass.SafetyTimeline");Object schedule=timeline.getConstructor(long[].class,long[].class,long.class).newInstance(new long[]{1400},new long[]{3500},duration);set(service,"schedule",schedule);((JSONObject)field(service,"guard")).put("intervals",new JSONArray().put(new JSONObject().put("start",1400).put("end",3500)));});
-   boolean skipped=false,clear=false;long previous=s.optLong("time");until=SystemClock.uptimeMillis()+18000;
-   while(SystemClock.uptimeMillis()<until){s=state();long now=s.optLong("time");if(previous<1800&&now>=3400)skipped=true;if(skipped&&!s.optBoolean("guardMasked")){clear=true;break;}previous=now;Thread.sleep(30);}
-   if(!clear)throw new Exception("The native skip/mask scheduler did not complete: "+s);report.put("synthetic_skip",true).put("clear_position_ms",s.optLong("time"));
+   final long duration=s.optLong("duration");
+   ui(()->{service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"pause",new JSONObject());Class<?> timeline=Class.forName("com.harsh.vlcglass.SafetyTimeline");Object schedule=timeline.getConstructor(long[].class,long[].class,long.class).newInstance(new long[]{5000},new long[]{8000},duration);set(service,"schedule",schedule);((JSONObject)field(service,"guard")).put("intervals",new JSONArray().put(new JSONObject().put("start",5000).put("end",8000)));service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"seek",new JSONObject().put("time",3500));});
+   until=SystemClock.uptimeMillis()+10000;
+   while(SystemClock.uptimeMillis()<until){s=state();if(!s.optBoolean("guardMasked")&&s.optLong("time")>=3400&&s.optLong("time")<5000)break;Thread.sleep(50);}
+   if(s.optBoolean("guardMasked")||s.optLong("time")<3400||s.optLong("time")>=5000)throw new Exception("Cannot prepare the deterministic skip position: "+s);
+   final java.util.concurrent.atomic.AtomicBoolean maskObserved=new java.util.concurrent.atomic.AtomicBoolean(false);
+   final Object original=field(service,"listener");Class<?> listener=Class.forName("com.harsh.vlcglass.PlaybackService$Listener");
+   Object observed=Proxy.newProxyInstance(listener.getClassLoader(),new Class<?>[]{listener},(proxy,method,args)->{if(method.getName().equals("protection")&&Boolean.TRUE.equals(args[0]))maskObserved.set(true);return method.invoke(original,args);});
+   ui(()->{set(service,"listener",observed);service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"play",new JSONObject());});
+   boolean clear=false;until=SystemClock.uptimeMillis()+20000;
+   while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&s.optLong("time")>=7900&&!s.optBoolean("guardMasked")){clear=true;break;}Thread.sleep(30);}
+   ui(()->set(service,"listener",original));
+   if(!clear)throw new Exception("The native skip/mask scheduler did not complete: "+s);report.put("synthetic_skip",true).put("mask_applied",maskObserved.get()).put("clear_position_ms",s.optLong("time"));
    js("host('pause');showHUD();true");Thread.sleep(500);
    String fits="(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");report.put("responsive_prompt",true);screenshot("android-portrait.png");
    ui(()->activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE));Thread.sleep(1500);
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the landscape viewport");report.put("landscape_prompt",true);screenshot("android-landscape.png");passed=true;
-  }catch(Throwable error){try{report.put("error",error.toString());}catch(Exception ignored){}error.printStackTrace();}
+  }catch(Throwable error){try{if(activity!=null)screenshot("android-error.png");}catch(Exception ignored){}try{report.put("error",error.toString());}catch(Exception ignored){}error.printStackTrace();}
   try{report.put("passed",passed);result.putString("stream",report.toString());}catch(Exception ignored){}
   finish(passed?Activity.RESULT_OK:Activity.RESULT_CANCELED,result);
  }

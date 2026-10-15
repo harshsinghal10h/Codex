@@ -2,7 +2,7 @@ name: Android playback and form-factor checks
 on:
   push:
     branches: [vlc-glass-0.3.0]
-    paths: ['android-qa/**', 'publish-0.3.1/manifest.json', '.github/workflows/test-vlc-glass-android.yml']
+    paths: ['android-qa/**', 'publish-0.3.1/build-evidence-0.3.1.json', '.github/workflows/test-vlc-glass-android.yml']
   workflow_dispatch:
 permissions:
   contents: read

@@ -96,7 +96,7 @@ class Player(QMainWindow):
         script=QWebEngineScript();script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation);script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld);script.setRunsOnSubFrames(False)
         script.setSourceCode("(()=>{let q=[],bridge;window.GlassHost={request:s=>bridge?bridge.request(s):q.push(s)};"+lib+";new QWebChannel(qt.webChannelTransport,c=>{bridge=c.objects.native;q.forEach(s=>bridge.request(s));q=[];});})();")
         page.scripts().insert(script)
-        handle=int(self.surface.winId())
+        handle=0 if self.software_video else int(self.surface.winId())
         if self.software_video:pass
         elif sys.platform=='win32':self.player.set_hwnd(handle)
         elif sys.platform=='darwin':self.player.set_nsobject(handle)
@@ -127,6 +127,7 @@ class Player(QMainWindow):
     def protect(self,hidden):
         if self.software_video:self.surface.set_masked(hidden)
         self.surface.setVisible(not hidden);self.player.audio_set_mute(bool(hidden))
+        if not hidden:self.web.raise_()
     def save_progress(self):
         if self.current>0 and self.player.get_length()>0:
             self.db.execute('UPDATE media SET position=?,duration=?,lastplayed=? WHERE id=?',(max(0,self.player.get_time()),self.player.get_length(),int(time.time()*1000),self.current));self.db.commit()

@@ -54,16 +54,24 @@ def run(Player,QApplication,QTimer,argv):
                 if evidence['synthetic_skip'] and window.seek_target is None and window.player.is_playing():
                     evidence['clear_position_ms']=position;window.player.set_pause(1)
                     window.web.page().runJavaScript('showHUD()')
-                    window.screen().grabWindow(int(window.winId())).save(str(report.with_name('ui-smoke.png')))
-                    phase='phone';window.resize(360,760)
-                    QTimer.singleShot(600,check_phone)
+                    phase='snapshot';QTimer.singleShot(700,snapshot_desktop)
                 previous=position
         except Exception as e:finish(e)
+    def snapshot(name):
+        picture=window.screen().grabWindow(0)
+        if picture.isNull():picture=window.screen().grabWindow(int(window.winId()))
+        picture.save(str(report.with_name(name)))
+    def snapshot_desktop():
+        nonlocal phase
+        snapshot('ui-smoke.png');phase='phone';window.resize(360,760)
+        QTimer.singleShot(700,check_phone)
     def check_phone():
         window.web.page().runJavaScript("(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+1;})()",phone_ready)
     def phone_ready(value):
         evidence['responsive_prompt']=bool(value)
-        window.screen().grabWindow(int(window.winId())).save(str(report.with_name('ui-phone.png')))
+        QTimer.singleShot(700,lambda:finish_phone(value))
+    def finish_phone(value):
+        snapshot('ui-phone.png')
         finish(None if value else 'The 360 px prompt layout overflowed')
     timer=QTimer();timer.timeout.connect(check);timer.start(50)
     return app.exec()
