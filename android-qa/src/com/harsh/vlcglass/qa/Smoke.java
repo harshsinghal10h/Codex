@@ -30,11 +30,23 @@ public final class Smoke extends Instrumentation {
   ui(()->service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"play",new JSONObject()));long until=SystemClock.uptimeMillis()+8000;JSONObject now=before;
   while(SystemClock.uptimeMillis()<until){now=state();if(!now.optString("error").isEmpty())throw new Exception("Rotation reported "+now.optString("error"));if(now.optBoolean("playing")&&!now.optBoolean("guardMasked")&&now.optLong("time")>at+300)break;Thread.sleep(30);}
   if(!now.optBoolean("playing")||now.optLong("time")<=at+300)throw new Exception("Playback did not continue after "+label+" rotation");
-  ui(()->{service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"pause",new JSONObject());android.view.TextureView surface=(android.view.TextureView)field(activity,"video");Bitmap frame=surface.getBitmap(8,8);if(frame==null)throw new Exception("No decoded video frame after "+label+" rotation");int visible=0;try{for(int y=0;y<8;y++)for(int x=0;x<8;x++){int c=frame.getPixel(x,y);if(Math.max(android.graphics.Color.red(c),Math.max(android.graphics.Color.green(c),android.graphics.Color.blue(c)))>30)visible++;}}finally{frame.recycle();}if(visible<32)throw new Exception("Video surface stayed black after "+label+" rotation");});
+  AtomicReference<int[]> bounds=new AtomicReference<>();
+  ui(()->{service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"pause",new JSONObject());android.view.TextureView surface=(android.view.TextureView)field(activity,"video");int[] where=new int[2];surface.getLocationOnScreen(where);bounds.set(new int[]{where[0],where[1],surface.getWidth(),surface.getHeight()});});
+  Thread.sleep(400);Bitmap screen=getUiAutomation().takeScreenshot();if(screen==null)throw new Exception("No display capture after "+label+" rotation");int visible=0;int[] r=bounds.get();
+  try{for(float fy:new float[]{.3f,.45f,.6f,.75f})for(float fx:new float[]{.2f,.4f,.6f,.8f}){int x=Math.max(0,Math.min(screen.getWidth()-1,r[0]+(int)(r[2]*fx))),y=Math.max(0,Math.min(screen.getHeight()-1,r[1]+(int)(r[3]*fy)));int c=screen.getPixel(x,y);if(Math.abs(android.graphics.Color.red(c)-48)<24&&Math.abs(android.graphics.Color.green(c)-64)<24&&Math.abs(android.graphics.Color.blue(c)-80)<24)visible++;}}finally{screen.recycle();}
+  if(visible<4)throw new Exception("The actual display did not show the safe video after "+label+" rotation");
   report.put(label+"_playback",true).put(label+"_video_frame",true);
  }
  private void dismissTutorial(){try{android.view.accessibility.AccessibilityNodeInfo root=getUiAutomation().getRootInActiveWindow();if(root==null)return;for(android.view.accessibility.AccessibilityNodeInfo node:root.findAccessibilityNodeInfosByText("Got it")){android.view.accessibility.AccessibilityNodeInfo target=node;for(int i=0;i<3&&target!=null;i++){if(target.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))break;target=target.getParent();}}root.recycle();}catch(Exception ignored){}}
- private void screenshot(String name)throws Exception{Bitmap bitmap=getUiAutomation().takeScreenshot();if(bitmap==null)throw new Exception("No screenshot");try(OutputStream out=new FileOutputStream(new File(getTargetContext().getExternalFilesDir(null),name))){bitmap.compress(Bitmap.CompressFormat.PNG,100,out);}finally{bitmap.recycle();}}
+ private void screenshot(String name)throws Exception{
+  if(!name.equals("android-error.png")){
+   js("showHUD();(()=>{const p=document.createElement('div');p.id='qa-visible-probe';p.style.cssText='position:fixed;left:6px;top:6px;width:24px;height:24px;background:#12ab34;z-index:2147483647;pointer-events:none';document.body.appendChild(p)})();true");
+   Thread.sleep(500);AtomicReference<int[]> origin=new AtomicReference<>();ui(()->{int[] xy=new int[2];web.getLocationOnScreen(xy);origin.set(xy);});float ratio=Float.parseFloat(js("devicePixelRatio"));Bitmap proof=getUiAutomation().takeScreenshot();if(proof==null)throw new Exception("No display capture");
+   try{int[] xy=origin.get();int c=proof.getPixel(xy[0]+Math.round(18*ratio),xy[1]+Math.round(18*ratio));if(Math.abs(android.graphics.Color.red(c)-18)>14||Math.abs(android.graphics.Color.green(c)-171)>14||Math.abs(android.graphics.Color.blue(c)-52)>14)throw new Exception("The glass UI is not visible on the actual display");}finally{proof.recycle();}
+   js("document.getElementById('qa-visible-probe').remove();showHUD();true");Thread.sleep(400);report.put(name.contains("portrait")?"portrait_visible_ui":"landscape_visible_ui",true);
+  }
+  Bitmap bitmap=getUiAutomation().takeScreenshot();if(bitmap==null)throw new Exception("No screenshot");try(OutputStream out=new FileOutputStream(new File(getTargetContext().getExternalFilesDir(null),name))){bitmap.compress(Bitmap.CompressFormat.PNG,100,out);}finally{bitmap.recycle();}
+ }
  public void onStart(){Bundle result=new Bundle();boolean passed=false;
   try{
    report.put("webview",WebView.getCurrentWebViewPackage().versionName).put("api",Build.VERSION.SDK_INT).put("abi",Build.SUPPORTED_ABIS[0]).put("physical_device",false);

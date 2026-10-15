@@ -4,6 +4,7 @@ trap 'adb logcat -d -t 2000 > android-qa/logcat.txt || true; adb pull /sdcard/An
 adb shell settings put secure immersive_mode_confirmations confirmed
 # Like Android CTS, honor test-requested orientations and suppress OS education.
 if [ "$(adb shell getprop ro.build.version.sdk | tr -d '\r')" -ge 31 ]; then
+  adb shell wm fixed-to-user-rotation disabled
   adb shell wm set-ignore-orientation-request false
   adb shell wm set-letterbox-style --isEducationEnabled false
 fi

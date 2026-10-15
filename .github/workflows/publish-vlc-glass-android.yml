@@ -46,3 +46,4 @@ jobs:
           SOURCE_SHA=$(python3 -c 'import json;print(json.load(open("publish-0.3.1/manifest.json"))["source_commit"])')
           gh release view vlc-glass-v0.3.1 || gh release create vlc-glass-v0.3.1 --target "$SOURCE_SHA" --prerelease --title 'VLC Glass 0.3.1 development builds' --notes-file VLC-Glass/RELEASE.md || gh release view vlc-glass-v0.3.1
           gh release upload vlc-glass-v0.3.1 publish-0.3.1/release/* --clobber
+          gh release edit vlc-glass-v0.3.1 --notes-file publish-0.3.1/RELEASE-final.md
