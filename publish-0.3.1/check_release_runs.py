@@ -1,6 +1,6 @@
 """Publish only after the concrete desktop and Android integration checks pass."""
 import json,os,re,subprocess,time
-checks=[('74b8a3e09122792389d63fc3066e94f3b4cd4cf6','Build VLC Glass 0.3.1'),('f7c578458aba1b75932dea210ca1413b5f57e0b0','Android playback and form-factor checks')]
+checks=[('74b8a3e09122792389d63fc3066e94f3b4cd4cf6','Build VLC Glass 0.3.1'),('968a6fb3846abf8349973b1284048bee286cc94f','Android playback and form-factor checks')]
 repo=os.environ['GITHUB_REPOSITORY']
 # Android-only fixes may advance the source archive; the tested desktop source
 # must remain byte-identical outside Android before its artifacts are reused.
