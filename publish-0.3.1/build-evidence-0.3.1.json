@@ -3,7 +3,7 @@
   "android": [
     {
       "file": "VLC-Glass-Android-0.3.1-arm64.apk",
-      "sha256": "16fe598bc7aed2be21574f8df0cc28d3077e8ee9cb5efbcc82baaf3dd193d405",
+      "sha256": "d6af16dd7cb4d4eb444a8b6b35154c5c2926f486b1ec7a7b35a394fc3276699c",
       "bytes": 42125655,
       "abis": [
         "arm64-v8a"
@@ -11,7 +11,7 @@
     },
     {
       "file": "VLC-Glass-Android-0.3.1-armv7.apk",
-      "sha256": "d6881ab5c8d56f093ccf4ec4cbf9cf5b53d464bb26bb11cd7f366c4dac7750d4",
+      "sha256": "300274cf7ef55ab314e425ba9fa97db2d38124fcf6841e2a95d35ac3a2423d68",
       "bytes": 37771617,
       "abis": [
         "armeabi-v7a"
@@ -19,7 +19,7 @@
     },
     {
       "file": "VLC-Glass-Android-0.3.1-x86_64.apk",
-      "sha256": "8ca026a4a7ba5fdc348c04c8952c00bbe4ec8f23ffcbbebe2792ecbe7f531e91",
+      "sha256": "42b28b0893d3e64c0e1d229eaac044a1ec7b2a4ec77bf7ab0286a3952e2be507",
       "bytes": 45144392,
       "abis": [
         "x86_64"
@@ -27,7 +27,7 @@
     },
     {
       "file": "VLC-Glass-Android-0.3.1-universal.apk",
-      "sha256": "f734cea9e97a496aa06211898fed3bcaed153ed3d76ebabd0b996beb1462f26a",
+      "sha256": "2c84ad4624db2599a0a6661c3b0a276df1831dbe0fffdc259ad687fb0bd0ee7a",
       "bytes": 103246916,
       "abis": [
         "arm64-v8a",

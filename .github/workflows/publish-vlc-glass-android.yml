@@ -4,6 +4,9 @@ on:
     branches: [vlc-glass-0.3.0]
     paths: ['publish-0.3.1/**', '.github/workflows/publish-vlc-glass-android.yml']
   workflow_dispatch:
+concurrency:
+  group: vlc-glass-publish-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
   actions: read

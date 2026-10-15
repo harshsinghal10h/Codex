@@ -25,6 +25,14 @@ public final class Smoke extends Instrumentation {
  private void ui(Work work)throws Exception{AtomicReference<Throwable> error=new AtomicReference<>();runOnMainSync(()->{try{work.run();}catch(Throwable e){error.set(e);}});if(error.get()!=null)throw new Exception(error.get());}
  private String js(String script)throws Exception{AtomicReference<String> value=new AtomicReference<>();CountDownLatch latch=new CountDownLatch(1);ui(()->web.evaluateJavascript(script,v->{value.set(v);latch.countDown();}));if(!latch.await(10,TimeUnit.SECONDS))throw new Exception("JavaScript response timed out");return value.get();}
  private JSONObject state()throws Exception{AtomicReference<JSONObject> value=new AtomicReference<>();ui(()->value.set((JSONObject)service.getClass().getMethod("state").invoke(service)));return value.get();}
+ private void verifyRotationPlayback(String label)throws Exception{
+  JSONObject before=state();if(!before.optString("error").isEmpty())throw new Exception("Rotation reported "+before.optString("error"));long at=before.optLong("time");
+  ui(()->service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"play",new JSONObject()));long until=SystemClock.uptimeMillis()+8000;JSONObject now=before;
+  while(SystemClock.uptimeMillis()<until){now=state();if(!now.optString("error").isEmpty())throw new Exception("Rotation reported "+now.optString("error"));if(now.optBoolean("playing")&&!now.optBoolean("guardMasked")&&now.optLong("time")>at+300)break;Thread.sleep(30);}
+  if(!now.optBoolean("playing")||now.optLong("time")<=at+300)throw new Exception("Playback did not continue after "+label+" rotation");
+  ui(()->{service.getClass().getMethod("command",String.class,JSONObject.class).invoke(service,"pause",new JSONObject());android.view.TextureView surface=(android.view.TextureView)field(activity,"video");Bitmap frame=surface.getBitmap(8,8);if(frame==null)throw new Exception("No decoded video frame after "+label+" rotation");int visible=0;try{for(int y=0;y<8;y++)for(int x=0;x<8;x++){int c=frame.getPixel(x,y);if(Math.max(android.graphics.Color.red(c),Math.max(android.graphics.Color.green(c),android.graphics.Color.blue(c)))>30)visible++;}}finally{frame.recycle();}if(visible<32)throw new Exception("Video surface stayed black after "+label+" rotation");});
+  report.put(label+"_playback",true).put(label+"_video_frame",true);
+ }
  private void dismissTutorial(){try{android.view.accessibility.AccessibilityNodeInfo root=getUiAutomation().getRootInActiveWindow();if(root==null)return;for(android.view.accessibility.AccessibilityNodeInfo node:root.findAccessibilityNodeInfosByText("Got it")){android.view.accessibility.AccessibilityNodeInfo target=node;for(int i=0;i<3&&target!=null;i++){if(target.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))break;target=target.getParent();}}root.recycle();}catch(Exception ignored){}}
  private void screenshot(String name)throws Exception{Bitmap bitmap=getUiAutomation().takeScreenshot();if(bitmap==null)throw new Exception("No screenshot");try(OutputStream out=new FileOutputStream(new File(getTargetContext().getExternalFilesDir(null),name))){bitmap.compress(Bitmap.CompressFormat.PNG,100,out);}finally{bitmap.recycle();}}
  public void onStart(){Bundle result=new Bundle();boolean passed=false;
@@ -65,10 +73,10 @@ public final class Smoke extends Instrumentation {
    while(SystemClock.uptimeMillis()<until){s=state();if(maskObserved.get()&&!s.optBoolean("guardMasked")&&s.optBoolean("playing")&&s.optLong("time")>=2000){clear=true;break;}Thread.sleep(30);}
    ui(()->set(service,"listener",original));
    if(!clear)throw new Exception("Replay exposed or failed to skip the protected opening: "+s);report.put("protected_replay",true);
-   js("host('pause');showHUD();true");dismissTutorial();rotate(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+   js("host('pause');showHUD();true");dismissTutorial();rotate(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);verifyRotationPlayback("portrait");
    String fits="(()=>{if(!model.player)return false;showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");report.put("responsive_prompt",true).put("portrait_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-portrait.png");
-   rotate(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+   rotate(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);verifyRotationPlayback("landscape");
    if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the landscape viewport");report.put("landscape_prompt",true).put("landscape_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-landscape.png");passed=true;
   }catch(Throwable error){try{if(activity!=null)screenshot("android-error.png");}catch(Exception ignored){}try{report.put("error",error.toString());}catch(Exception ignored){}error.printStackTrace();}
   try{report.put("passed",passed);result.putString("stream",report.toString());}catch(Exception ignored){}
