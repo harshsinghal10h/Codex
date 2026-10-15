@@ -1,0 +1,37 @@
+name: Publish tested VLC Glass desktops
+on:
+  push:
+    branches: [vlc-glass-0.3.0]
+    paths: ['desktop-release/**', '.github/workflows/publish-vlc-glass-desktop.yml']
+  workflow_dispatch:
+concurrency:
+  group: vlc-glass-desktop-publication
+  cancel-in-progress: true
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify successful package jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 desktop-release/verify.py --check-jobs
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: 38780026939
+          pattern: VLC-Glass-*
+          path: release-assets
+      - name: Verify actual packaged UI reports and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 desktop-release/verify.py
+      - name: Publish verified development packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' -o -name '*smoke.json' -o -name 'Desktop-build-0.3.1.json' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.1 --clobber

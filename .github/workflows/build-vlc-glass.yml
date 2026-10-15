@@ -156,5 +156,4 @@ jobs:
           (root/'SHA256SUMS-desktop.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths))
           PY
           gh release view vlc-glass-v0.3.1 || gh release create vlc-glass-v0.3.1 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.1 development builds' --notes-file VLC-Glass/RELEASE.md
-          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/vlc-glass-v0.3.1" -f sha="$GITHUB_SHA" -F force=true
           find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' -o -name '*smoke.json' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.1 --clobber

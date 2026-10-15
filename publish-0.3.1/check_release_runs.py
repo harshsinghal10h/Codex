@@ -10,6 +10,10 @@ for i in range(270):
   runs=[r for r in data['workflow_runs'] if r['name']==name]
   if not runs:pending.append(name);continue
   run=max(runs,key=lambda r:r['id'])
+  if name=='Build VLC Glass 0.3.1':
+   jobs=json.loads(subprocess.check_output(['gh','api',f"repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100"]))['jobs']
+   expected={'Windows-x64','macOS-arm64','macOS-x64','Linux-x64'}
+   if all(any(j['name'].startswith('desktop (') and label in j['name'] and j['conclusion']=='success' for j in jobs) for label in expected):continue
   if run['status']=='completed':
    if run['conclusion']!='success':raise SystemExit(name+' failed; release publication stopped. See '+run['html_url'])
   else:pending.append(name)
