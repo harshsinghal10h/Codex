@@ -9,13 +9,19 @@ concurrency:
   cancel-in-progress: true
 permissions:
   contents: write
-  actions: read
+  actions: write
 jobs:
   release:
     runs-on: ubuntu-22.04
     timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
+      - name: Stop superseded release publishers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?branch=vlc-glass-0.3.0&status=in_progress&per_page=100" --jq '.workflow_runs[] | select(.name == "Publish verified Android 0.3.1" and .id < (env.GITHUB_RUN_ID | tonumber)) | .id' > old-publishers.txt
+          while read -r id; do gh api --method POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/cancel" || true; done < old-publishers.txt
       - name: Require successful integration checks
         env:
           GH_TOKEN: ${{ github.token }}
