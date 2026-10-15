@@ -52,4 +52,4 @@ class SentryAdapter:
             return {'media_id':str(media_id),'media_sha256':identity,'results':[
               {'start':round(h['start_time']*1000),'end':round(h['end_time']*1000),
                'similarity':h['similarity_score'],'source':'SentrySearch'}
-              for h in hits if str(h['source_file'])==path][:5]}
+              for h in hits][:5]}

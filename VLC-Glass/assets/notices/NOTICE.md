@@ -1,54 +1,15 @@
-# Third party notices
+# Third-party notices
 
-## VideoLAN / LibVLC
+VLC Glass is an independent application, not an official VideoLAN release.
 
-LibVLC 3.7.6, copyright VideoLAN and contributors. The engine and Java bindings
-retain their original binary implementation. LibVLC's licensing and the licenses
-of its codec dependencies remain applicable; this repository's application
-license does not replace them.
+The application source retains GPL-3.0. Android uses the official Maven `org.videolan.android:libvlc-all:3.7.6` artifact. Desktop uses the official platform VLC libraries. Their VideoLAN notices and license obligations apply. Build input URLs and hashes are recorded in `vendor/build-inputs.json`. No donor application code is included in new Android packages.
 
-- Android bindings and source: https://code.videolan.org/videolan/libvlcjni
-- VLC source: https://code.videolan.org/videolan/vlc
-- Maven coordinate: `org.videolan.android:libvlc-all:3.7.6`
-- Android app reference source: https://github.com/videolan/vlc-android
-- Dependency carrier: https://github.com/AndreyPavlenko/Fermata/actions/runs/35517061248
-- Carrier commit: `7d2bd42e0fea98a796ba069b56c48ef07d874549`
-- Carrier archive SHA-256:
-  `6ce7e21f3612357d7b4797305040386e708b8e124d640d195db188348506872d`
+SentrySearch is pinned to ssrajadh/sentrysearch commit ab688137e2a4a9d6f67cac5677be26db16dc406c under Apache-2.0. Its complete package source and license are under `upstream/sentrysearch`.
 
-The carrier application's classes are excluded. `extract_engine.py` selects
-only `org.videolan.libvlc` definitions and the two native engine libraries.
-D8 re-encodes the selected definitions into a 126 KiB dependency. The provenance
-file retains the original selected-class names and individual library hashes.
-The carrier's declaration establishes the dependency version; the artifact
-digest establishes byte identity, not independent authentication of its build.
+LAYA's supplied SDK and Apache-2.0 license are under `upstream/laya`. No trained LAYA weights were supplied or fine-tuned in this work.
 
-## Anatomy, Liquid Glass, Arc
+NudeNet 320n is bundled from the verified nudenet 3.4.2 wheel. Its included license text is AGPL-3.0 and is retained in `licenses/NudeNet-AGPL-3.0.txt`; its package metadata's conflicting MIT label is not used to assume a permissive grant. This distribution provides application and integration source. Model SHA-256: c15d8273adad2d0a92f014cc69ab2d6c311a06777a55545f2c4eb46f51911f0f.
 
-MIT licenses supplied with the uploaded repositories are retained under
-`licenses/`. The Anatomy kit is included under `vendor/anatomy/`. The native
-lens combines the supplied Liquid Glass material guidance with VASO-inspired
-convex refraction, adapted to AGSL.
-The React/WebGPU Liquid Glass package and Arc React components are not bundled
-as runtime dependencies in this Android application.
+ONNX Runtime 1.23.2 Android and 1.20.1 desktop are from Microsoft under MIT. Qt/PySide6 is distributed under its applicable LGPL/GPL/commercial terms; this open-source distribution uses the open-source components. Desktop bundles FFmpeg through imageio-ffmpeg; its FFmpeg licensing and source obligations apply.
 
-## VASO
-
-Source: https://github.com/huozhi/vaso
-Author: huozhi. The supplied repository's package.json and README declare MIT;
-it does not include a separate LICENSE file. `licenses/VASO-MIT.txt` records
-that declaration, attribution and the standard MIT terms. The convex squircle
-profile, Snell-law refraction and SVG displacement approach inform the new
-dependency-free material renderer. No VASO React runtime is bundled.
-
-## LastWave
-
-Visual reference: https://github.com/Clash-Projects/LastWave-Native
-Inspected commit: `15bafdbaed6ce447f6ca86314bf102a468ed8236`.
-No LastWave source or binaries are included.
-
-## Application source
-
-New application code is provided under GPL-3.0-or-later. Dependencies retain
-their respective original licenses. The product name identifies an independent
-personal build and does not imply endorsement by VideoLAN or Apple.
+Anatomy, Arc, Liquid Glass and VASO materials retain the MIT notices in `licenses/`. LastWave is a visual reference; its app code is not copied. Browser and native material paths can differ where platform backdrop APIs differ.

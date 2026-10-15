@@ -1,4 +1,4 @@
-# VLC Glass 0.3.0
+# VLC Glass 0.3.1
 
 Responsive liquid glass controls, a video-moment prompt connected to pinned SentrySearch, and local automatic scene skipping using the bundled NudeNet ONNX detector.
 

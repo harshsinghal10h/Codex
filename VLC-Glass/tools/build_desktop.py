@@ -29,7 +29,7 @@ else:
         shutil.copy2((source/name).resolve(),vlc/name)
     shutil.copytree(source/'vlc/plugins',vlc/'plugins',dirs_exist_ok=True)
 
-cmd=[sys.executable,'-m','PyInstaller','--noconfirm','--clean','--name','VLC-Glass-0.3.0',
+cmd=[sys.executable,'-m','PyInstaller','--noconfirm','--clean','--name','VLC-Glass-0.3.1',
  '--paths',str(ROOT),'--paths',str(next((ROOT/'upstream/sentrysearch').glob('sentrysearch-*'))),
  '--add-data',str(ROOT/'assets')+os.pathsep+'assets',
  '--add-data',str(ROOT/'upstream')+os.pathsep+'upstream',

@@ -73,7 +73,7 @@ class Player(QMainWindow):
         self.scanner=Scanner(ROOT/'assets/models/320n.onnx',self.data/'scan-maps')
         upstream=next((ROOT/'upstream/sentrysearch').glob('sentrysearch-*'))
         self.sentry=SentryAdapter(self.data/'sentry-index',upstream)
-        self.vlc=vlc.Instance('--no-video-title-show','--no-snapshot-preview','--audio-time-stretch');self.player=self.vlc.media_player_new()
+        self.vlc=vlc.Instance('--no-plugins-cache','--no-video-title-show','--no-snapshot-preview','--audio-time-stretch');self.player=self.vlc.media_player_new()
         container=QWidget();self.setCentralWidget(container);layout=QStackedLayout(container);layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
         self.surface=QWidget();self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
         self.web=QWebEngineView();self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground);page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
@@ -124,13 +124,13 @@ class Player(QMainWindow):
             if p.suffix.lower() not in ('.mp3','.flac','.wav','.m4a','.opus','.ogg','.aac','.mp4','.mkv','.avi','.webm','.mov','.ts','.m4v'):continue
             self.db.execute('INSERT OR IGNORE INTO media(uri,title,kind,size,added) VALUES(?,?,?,?,?)',(str(p.resolve()),p.name,kind,p.stat().st_size,int(time.time()*1000)))
         self.db.commit();self.refresh()
-    def open(self,id,queue=None):
+    def open(self,id,queue=None,resume=True):
         self.save_progress();self.generation+=1;self.seek_target=None;self.schedule=None;self.guard={};self.player.stop();self.current=int(id)
         item=self.row()
         if not item:raise ValueError('This media is no longer available.')
         if queue is not None:self.queue=[int(x) for x in queue if self.row(x)]
         if self.current not in self.queue:self.queue.append(self.current)
-        self.cursor=self.queue.index(self.current);self.pending_resume=item['position'] if self.settings.get('resume',True) else 0;self.ended=False;self.fault='';self.ab_a=self.ab_b=-1
+        self.cursor=self.queue.index(self.current);self.pending_resume=item['position'] if resume and self.settings.get('resume',True) else 0;self.ended=False;self.fault='';self.ab_a=self.ab_b=-1
         if self.settings.get('sceneGuard') and item['kind']!='audio':
             self.protect(True);self.guard={'blocked':True,'phase':'hashing','progress':0};generation=self.generation
             def progress(state):self.worker_event.emit({'kind':'guard-progress','generation':generation,'state':state})
@@ -162,13 +162,13 @@ class Player(QMainWindow):
         self.player.set_time(target)
     def next(self,ended=False):
         import random
-        if ended and self.repeat=='one':self.pending_resume=0;self.open(self.current);return
+        if ended and self.repeat=='one':self.open(self.current,resume=False);return
         n=self.cursor+1
         if self.shuffle and len(self.queue)>1:n=random.choice([i for i in range(len(self.queue)) if i!=self.cursor])
         if n>=len(self.queue):
             if self.repeat=='all':n=0
             else:self.player.stop();return
-        self.open(self.queue[n]);self.pending_resume=0
+        self.open(self.queue[n],resume=False)
     @Slot(object)
     def event(self,event):
         if event.get('generation') is not None and event['generation']!=self.generation:return
@@ -308,11 +308,14 @@ def main():
     except Exception as e:QMessageBox.critical(None,'VLC Glass could not start',str(e));raise
 
 if __name__=='__main__':
-    if '--smoke-report' in sys.argv:
+    if '--ui-smoke-report' in sys.argv:
+        from desktop.ui_smoke import run
+        sys.exit(run(Player,QApplication,QTimer,sys.argv))
+    elif '--smoke-report' in sys.argv:
         from intelligence.vision import FrameDetector,sha256_file
         import numpy as np
         model=ROOT/'assets/models/320n.onnx';detector=FrameDetector(model)
-        instance=vlc.Instance('--no-audio','--no-video');player=instance.media_player_new();player.release();instance.release()
+        instance=vlc.Instance('--no-plugins-cache','--no-audio','--no-video');player=instance.media_player_new();player.release();instance.release()
         report={'platform':sys.platform,'vlc':vlc.libvlc_get_version().decode(),'model_sha256':sha256_file(model),'synthetic_frame_score':detector.score(np.zeros((180,320,3),np.uint8)),'physical_playback_tested':False}
         Path(sys.argv[sys.argv.index('--smoke-report')+1]).write_text(json.dumps(report,indent=2))
     else:main()

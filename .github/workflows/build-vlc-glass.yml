@@ -1,4 +1,4 @@
-name: Build VLC Glass 0.3.0
+name: Build VLC Glass 0.3.1
 on:
   push:
     branches: [vlc-glass-0.3.0]
@@ -38,33 +38,47 @@ jobs:
         run: python tools/prepare_dependencies.py --desktop
       - name: Install Linux media libraries
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libegl1 libxcb-cursor0 libxkbcommon-x11-0
+        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libegl1 libxcb-cursor0 libxkbcommon-x11-0 xvfb
       - name: Install official macOS VLC
         if: runner.os == 'macOS'
         run: brew install --cask vlc
       - name: Test timeline policy
-        run: python -m unittest discover -s tests -p 'test_timeline.py' -v
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Create safe playback fixture
+        run: python tools/make_smoke_video.py
       - name: Package desktop app
         run: python tools/build_desktop.py
       - name: Smoke test Windows package
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.0.exe" -ArgumentList "--smoke-report", "desktop-smoke.json" -Wait -PassThru
+          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.1.exe" -ArgumentList "--smoke-report", "desktop-smoke.json" -Wait -PassThru
           if ($process.ExitCode -ne 0 -or !(Test-Path desktop-smoke.json)) { throw 'Packaged runtime smoke test failed' }
           Get-Content desktop-smoke.json
+          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.1.exe" -ArgumentList "--ui-smoke-report", "ui-smoke.json", "--smoke-video", "build/safe-smoke.mp4" -Wait -PassThru
+          if ($process.ExitCode -ne 0 -or !(Test-Path ui-smoke.json)) { throw 'Packaged UI playback test failed' }
+          Get-Content ui-smoke.json
       - name: Smoke test Unix package
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          if [ -d dist/VLC-Glass-0.3.0.app ]; then
-            dist/VLC-Glass-0.3.0.app/Contents/MacOS/VLC-Glass-0.3.0 --smoke-report desktop-smoke.json
-            ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.0.app dist/VLC-Glass-0.3.0-${{ matrix.label }}.zip
+          if [ -d dist/VLC-Glass-0.3.1.app ]; then
+            dist/VLC-Glass-0.3.1.app/Contents/MacOS/VLC-Glass-0.3.1 --smoke-report desktop-smoke.json
+            dist/VLC-Glass-0.3.1.app/Contents/MacOS/VLC-Glass-0.3.1 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4
+            ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.1.app dist/VLC-Glass-0.3.1-${{ matrix.label }}.zip
           else
-            dist/VLC-Glass-0.3.0/VLC-Glass-0.3.0 --smoke-report desktop-smoke.json
-            tar -C dist -czf dist/VLC-Glass-0.3.0-${{ matrix.label }}.tar.gz VLC-Glass-0.3.0
+            dist/VLC-Glass-0.3.1/VLC-Glass-0.3.1 --smoke-report desktop-smoke.json
+            xvfb-run -a dist/VLC-Glass-0.3.1/VLC-Glass-0.3.1 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4
+            tar -C dist -czf dist/VLC-Glass-0.3.1-${{ matrix.label }}.tar.gz VLC-Glass-0.3.1
           fi
           cat desktop-smoke.json
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: QA-failure-${{ matrix.label }}
+          path: |
+            VLC-Glass/*smoke.json
+            VLC-Glass/ui-*.png
       - uses: actions/upload-artifact@v4
         if: success()
         with:
@@ -74,6 +88,9 @@ jobs:
             VLC-Glass/dist/*.zip
             VLC-Glass/dist/*.tar.gz
             VLC-Glass/desktop-smoke.json
+            VLC-Glass/ui-smoke.json
+            VLC-Glass/ui-smoke.png
+            VLC-Glass/ui-phone.png
           compression-level: 0
           retention-days: 14
   release:
@@ -97,7 +114,9 @@ jobs:
           root=Path('release-assets')
           paths=[p for p in root.rglob('*') if p.suffix in ('.exe','.zip','.gz')]
           if not paths:raise SystemExit('No verified desktop packages were produced')
+          for p in root.glob('VLC-Glass-*/*smoke.json'):
+              p.rename(p.with_name(p.parent.name+'-'+p.name))
           (root/'SHA256SUMS-desktop.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths))
           PY
-          gh release view vlc-glass-v0.3.0 || gh release create vlc-glass-v0.3.0 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.0 development builds' --notes-file VLC-Glass/RELEASE.md
-          find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.0 --clobber
+          gh release view vlc-glass-v0.3.1 || gh release create vlc-glass-v0.3.1 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.1 development builds' --notes-file VLC-Glass/RELEASE.md
+          find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' -o -name '*smoke.json' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.1 --clobber

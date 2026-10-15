@@ -36,7 +36,7 @@ def safe_extract(archive, destination):
 
 def main():
     urls = {
-      'onnxruntime-android-1.20.0.aar': 'https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.20.0/onnxruntime-android-1.20.0.aar',
+      'onnxruntime-android-1.23.2.aar': 'https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.23.2/onnxruntime-android-1.23.2.aar',
       'libvlc-all-3.7.6.aar': 'https://repo.maven.apache.org/maven2/org/videolan/android/libvlc-all/3.7.6/libvlc-all-3.7.6.aar',
       'build-tools_r35_linux.zip': 'https://dl.google.com/android/repository/build-tools_r35_linux.zip',
       'platform-35_r02.zip': 'https://dl.google.com/android/repository/platform-35_r02.zip',
@@ -60,9 +60,10 @@ def main():
                 print('FAILED',name,str(e),flush=True)
     lock={name:{'url':urls[name],'sha256':sha} for name,(_,sha) in results.items()}
     (ROOT/'vendor/build-inputs.json').write_text(json.dumps(lock,indent=2)+'\n')
-    for name in ['onnxruntime-android-1.20.0.aar','libvlc-all-3.7.6.aar']:
+    for name in ['onnxruntime-android-1.23.2.aar','libvlc-all-3.7.6.aar']:
         if name not in results:continue
         dest=ROOT/'vendor' / ('onnx-android' if name.startswith('onnx') else 'libvlc-aar')
+        if dest.exists():shutil.rmtree(dest)
         safe_extract(results[name][0],dest)
     if wheel['filename'] in results:
         with zipfile.ZipFile(results[wheel['filename']][0]) as z:

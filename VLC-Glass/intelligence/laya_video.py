@@ -15,6 +15,8 @@ QUESTIONS={
 
 class VideoDecisionAgent:
     def __init__(self,path,device='cpu',cache_size=128):
+        from pathlib import Path
+        if not Path(path).is_dir():raise ValueError("LAYA_MODEL_DIR must point to a local checkpoint directory")
         import torch
         import laya
         torch.set_num_threads(2)

@@ -1,117 +1,72 @@
-# VLC Glass
+# VLC Glass 0.3.1
 
-An independent Android media player using LibVLC 3.7.6, a local SQLite library,
-and two switchable glass appearances. This is a development build, not an official
-VideoLAN release or a complete implementation of every VLC desktop feature.
+An independent LibVLC player for Android and desktop with shared, responsive liquid glass controls. It is not an official VideoLAN release.
 
-Install `VLC-Glass-Android-0.2.0-arm64.apk` on a 64-bit Android 9 or newer device.
-Open media files or choose a folder from Browse. Change the appearance through
-**Settings → Visual & appearance → Liquid glass → Emulate mode**.
+## Play and protect a video
 
-## Included behavior
+Open a local video. Select the shield in the player or **More → Scene guard**, then enable **Automatic scene skipping**. The first scan runs locally before protected playback starts. Reopening an unchanged file reuses a map verified against its complete SHA-256, the detector hash, and the analysis policy.
 
-- Local file and folder import through Android's document picker, including
-  persistent access grants, thumbnails and saved playback positions.
-- Video and audio libraries, search, sort, grid/list views, favorites, history,
-  saved playlists, an editable playback queue and multi-file import.
-- Native VLC decoding with selectable hardware/software decoding, manually
-  opened network locations, a configurable stream cache and external-open intents.
-- Native receiver discovery and a cast selector using LibVLC's renderer
-  discoverers. A scan runs for twelve seconds; selecting a receiver explicitly
-  connects playback. Casting and receiver compatibility require device testing.
-- Playback speed, audio/subtitle tracks and delays, subtitle files, chapters,
-  bookmarks, A–B looping, repeat, shuffle, volume, sleep timer and aspect ratios.
-- YouTube-style control placement: title/back at the upper left; cast, quality
-  and settings at the upper right; transport in the center; captions, speed,
-  queue, fullscreen and lock near the bottom; a red timeline below them.
-  Hold the video for 2× speed and release to restore the previous rate. Double
-  tap the sides to seek. Pinch or use the zoom menu to enlarge video.
-- Local-file seek thumbnails, chapter markers, mute, replay, caption appearance,
-  adjustable control timeout and optional automatic picture in picture.
-  Quality reports the actual encoded resolution and exposes genuine video
-  track variants when available; it does not invent downloadable resolutions.
-- Background audio service, audio-focus handling, headphone-unplug pause,
-  media session and playback notification, screen-awake control and picture in picture.
-- Apple clear and LastWave depth appearances, with VASO-inspired convex
-  refraction, RGB edge dispersion, directional specular highlights and frosting.
-  Four saved sliders adjust depth, dispersion, frosting and edge highlights.
-  Android 13+ uses a native AGSL lens on the live video texture; earlier
-  versions use translucent controls. Native subtitles remain on a separate
-  surface and lift above visible lower controls. The browser material uses
-  cached SVG displacement filters, without cloning the video or page backdrop.
-- A 79-part Anatomy audio console with a continuously turning flywheel and
-  three breathing lamps. Its faders follow saved equalizer gains, and its
-  carriage follows actual playback time. Loop motion pauses offscreen or when
-  hidden; the loop toggle and reduced-motion setting stop decorative animation.
-- Responsive layouts for compact phones, landscape, tablets and desktop
-  previews, with large touch targets and a high-contrast material option.
+The bundled NudeNet ONNX detector samples frames every 500 ms, checks near detected boundaries at 100 ms, and adds padding. Playback uses a 50 ms schedule lookup with a speed-adjusted lead, masking and muting during a protected seek. Failed scans keep protected playback paused. This can miss content or skip innocent scenes. It does not guarantee frame-exact recognition, detect every kind of sexual activity, or protect live streams and casting.
 
-## Run the interface preview
+## Find a described moment
+
+The glass prompt above the timeline searches the current video's SentrySearch index. Results show timestamp ranges and embedding similarity, not a calibrated probability. Choose a result to seek to that range. Weak matches are labelled.
+
+On desktop, open video search setup, save your Gemini API key and select **Index this video**. Cloud indexing sends overlapping video chunks to Google. It is an explicit action and needs your own API access. No key is included. Local Qwen indexing is available from a source installation with the upstream optional dependencies and weights; these large dependencies are not included in the desktop executable.
+
+On Android, scene skipping runs on the phone. Description search connects to the SentrySearch companion included in the desktop/source distribution. Start it with a token file:
 
 ```sh
+python desktop/main.py --companion --token-file /private/path/companion-token.txt
+```
+
+Set `GEMINI_API_KEY` in the companion's environment. It listens on localhost by default. A LAN listener requires HTTPS:
+
+```sh
+python desktop/main.py --companion --bind 0.0.0.0 --cert certificate.pem --key private-key.pem --token-file /private/path/companion-token.txt
+```
+
+Use a certificate trusted by the phone. Enter its URL and token in the Android search setup, then explicitly index the selected video. The companion accepts uploaded media IDs, not arbitrary filesystem paths. Raw uploads and indexes are stored in the companion's selected data directory. API tokens and prompts are excluded from request logs. The first index can take substantial time; searching an existing index is a separate operation.
+
+## LAYA
+
+The supplied LAYA SDK is preserved under `upstream/laya`. It is a text decision model, not a visual nudity detector. `intelligence/laya_video.py` adds a single resident checkpoint, warm-up, batched questions, bounded evidence, inference mode and an LRU cache. Its output is advisory and cannot clear positive visual detections or unscanned video.
+
+No trained weights were present in the supplied archive. No video-domain fine-tuning, calibration, recognition-accuracy improvement or device-wide latency figure is claimed. For a source installation with LAYA's dependencies and a local checkpoint, set `LAYA_MODEL_DIR` and optionally `LAYA_DEVICE`. The desktop executable does not bundle PyTorch or LAYA weights. Inference stays outside playback scheduling.
+
+## Platforms and builds
+
+| Target | Package | Minimum target / scope |
+| --- | --- | --- |
+| Android arm64 | APK | Android 9+, phones, tablets and compatible TVs |
+| Android armv7 | APK | Android 9+, 32-bit ARM |
+| Android x86_64 | APK | Android 9+, compatible x86 devices/emulators |
+| Android universal | APK | Includes the three architectures above |
+| Windows x64 | EXE | Windows 10/11 target; packaged runtime tested in CI |
+| macOS arm64 / x64 | App ZIP | Separate native builds; see individual CI results |
+| Linux x64 | TAR.GZ | Built on Ubuntu 22.04; other distributions require validation |
+
+These are development builds. Native iOS, Windows ARM64, Android before 9, commercial signing/notarization, and an exhaustive OS/device certification matrix are not supplied. Browser preview supports ordinary media playback; native analysis features explain their limits.
+
+```sh
+python3 tools/prepare_dependencies.py
+python3 tools/build.py --keystore /private/path/signing.p12 --universal
+```
+
+The Android build needs JDK 17. It uses pinned official LibVLC and ONNX Runtime AARs. Runtime 1.23.2 supplies 16 KB-aligned 64-bit native libraries. Production signing keys must stay private. Rebuilding without the existing development key creates a different signer.
+
+For desktop, install `desktop/requirements.txt`, prepare inputs with `python tools/prepare_dependencies.py --desktop`, and run `python tools/build_desktop.py`. Official platform VLC libraries are collected by the build script. Native binaries and detector bytes are fetched at build time and bundled for playback; they are not downloaded while watching.
+
+```sh
+python -m unittest discover -s tests -p 'test_*.py' -v
+npm run check
 npm run dev -- --host 0.0.0.0 --port 4173
 ```
 
-No npm dependencies need to be installed. The preview uses actual browser media
-playback and IndexedDB. It is useful for checking the interface, file import and
-saved preferences; it does not validate Android native decoding. Native-only
-features report their limits in the preview. Browser format support depends on
-the browser. Open the preview through localhost rather than a `file:` URL.
+## Included controls
 
-## Build Android
+Local library, folders, playlists, favorites, saved positions, queue, tracks and captions, playback speed, equalizer, bookmarks, A–B loop, gestures, picture in picture on Android, two saved glass finishes, reduced motion and animated Anatomy artwork. The desktop host uses native LibVLC; desktop receiver discovery is not implemented. Desktop bookmarks are currently session-local. This does not implement every VLC feature.
 
-Install JDK 17, Python 3, Android SDK platform 35 and Android build tools 35.
-The source bundle includes the pinned, isolated native dependency and artwork kit.
+## Notices
 
-```sh
-python3 tools/build.py --sdk /absolute/path/to/android-sdk
-python3 tests/verify_package.py
-```
-
-The build creates a local development signing key if no key is supplied. Use
-`--keystore /path/to/signing.p12` with the supplied development key to produce
-updates compatible with this build. The development key's alias is `vlcglass`
-and its password is `android`. It is not suitable for a public production release.
-The key is supplied in a separate private backup archive and is excluded from
-the application and source bundle.
-
-Regenerate the Anatomy asset with `node tools/build_deck.mjs`. APK assembly
-uses the included Python ZIP aligner for 4-byte alignment of stored entries.
-Native libraries are compressed and extracted on installation, rather than
-being directly mapped from the APK. The original 0.1.0 signing certificate is
-retained in the delivered 0.2.0 APK; source rebuilds need the separate private
-key to preserve update compatibility.
-Native dependency provenance, class inventory and hashes are in `vendor/`.
-The dependency preparation script is retained for reproducibility; normal builds
-use `vendor/libvlc.dex` and do not need to download the original build artifact.
-
-## Verification and limits
-
-See `QA.md` for the exact checks performed. Java compilation, native API
-signature checks, DEX packaging and APK signature verification passed. Browser
-checks include real file playback, captions, actual resolution reporting,
-1.5× speed, hold-for-2× and restoration, lock/unlock, both glass modes,
-320–1120 pixel layouts, looping SVG motion and reduced-motion behavior.
-
-This environment has no running Android device or emulator. Installation,
-native decoder initialization, hardware codec behavior, HDR output, subtitle
-rendering, background playback, native refraction, casting, PiP and Android lifecycle
-behavior remain unverified. Do not treat this build as production certified.
-
-LAN share discovery, optical-disc navigation, capture-device
-input, media conversion, transcoding, VLC extensions and the complete VLC
-desktop preferences system are not implemented. Network playback depends on
-the bundled engine, server and device. It does not bypass DRM or service restrictions.
-
-## Attribution
-
-VideoLAN LibVLC provides the media engine. Its pinned Android dependency is
-isolated from an integrity-checked public Fermata build artifact. No Fermata
-application components or user interface are included. See `NOTICE.md`.
-
-Anatomy geometry and CSS are used under MIT. The supplied Liquid Glass material
-guidance and VASO's convex profile inform the lens. Arc's calm
-motion and accessible control patterns inform the interface. LastWave's native
-glass source was inspected as a visual reference; its app code is not copied.
-The supplied VASO repository declares MIT; attribution is retained under
-`licenses/VASO-MIT.txt`. Third-party notices also ship inside the APK assets.
+Application source retains GPL-3.0. SentrySearch and LAYA retain Apache-2.0. NudeNet's bundled license text is AGPL-3.0, despite conflicting MIT package metadata; the supplied license is included rather than assuming a permissive grant. Full corresponding application/adapter source is provided. See `NOTICE.md` and `licenses/` for dependencies and attribution.

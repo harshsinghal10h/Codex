@@ -1,4 +1,8 @@
 {
+  "sentrysearch-ab688137.zip": {
+    "url": "https://github.com/ssrajadh/sentrysearch/archive/ab688137e2a4a9d6f67cac5677be26db16dc406c.zip",
+    "sha256": "4cd02d0bd0c3c711a881257b1b4cccf9716e21614c43746f3fd121c51fa12087"
+  },
   "nudenet-3.4.2-py3-none-any.whl": {
     "url": "https://files.pythonhosted.org/packages/1c/ee/1aa02d44ba958cc77e16ff1e41a0aac5e721037db7bf62b9c9d124917f87/nudenet-3.4.2-py3-none-any.whl",
     "sha256": "5937dbd84e5d8e5de038f08ffea5a1bb50a08475776bf2b4795914ce0eaf0331"
@@ -11,16 +15,12 @@
     "url": "https://dl.google.com/android/repository/build-tools_r35_linux.zip",
     "sha256": "bd3a4966912eb8b30ed0d00b0cda6b6543b949d5ffe00bea54c04c81e1561d88"
   },
-  "sentrysearch-ab688137.zip": {
-    "url": "https://github.com/ssrajadh/sentrysearch/archive/ab688137e2a4a9d6f67cac5677be26db16dc406c.zip",
-    "sha256": "4cd02d0bd0c3c711a881257b1b4cccf9716e21614c43746f3fd121c51fa12087"
-  },
-  "onnxruntime-android-1.20.0.aar": {
-    "url": "https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.20.0/onnxruntime-android-1.20.0.aar",
-    "sha256": "07a8f71ef890afed8c6087a56220e6d558a492804276ee2dd7cb7f6262242027"
-  },
   "libvlc-all-3.7.6.aar": {
     "url": "https://repo.maven.apache.org/maven2/org/videolan/android/libvlc-all/3.7.6/libvlc-all-3.7.6.aar",
     "sha256": "6b438ab75eb3b307d9699f4594c043f46b0a9a697521bd03729c02c0a400eb8a"
+  },
+  "onnxruntime-android-1.23.2.aar": {
+    "url": "https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.23.2/onnxruntime-android-1.23.2.aar",
+    "sha256": "82048d1f462218adae4ba76477089ab0ba76093d84f733540066db1a8ba6b827"
   }
 }

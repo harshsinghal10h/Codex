@@ -17,7 +17,7 @@ public final class SceneSearchClient {
   String value=settings.optString("analysisEndpoint").trim().replaceAll("/+$","");
   if(value.isEmpty())throw new IOException("Set up the SentrySearch companion connection, then index this video.");
   URI uri=new URI(value);if(uri.getUserInfo()!=null||uri.getQuery()!=null||uri.getFragment()!=null||uri.getHost()==null)throw new IOException("Use a valid companion URL without credentials or query parameters.");
-  String host=uri.getHost();boolean local=host.equals("localhost")||host.equals("127.0.0.1")||host.startsWith("192.168.")||host.startsWith("10.")||host.matches("172\\.(1[6-9]|2[0-9]|3[01])\\..+");
+  String host=uri.getHost();boolean local=host.equals("localhost")||host.equals("127.0.0.1")||host.matches("192\\.168\\.[0-9]{1,3}\\.[0-9]{1,3}")||host.matches("10\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")||host.matches("172\\.(1[6-9]|2[0-9]|3[01])\\.[0-9]{1,3}\\.[0-9]{1,3}");
   if(!uri.getScheme().equals("https")&&!(uri.getScheme().equals("http")&&local))throw new IOException("Use HTTPS for the companion connection. HTTP is allowed only on a private local network.");
   if(secrets.get("companion").isEmpty())throw new IOException("Enter the companion access token first.");return value;
  }
