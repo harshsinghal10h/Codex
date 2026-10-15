@@ -1,0 +1,43 @@
+name: Build Brave with Proton Free
+on:
+  push:
+    branches: [brave-proton-single-app]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install validation dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Build and validate credential-free APK
+        run: python build.py --import-only --generate-signing-key
+      - name: Record APK checksum
+        run: sha256sum Brave-Proton-Free-1.97.56-arm64.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Brave-Proton-Free-arm64
+          path: |
+            Brave-Proton-Free-1.97.56-arm64.apk
+            SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publish experimental APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: brave-proton-v1.97.56-r${{ github.run_number }}
+        run: |
+          gh release create "$RELEASE_TAG" Brave-Proton-Free-1.97.56-arm64.apk SHA256SUMS.txt \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Brave + Proton Free: one Android app" \
+            --notes-file RELEASE-NOTES.md

@@ -1,0 +1,11 @@
+{
+  "upstream": "brave/brave-browser v1.97.56",
+  "source_commit": "b01cdf43be4b4d5559bf7e58229e666e24454f50",
+  "package": "com.brave.browser",
+  "version": "1.97.56-proton.2",
+  "minimum_android_api": 29,
+  "cpu": "arm64-v8a",
+  "version_code": 429705606,
+  "launcher_count": 1,
+  "vpn_entry": "Internal Brave Settings menu"
+}
