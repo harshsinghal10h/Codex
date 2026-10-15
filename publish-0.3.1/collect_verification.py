@@ -2,7 +2,7 @@
 from pathlib import Path
 import io,json,os,subprocess,zipfile
 repo=os.environ['GITHUB_REPOSITORY']
-sha='968a6fb3846abf8349973b1284048bee286cc94f'
+sha='db5348777dcc46589012b28f1ee9fde26b393427'
 def api(path):return subprocess.check_output(['gh','api',f'repos/{repo}/{path}'])
 runs=json.loads(api(f'actions/runs?head_sha={sha}'))['workflow_runs']
 run=max((r for r in runs if r['name']=='Android playback and form-factor checks'),key=lambda r:r['id'])
