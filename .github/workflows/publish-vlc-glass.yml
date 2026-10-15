@@ -1,0 +1,40 @@
+name: Publish VLC Glass 0.2.0
+on:
+  push:
+    branches: [vlc-glass-0.2.0]
+    paths: [publish/manifest.json]
+permissions:
+  contents: write
+concurrency:
+  group: vlc-glass-0.2.0-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the exact publication commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
+      - name: Reconstruct and verify the exact signed APK and source
+        run: python3 publish/reassemble.py
+      - name: Publish development release downloads
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create vlc-glass-v0.2.0 \
+            dist/VLC-Glass-Android-0.2.0-arm64.apk \
+            dist/VLC-Glass-Source-0.2.0.zip \
+            dist/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "VLC Glass 0.2.0" \
+            --notes-file publish/RELEASE.md \
+            --prerelease
