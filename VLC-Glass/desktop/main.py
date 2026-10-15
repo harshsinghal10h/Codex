@@ -16,6 +16,7 @@ if '--companion' in sys.argv:
     main(sys.argv[sys.argv.index('--companion')+1:]);raise SystemExit()
 if (ROOT/'vendor/vlc').exists():
     folder=ROOT/'vendor/vlc'
+    if sys.platform=='darwin' and not getattr(sys,'frozen',False):folder=Path('/Applications/VLC.app/Contents/MacOS')
     if sys.platform=='win32':
         DLL_HANDLE=os.add_dll_directory(str(folder));os.environ['PYTHON_VLC_LIB_PATH']=str(folder/'libvlc.dll')
     elif sys.platform=='darwin':os.environ['PYTHON_VLC_LIB_PATH']=str(folder/'lib/libvlc.dylib')
