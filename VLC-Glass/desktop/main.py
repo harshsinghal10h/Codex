@@ -88,7 +88,7 @@ class Player(QMainWindow):
         if sys.platform=='win32':self.player.set_hwnd(handle)
         elif sys.platform=='darwin':self.player.set_nsobject(handle)
         else:self.player.set_xwindow(handle)
-        self.worker_event.connect(self.event)
+        self.worker_event.connect(self.handle_worker_event)
         self.web.setUrl(QUrl('vlcglass://local/index.html'))
         self.clock=QTimer(self);self.clock.timeout.connect(self.tick);self.clock.start(50);self.last_ui=0;self.last_save=0
         QShortcut(QKeySequence('F11'),self,activated=self.fullscreen)
@@ -170,7 +170,7 @@ class Player(QMainWindow):
             else:self.player.stop();return
         self.open(self.queue[n],resume=False)
     @Slot(object)
-    def event(self,event):
+    def handle_worker_event(self,event):
         if event.get('generation') is not None and event['generation']!=self.generation:return
         try:
             if event['kind']=='guard-progress':self.guard.update(event['state'])

@@ -47,6 +47,6 @@ for suffix,abis in EXPECTED.items():
  certificate=re.search(r'certificate SHA-256 digest: (\w+)',signature.stdout).group(1)
  badging=subprocess.run([str(BT/'aapt2'),'dump','badging',str(apk)],text=True,capture_output=True,check=True).stdout
  assert "versionCode='4'" in badging and "versionName='0.3.1'" in badging
- assert "sdkVersion:'28'" in badging and "targetSdkVersion:'35'" in badging
- assert 'android.intent.category.LEANBACK_LAUNCHER' in badging
+ assert "minSdkVersion:'28'" in badging and "targetSdkVersion:'35'" in badging
+ assert 'leanback-launchable-activity:' in badging
  print(json.dumps({'file':apk.name,'verified':True,'certificate_sha256':certificate,'abis':sorted(abis),'64_bit_elf_alignment':'16 KB or greater'}))
