@@ -1,0 +1,6836 @@
+{
+  "Lorg/videolan/libvlc/AWindow$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$NativeLock;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$NativeLock;",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$NativeLock;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$SurfaceCallback;": [
+    {
+      "name": "onSurfacesCreated",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfacesDestroyed",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$SurfaceHelper$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceHelper;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "surfaceChanged",
+      "parameters": [
+        "Landroid/view/SurfaceHolder;",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "surfaceCreated",
+      "parameters": [
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "surfaceDestroyed",
+      "parameters": [
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$SurfaceHelper$2;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceHelper;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfaceTextureAvailable",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfaceTextureDestroyed",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "onSurfaceTextureSizeChanged",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfaceTextureUpdated",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$SurfaceHelper;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/SurfaceView;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/TextureView;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceHelper;"
+      ],
+      "returns": "Landroid/view/SurfaceHolder;"
+    },
+    {
+      "name": "attach",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "attachSurface",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "attachSurfaceView",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "attachTextureView",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceHelper;",
+        "Landroid/view/Surface;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "createSurfaceTextureListener",
+      "parameters": [],
+      "returns": "Landroid/view/TextureView$SurfaceTextureListener;"
+    },
+    {
+      "name": "getSurface",
+      "parameters": [],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "getSurfaceHolder",
+      "parameters": [],
+      "returns": "Landroid/view/SurfaceHolder;"
+    },
+    {
+      "name": "isReady",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "releaseTextureView",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setSurface",
+      "parameters": [
+        "Landroid/view/Surface;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "attachToGLContext",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "c",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;"
+      ],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "createSurface",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "d",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "detachFromGLContext",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "e",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceTextureThread;",
+        "[F"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "getSurface",
+      "parameters": [],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "onFrameAvailable",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "waitAndUpdateTexImage",
+      "parameters": [
+        "[F"
+      ],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/AWindow;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow$SurfaceCallback;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "SurfaceTexture_attachToGLContext",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "SurfaceTexture_detachFromGLContext",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "SurfaceTexture_getSurface",
+      "parameters": [],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "SurfaceTexture_waitAndUpdateTexImage",
+      "parameters": [
+        "[F"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IVLCVout$OnNewVideoLayoutListener;"
+    },
+    {
+      "name": "addCallback",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$Callback;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "areSurfacesWaiting",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "areViewsAttached",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$OnNewVideoLayoutListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I"
+      ],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "c",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "d",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "detachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "e",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;",
+        "I",
+        "Landroid/view/Surface;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "ensureInitState",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getNativeSurface",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "getSubtitlesSurface",
+      "parameters": [],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "getVideoSurface",
+      "parameters": [],
+      "returns": "Landroid/view/Surface;"
+    },
+    {
+      "name": "nativeOnMouseEvent",
+      "parameters": [
+        "J",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeOnWindowSize",
+      "parameters": [
+        "J",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfaceCreated",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfaceDestroyed",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "registerNative",
+      "parameters": [
+        "J"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "removeCallback",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$Callback;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "sendMouseEvent",
+      "parameters": [
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setBuffersGeometry",
+      "parameters": [
+        "Landroid/view/Surface;",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setNativeSurface",
+      "parameters": [
+        "I",
+        "Landroid/view/Surface;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesSurface",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesSurface",
+      "parameters": [
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesView",
+      "parameters": [
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesView",
+      "parameters": [
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSurface",
+      "parameters": [
+        "I",
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoLayout",
+      "parameters": [
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoSurface",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoSurface",
+      "parameters": [
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoView",
+      "parameters": [
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoView",
+      "parameters": [
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setView",
+      "parameters": [
+        "I",
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setView",
+      "parameters": [
+        "I",
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setWindowSize",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "unregisterNative",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ErrorMessage;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$2;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$LoginDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$3;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$QuestionDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$4;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ProgressDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$5;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$6;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog;",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$Callbacks;": [
+    {
+      "name": "onCanceled",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onDisplay",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ErrorMessage;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onDisplay",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$LoginDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onDisplay",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ProgressDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onDisplay",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$QuestionDialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onProgressUpdate",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ProgressDialog;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$ErrorMessage;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$IdDialog;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "dismiss",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeDismiss",
+      "parameters": [
+        "J"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$LoginDialog;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "asksStore",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "dismiss",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getDefaultUsername",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativePostLogin",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "postLogin",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$ProgressDialog;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z",
+        "F",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog$ProgressDialog;",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "dismiss",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getCancelText",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getPosition",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "isCancelable",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isIndeterminate",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "update",
+      "parameters": [
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog$QuestionDialog;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "dismiss",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getAction1Text",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getAction2Text",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getCancelText",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getQuestionType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativePostAction",
+      "parameters": [
+        "J",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "postAction",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/Dialog;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/Dialog$Callbacks;"
+    },
+    {
+      "name": "cancelFromNative",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "dismiss",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "displayErrorFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "displayLoginFromNative",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "Lorg/videolan/libvlc/Dialog;"
+    },
+    {
+      "name": "displayProgressFromNative",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/Dialog;"
+    },
+    {
+      "name": "displayQuestionFromNative",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/Dialog;"
+    },
+    {
+      "name": "getContext",
+      "parameters": [],
+      "returns": "Ljava/lang/Object;"
+    },
+    {
+      "name": "getText",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getTitle",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeSetCallbacks",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setCallbacks",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Lorg/videolan/libvlc/Dialog$Callbacks;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setContext",
+      "parameters": [
+        "Ljava/lang/Object;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "updateProgressFromNative",
+      "parameters": [
+        "Lorg/videolan/libvlc/Dialog;",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/FactoryManager;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getFactory",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IComponentFactory;"
+    },
+    {
+      "name": "registerFactory",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Lorg/videolan/libvlc/interfaces/IComponentFactory;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/LibVLC$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/LibVLC;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/util/List;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "changeset",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "compiler",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getAppContext",
+      "parameters": [],
+      "returns": "Landroid/content/Context;"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "loadLibraries",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "majorVersion",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeNew",
+      "parameters": [
+        "[Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetUserAgent",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC$Event;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setUserAgent",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "version",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    }
+  ],
+  "Lorg/videolan/libvlc/LibVLCFactory;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getFromContext",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getFromOptions",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/util/List;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    }
+  ],
+  "Lorg/videolan/libvlc/Media;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addOption",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addSlave",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "clearSlaves",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "createAudioTrackFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "createSlaveFromNative",
+      "parameters": [
+        "I",
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+    },
+    {
+      "name": "createStatsFromNative",
+      "parameters": [
+        "I",
+        "F",
+        "I",
+        "F",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "F"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Stats;"
+    },
+    {
+      "name": "createSubtitleTrackFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "createUnknownTrackFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "createVideoTrackFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "getDuration",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getMediaCodecModule",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I",
+        "Z"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getSlaves",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+    },
+    {
+      "name": "getState",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getStats",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Stats;"
+    },
+    {
+      "name": "getTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "getTrackCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "getType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getUri",
+      "parameters": [],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "isParsed",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeAddOption",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeAddSlave",
+      "parameters": [
+        "I",
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeClearSlaves",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeGetDuration",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "nativeGetMeta",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativeGetMrl",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativeGetSlaves",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+    },
+    {
+      "name": "nativeGetState",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetStats",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Stats;"
+    },
+    {
+      "name": "nativeGetTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "nativeGetType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeNewFromFd",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromFdWithOffsetLength",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;",
+        "J",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromLocation",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromMediaList",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromPath",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeParse",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeParseAsync",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Event;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "parse",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parse",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "postParse",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setDefaultMediaPlayerOptions",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setHWDecoderEnabled",
+      "parameters": [
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "subItems",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/MediaList;"
+    },
+    {
+      "name": "subItems",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMediaList;"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaDiscoverer$Description$Category;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaDiscoverer$Description;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaDiscoverer$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaDiscoverer;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "createDescriptionFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaDiscoverer$Description;"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getMediaList",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/MediaList;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "list",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "I"
+      ],
+      "returns": "[Lorg/videolan/libvlc/MediaDiscoverer$Description;"
+    },
+    {
+      "name": "nativeList",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "I"
+      ],
+      "returns": "[Lorg/videolan/libvlc/MediaDiscoverer$Description;"
+    },
+    {
+      "name": "nativeNew",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeStart",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeStop",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaDiscoverer$Event;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaDiscoverer$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "start",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "stop",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaFactory;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getFromAssetFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromLocalPath",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromUri",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaList;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaDiscoverer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getMediaAt",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "init",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "insertMediaFromEvent",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "isLocked",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "lock",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeGetCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeLock",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromLibVlc",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromMedia",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromMediaDiscoverer",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaDiscoverer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeUnlock",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMediaList$Event;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "removeMediaFromEvent",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList$EventListener;",
+        "Landroid/os/Handler;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "unlock",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfacesCreated",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfacesDestroyed",
+      "parameters": [
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$2;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onReceive",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/content/Intent;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$3;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onAudioDevicesAdded",
+      "parameters": [
+        "[Landroid/media/AudioDeviceInfo;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onAudioDevicesChanged",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onAudioDevicesRemoved",
+      "parameters": [
+        "[Landroid/media/AudioDeviceInfo;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$4;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Chapter;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "I",
+        "Ljava/lang/String;",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Equalizer;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "create",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$Equalizer;"
+    },
+    {
+      "name": "createFromPreset",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$Equalizer;"
+    },
+    {
+      "name": "finalize",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getAmp",
+      "parameters": [
+        "I"
+      ],
+      "returns": "F"
+    },
+    {
+      "name": "getBandCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getBandFrequency",
+      "parameters": [
+        "I"
+      ],
+      "returns": "F"
+    },
+    {
+      "name": "getPreAmp",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getPresetCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getPresetName",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativeGetAmp",
+      "parameters": [
+        "I"
+      ],
+      "returns": "F"
+    },
+    {
+      "name": "nativeGetBandCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetBandFrequency",
+      "parameters": [
+        "I"
+      ],
+      "returns": "F"
+    },
+    {
+      "name": "nativeGetPreAmp",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "nativeGetPresetCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetPresetName",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativeNew",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromPreset",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetAmp",
+      "parameters": [
+        "I",
+        "F"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetPreAmp",
+      "parameters": [
+        "F"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAmp",
+      "parameters": [
+        "I",
+        "F"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setPreAmp",
+      "parameters": [
+        "F"
+      ],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getBuffering",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getEsChangedID",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getEsChangedType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getLengthChanged",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getPausable",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "getPositionChanged",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getRecordPath",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getRecording",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "getSeekable",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "getTimeChanged",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getVoutCount",
+      "parameters": [],
+      "returns": "I"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Navigate;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Position;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$ScaleType;": [
+    {
+      "name": "$values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    },
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I",
+        "Ljava/lang/Float;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getMainScaleTypes",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    },
+    {
+      "name": "getRatio",
+      "parameters": [],
+      "returns": "Ljava/lang/Float;"
+    },
+    {
+      "name": "valueOf",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    },
+    {
+      "name": "values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Title$Flags;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$Title;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "isInteractive",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isMenu",
+      "parameters": [],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer$TrackDescription;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/MediaPlayer;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "addSlave",
+      "parameters": [
+        "I",
+        "Landroid/net/Uri;",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "addSlave",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/VLCVideoLayout;",
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "c",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "canDoPassthrough",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "createAudioDeviceCallback",
+      "parameters": [],
+      "returns": "Landroid/media/AudioDeviceCallback;"
+    },
+    {
+      "name": "createAudioPlugReceiver",
+      "parameters": [],
+      "returns": "Landroid/content/BroadcastReceiver;"
+    },
+    {
+      "name": "createChapterFromNative",
+      "parameters": [
+        "J",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$Chapter;"
+    },
+    {
+      "name": "createTitleFromNative",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$Title;"
+    },
+    {
+      "name": "createTrackDescriptionFromNative",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "d",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;",
+        "[I"
+      ],
+      "returns": "J"
+    },
+    {
+      "name": "detachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "e",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "forceAudioDigitalEncodings",
+      "parameters": [
+        "[I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "getAspectRatio",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getAudioDelay",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getAudioTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getAudioTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "getAudioTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getChapter",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getChapters",
+      "parameters": [
+        "I"
+      ],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$Chapter;"
+    },
+    {
+      "name": "getCurrentVideoTrack",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$VideoTrack;"
+    },
+    {
+      "name": "getEncodingFlags",
+      "parameters": [
+        "[I"
+      ],
+      "returns": "J"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLength",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getMedia",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getPlayerState",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getPosition",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getRate",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getScale",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "getSpuDelay",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getSpuTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getSpuTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "getSpuTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getTeletext",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getTime",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getTitle",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getTitles",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$Title;"
+    },
+    {
+      "name": "getVLCVout",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IVLCVout;"
+    },
+    {
+      "name": "getVideoScale",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    },
+    {
+      "name": "getVideoTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getVideoTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "getVideoTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getVolume",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "hasMedia",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isAudioTrack",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isEncoded",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "isPlaying",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isSeekable",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeAddSlave",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeGetAspectRatio",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "nativeGetAudioDelay",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "nativeGetAudioTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetAudioTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "nativeGetAudioTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetChapters",
+      "parameters": [
+        "I"
+      ],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$Chapter;"
+    },
+    {
+      "name": "nativeGetScale",
+      "parameters": [],
+      "returns": "F"
+    },
+    {
+      "name": "nativeGetSpuDelay",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "nativeGetSpuTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetSpuTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "nativeGetSpuTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetTeletext",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetTitles",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$Title;"
+    },
+    {
+      "name": "nativeGetVideoTrack",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeGetVideoTracks",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/MediaPlayer$TrackDescription;"
+    },
+    {
+      "name": "nativeGetVideoTracksCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "nativeNewFromLibVlc",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewFromMedia",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;",
+        "Lorg/videolan/libvlc/AWindow;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativePlay",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeRecord",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetAspectRatio",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetAudioDelay",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetAudioOutput",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetAudioOutputDevice",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetAudioTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetEqualizer",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$Equalizer;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetMedia",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetPosition",
+      "parameters": [
+        "F",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetRenderer",
+      "parameters": [
+        "Lorg/videolan/libvlc/RendererItem;"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "nativeSetScale",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetSpuDelay",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetSpuTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeSetTeletext",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetTime",
+      "parameters": [
+        "J",
+        "Z"
+      ],
+      "returns": "J"
+    },
+    {
+      "name": "nativeSetVideoTitleDisplay",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeSetVideoTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeStop",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeUpdateViewpoint",
+      "parameters": [
+        "F",
+        "F",
+        "F",
+        "F",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "navigate",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nextChapter",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$Event;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "pause",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "play",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "play",
+      "parameters": [
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "play",
+      "parameters": [
+        "Landroid/net/Uri;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "play",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "play",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "playAsset",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "previousChapter",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "record",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "registerAudioPlug",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "registerAudioPlugV21",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "registerAudioPlugV23",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setAspectRatio",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setAudioDelay",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAudioDigitalOutputEnabled",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAudioOutput",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAudioOutputDevice",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAudioOutputDeviceInternal",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setAudioTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setChapter",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setEqualizer",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$Equalizer;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setMedia",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setPosition",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setPosition",
+      "parameters": [
+        "F",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setRate",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setRenderer",
+      "parameters": [
+        "Lorg/videolan/libvlc/RendererItem;"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "setScale",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSpuDelay",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setSpuTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setTeletext",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setTime",
+      "parameters": [
+        "J"
+      ],
+      "returns": "J"
+    },
+    {
+      "name": "setTime",
+      "parameters": [
+        "J",
+        "Z"
+      ],
+      "returns": "J"
+    },
+    {
+      "name": "setTitle",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setUseOrientationFromBounds",
+      "parameters": [
+        "Ljava/lang/Boolean;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoScale",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoTitleDisplay",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setVideoTrackEnabled",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVolume",
+      "parameters": [
+        "I"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "stop",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "updateAudioOutputDevice",
+      "parameters": [
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "updateVideoSurfaces",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "updateViewpoint",
+      "parameters": [
+        "F",
+        "F",
+        "F",
+        "F",
+        "Z"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "useOrientationFromBounds",
+      "parameters": [],
+      "returns": "Ljava/lang/Boolean;"
+    }
+  ],
+  "Lorg/videolan/libvlc/RendererDiscoverer$Description;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/RendererDiscoverer$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J",
+        "Lorg/videolan/libvlc/RendererItem;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getItem",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/RendererDiscoverer;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "createDescriptionFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererDiscoverer$Description;"
+    },
+    {
+      "name": "createItemFromNative",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "J"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "insertItemFromEvent",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "list",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "[Lorg/videolan/libvlc/RendererDiscoverer$Description;"
+    },
+    {
+      "name": "nativeList",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "[Lorg/videolan/libvlc/RendererDiscoverer$Description;"
+    },
+    {
+      "name": "nativeNew",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "nativeNewItem",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "nativeRelease",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "nativeStart",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeStop",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererDiscoverer$Event;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "removeItemFromEvent",
+      "parameters": [
+        "J"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/RendererDiscoverer$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "start",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "stop",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/RendererItem$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/RendererItem;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "equals",
+      "parameters": [
+        "Ljava/lang/Object;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeReleaseItem",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem$Event;"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VLCObject$1EventRunnable;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/VLCObject;",
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent$Listener;",
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/VLCObject;",
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent$Listener;",
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VLCObject;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCObject;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "dispatchEventFromNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "finalize",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getInstance",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "nativeDetachEvents",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onEventNative",
+      "parameters": [
+        "I",
+        "J",
+        "J",
+        "F",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+    },
+    {
+      "name": "onReleaseNative",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "retain",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent$Listener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent$Listener;",
+        "Landroid/os/Handler;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VideoHelper$1$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/VideoHelper$1;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VideoHelper$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/VideoHelper;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onLayoutChange",
+      "parameters": [
+        "Landroid/view/View;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VideoHelper$2;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/VideoHelper;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;",
+        "Lorg/videolan/libvlc/util/VLCVideoLayout;",
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/VideoHelper;"
+      ],
+      "returns": "Landroid/os/Handler;"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/VideoHelper;"
+      ],
+      "returns": "Landroid/view/View$OnLayoutChangeListener;"
+    },
+    {
+      "name": "c",
+      "parameters": [
+        "Lorg/videolan/libvlc/VideoHelper;"
+      ],
+      "returns": "Landroid/widget/FrameLayout;"
+    },
+    {
+      "name": "changeMediaPlayerLayout",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "detachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getVideoScale",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+    },
+    {
+      "name": "init",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer;",
+        "Lorg/videolan/libvlc/util/VLCVideoLayout;",
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onNewVideoLayout",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoScale",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$ScaleType;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "updateVideoSurfaces",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent$Listener;": [
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/ILibVLC$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/ILibVLC;": [
+    {
+      "name": "getAppContext",
+      "parameters": [],
+      "returns": "Landroid/content/Context;"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/ILibVLCFactory;": [
+    {
+      "name": "getFromContext",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getFromOptions",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/util/List;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$AudioTrack;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getMetaId",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getParsedStatus",
+      "parameters": [],
+      "returns": "I"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Meta;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Parse;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$ParsedStatus;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Slave$Type;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Slave;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "I",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$State;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Stats;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "F",
+        "I",
+        "F",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "F"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$SubtitleTrack;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Track$Type;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Track;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$Type;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$UnknownTrack;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$VideoTrack$Orientation;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$VideoTrack$Projection;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia$VideoTrack;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMedia;": [
+    {
+      "name": "addOption",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addSlave",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "clearSlaves",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getDuration",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I",
+        "Z"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getSlaves",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+    },
+    {
+      "name": "getState",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getStats",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Stats;"
+    },
+    {
+      "name": "getTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "getTrackCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getUri",
+      "parameters": [],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "isParsed",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parse",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parse",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "setDefaultMediaPlayerOptions",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setHWDecoderEnabled",
+      "parameters": [
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "subItems",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMediaList;"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMediaFactory;": [
+    {
+      "name": "getFromAssetFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromLocalPath",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromUri",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMediaList$Event;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "I",
+        "Lorg/videolan/libvlc/interfaces/IMedia;",
+        "Z",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IMediaList;": [
+    {
+      "name": "getCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getMediaAt",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "isLocked",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList$EventListener;",
+        "Landroid/os/Handler;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IVLCObject;": [
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "retain",
+      "parameters": [],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IVLCVout$Callback;": [
+    {
+      "name": "onSurfacesCreated",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onSurfacesDestroyed",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IVLCVout$OnNewVideoLayoutListener;": [
+    {
+      "name": "onNewVideoLayout",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout;",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/interfaces/IVLCVout;": [
+    {
+      "name": "addCallback",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$Callback;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "areViewsAttached",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "attachViews",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$OnNewVideoLayoutListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "detachViews",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "removeCallback",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IVLCVout$Callback;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "sendMouseEvent",
+      "parameters": [
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesSurface",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesSurface",
+      "parameters": [
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesView",
+      "parameters": [
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSubtitlesView",
+      "parameters": [
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoSurface",
+      "parameters": [
+        "Landroid/graphics/SurfaceTexture;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoSurface",
+      "parameters": [
+        "Landroid/view/Surface;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoView",
+      "parameters": [
+        "Landroid/view/SurfaceView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoView",
+      "parameters": [
+        "Landroid/view/TextureView;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setWindowSize",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnBufferingUpdateListener;": [
+    {
+      "name": "onBufferingUpdate",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnCompletionListener;": [
+    {
+      "name": "onCompletion",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnErrorListener;": [
+    {
+      "name": "onError",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;",
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnInfoListener;": [
+    {
+      "name": "onInfo",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;",
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnPreparedListener;": [
+    {
+      "name": "onPrepared",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnSeekCompleteListener;": [
+    {
+      "name": "onSeekComplete",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnTimedTextListener;": [
+    {
+      "name": "onTimedText",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;",
+        "Landroid/media/TimedText;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$OnVideoSizeChangedListener;": [
+    {
+      "name": "onVideoSizeChanged",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer$TrackInfo;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/os/Parcel;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "describeContents",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getFormat",
+      "parameters": [],
+      "returns": "Landroid/media/MediaFormat;"
+    },
+    {
+      "name": "getLanguage",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getTrackType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "toString",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "writeToParcel",
+      "parameters": [
+        "Landroid/os/Parcel;",
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/MediaPlayer;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "addTimedTextSource",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addTimedTextSource",
+      "parameters": [
+        "Ljava/io/FileDescriptor;",
+        "J",
+        "J",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addTimedTextSource",
+      "parameters": [
+        "Ljava/io/FileDescriptor;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addTimedTextSource",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "attachAuxEffect",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "create",
+      "parameters": [
+        "Landroid/content/Context;",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/media/MediaPlayer;"
+    },
+    {
+      "name": "create",
+      "parameters": [
+        "Landroid/content/Context;",
+        "I",
+        "Landroid/media/AudioAttributes;",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/media/MediaPlayer;"
+    },
+    {
+      "name": "create",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Lorg/videolan/libvlc/media/MediaPlayer;"
+    },
+    {
+      "name": "create",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;",
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "Lorg/videolan/libvlc/media/MediaPlayer;"
+    },
+    {
+      "name": "create",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;",
+        "Landroid/view/SurfaceHolder;",
+        "Landroid/media/AudioAttributes;",
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/media/MediaPlayer;"
+    },
+    {
+      "name": "deselectTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "finalize",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getAudioSessionId",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getCurrentPosition",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getDuration",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getSelectedTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "getTrackInfo",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/media/MediaPlayer$TrackInfo;"
+    },
+    {
+      "name": "getVideoHeight",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getVideoWidth",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "isLooping",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isPlaying",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "pause",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "prepare",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "prepareAsync",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "reset",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "seekTo",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "selectTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setAudioAttributes",
+      "parameters": [
+        "Landroid/media/AudioAttributes;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setAudioSessionId",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setAudioStreamType",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setAuxEffectSendLevel",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDataSource",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDataSource",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/net/Uri;",
+        "Ljava/util/Map;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDataSource",
+      "parameters": [
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDataSource",
+      "parameters": [
+        "Ljava/io/FileDescriptor;",
+        "J",
+        "J"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDataSource",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setDisplay",
+      "parameters": [
+        "Landroid/view/SurfaceHolder;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setLooping",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setNextMediaPlayer",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnBufferingUpdateListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnBufferingUpdateListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnCompletionListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnCompletionListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnErrorListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnErrorListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnInfoListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnInfoListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnPreparedListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnPreparedListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnSeekCompleteListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnSeekCompleteListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnTimedTextListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnTimedTextListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnVideoSizeChangedListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/media/MediaPlayer$OnVideoSizeChangedListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setScreenOnWhilePlaying",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setSurface",
+      "parameters": [
+        "Landroid/view/Surface;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoScalingMode",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVolume",
+      "parameters": [
+        "F",
+        "F"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setWakeMode",
+      "parameters": [
+        "Landroid/content/Context;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "start",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "stop",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/media/VideoView;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addSubtitleSource",
+      "parameters": [
+        "Ljava/io/InputStream;",
+        "Landroid/media/MediaFormat;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "canPause",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "canSeekBackward",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "canSeekForward",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "draw",
+      "parameters": [
+        "Landroid/graphics/Canvas;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getAudioSessionId",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getBufferPercentage",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getCurrentPosition",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getDuration",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "isPlaying",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "onAttachedToWindow",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onDetachedFromWindow",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onInitializeAccessibilityEvent",
+      "parameters": [
+        "Landroid/view/accessibility/AccessibilityEvent;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onInitializeAccessibilityNodeInfo",
+      "parameters": [
+        "Landroid/view/accessibility/AccessibilityNodeInfo;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onKeyDown",
+      "parameters": [
+        "I",
+        "Landroid/view/KeyEvent;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "onLayout",
+      "parameters": [
+        "Z",
+        "I",
+        "I",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onMeasure",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onTouchEvent",
+      "parameters": [
+        "Landroid/view/MotionEvent;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "onTrackballEvent",
+      "parameters": [
+        "Landroid/view/MotionEvent;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "pause",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "resolveAdjustedSize",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "resume",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "seekTo",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setMediaController",
+      "parameters": [
+        "Landroid/widget/MediaController;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnCompletionListener",
+      "parameters": [
+        "Landroid/media/MediaPlayer$OnCompletionListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnErrorListener",
+      "parameters": [
+        "Landroid/media/MediaPlayer$OnErrorListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnInfoListener",
+      "parameters": [
+        "Landroid/media/MediaPlayer$OnInfoListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setOnPreparedListener",
+      "parameters": [
+        "Landroid/media/MediaPlayer$OnPreparedListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoPath",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoURI",
+      "parameters": [
+        "Landroid/net/Uri;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setVideoURI",
+      "parameters": [
+        "Landroid/net/Uri;",
+        "Ljava/util/Map;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "start",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "stopPlayback",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "suspend",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubLibVLC;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/util/List;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getAppContext",
+      "parameters": [],
+      "returns": "Landroid/content/Context;"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubLibVLCFactory;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getFromContext",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getFromOptions",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Ljava/util/List;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubMedia;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addOption",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "addSlave",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "clearSlaves",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getDuration",
+      "parameters": [],
+      "returns": "J"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getMeta",
+      "parameters": [
+        "I",
+        "Z"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getSlaves",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/interfaces/IMedia$Slave;"
+    },
+    {
+      "name": "getState",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getStats",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Stats;"
+    },
+    {
+      "name": "getTitle",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getTrack",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia$Track;"
+    },
+    {
+      "name": "getTrackCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getType",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getUri",
+      "parameters": [],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "isParsed",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parse",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parse",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "parseAsync",
+      "parameters": [
+        "I",
+        "I"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "retain",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "setDefaultMediaPlayerOptions",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setHWDecoderEnabled",
+      "parameters": [
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "setType",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "subItems",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMediaList;"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubMediaFactory;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getFromAssetFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/content/res/AssetFileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromFileDescriptor",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/io/FileDescriptor;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromLocalPath",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getFromUri",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubMediaList;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "getMediaAt",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "isLocked",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "setEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList$EventListener;",
+        "Landroid/os/Handler;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/stubs/StubVLCObject;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getLibVLC",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/interfaces/ILibVLC;"
+    },
+    {
+      "name": "isReleased",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "retain",
+      "parameters": [],
+      "returns": "Z"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/AndroidUtil;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "FileToUri",
+      "parameters": [
+        "Ljava/io/File;"
+      ],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "LocationToUri",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "PathToUri",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "UriToFile",
+      "parameters": [
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Ljava/io/File;"
+    },
+    {
+      "name": "resolveActivity",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "Landroid/app/Activity;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onChanged",
+      "parameters": [
+        "Ljava/lang/Object;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onChanged",
+      "parameters": [
+        "Lorg/videolan/libvlc/RendererItem;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$2;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onDismiss",
+      "parameters": [
+        "Landroid/content/DialogInterface;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$3;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "run",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$4;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onRoutePresentationDisplayChanged",
+      "parameters": [
+        "Landroid/media/MediaRouter;",
+        "Landroid/media/MediaRouter$RouteInfo;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$DisplayType;": [
+    {
+      "name": "$values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/DisplayManager$DisplayType;"
+    },
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "valueOf",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$DisplayType;"
+    },
+    {
+      "name": "values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/DisplayManager$DisplayType;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager$SecondaryDisplay;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Landroid/content/Context;",
+        "Landroid/view/Display;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Landroid/content/Context;",
+        "Landroid/view/Display;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getSubtitlesSurfaceView",
+      "parameters": [],
+      "returns": "Landroid/view/SurfaceView;"
+    },
+    {
+      "name": "getSurfaceFrame",
+      "parameters": [],
+      "returns": "Landroid/widget/FrameLayout;"
+    },
+    {
+      "name": "getSurfaceView",
+      "parameters": [],
+      "returns": "Landroid/view/SurfaceView;"
+    },
+    {
+      "name": "onCreate",
+      "parameters": [
+        "Landroid/os/Bundle;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/DisplayManager;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/app/Activity;",
+        "Landroidx/lifecycle/c;",
+        "Z",
+        "Z",
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "Landroid/app/Activity;"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$SecondaryDisplay;"
+    },
+    {
+      "name": "c",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "createPresentation",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$SecondaryDisplay;"
+    },
+    {
+      "name": "d",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "Lorg/videolan/libvlc/RendererItem;"
+    },
+    {
+      "name": "e",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "f",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "g",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;",
+        "Lorg/videolan/libvlc/RendererItem;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getCurrentType",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$DisplayType;"
+    },
+    {
+      "name": "getDisplayType",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$DisplayType;"
+    },
+    {
+      "name": "getPresentation",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/DisplayManager$SecondaryDisplay;"
+    },
+    {
+      "name": "h",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "i",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/DisplayManager;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "isOnRenderer",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isPrimary",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "isSecondary",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "removeMediaRouterCallback",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "removePresentation",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setMediaRouterCallback",
+      "parameters": [],
+      "returns": "Z"
+    },
+    {
+      "name": "updateDisplayType",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/Dumper$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/Dumper;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/MediaPlayer$Event;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/Dumper$Listener;": [
+    {
+      "name": "onFinish",
+      "parameters": [
+        "Z"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onProgress",
+      "parameters": [
+        "F"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/Dumper;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/net/Uri;",
+        "Ljava/lang/String;",
+        "Lorg/videolan/libvlc/util/Dumper$Listener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/Dumper;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/Dumper$Listener;"
+    },
+    {
+      "name": "cancel",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "start",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/Extensions;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;": [
+    {
+      "name": "$values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;"
+    },
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "valueOf",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;"
+    },
+    {
+      "name": "values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutputBySOC;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;": [
+    {
+      "name": "$values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;"
+    },
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "valueOf",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;"
+    },
+    {
+      "name": "values",
+      "parameters": [],
+      "returns": "[Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/HWDecoderUtil$DecoderBySOC;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/HWDecoderUtil;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "getAudioOutputFromDevice",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/HWDecoderUtil$AudioOutput;"
+    },
+    {
+      "name": "getDecoderFromDevice",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/HWDecoderUtil$Decoder;"
+    },
+    {
+      "name": "getSystemProperty",
+      "parameters": [
+        "Ljava/lang/String;",
+        "Ljava/lang/String;"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getSystemPropertyCached",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Ljava/lang/String;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/MediaBrowser$1;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/MediaBrowser;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList$Event;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/MediaBrowser$2;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/MediaBrowser;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/AbstractVLCEvent;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onEvent",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMediaList$Event;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/MediaBrowser$EventListener;": [
+    {
+      "name": "onBrowseEnd",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "onMediaAdded",
+      "parameters": [
+        "I",
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onMediaRemoved",
+      "parameters": [
+        "I",
+        "Lorg/videolan/libvlc/interfaces/IMedia;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/MediaBrowser$Flag;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/MediaBrowser;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Lorg/videolan/libvlc/util/MediaBrowser$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/ILibVLC;",
+        "Lorg/videolan/libvlc/util/MediaBrowser$EventListener;",
+        "Landroid/os/Handler;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "a",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/MediaBrowser;"
+      ],
+      "returns": "Ljava/util/ArrayList;"
+    },
+    {
+      "name": "b",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/MediaBrowser;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/MediaBrowser$EventListener;"
+    },
+    {
+      "name": "browse",
+      "parameters": [
+        "Landroid/net/Uri;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "browse",
+      "parameters": [
+        "Ljava/lang/String;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "browse",
+      "parameters": [
+        "Lorg/videolan/libvlc/interfaces/IMedia;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "changeEventListener",
+      "parameters": [
+        "Lorg/videolan/libvlc/util/MediaBrowser$EventListener;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "discoverNetworkShares",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "discoverNetworkShares",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "getMediaAt",
+      "parameters": [
+        "I"
+      ],
+      "returns": "Lorg/videolan/libvlc/interfaces/IMedia;"
+    },
+    {
+      "name": "getMediaCount",
+      "parameters": [],
+      "returns": "I"
+    },
+    {
+      "name": "release",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "reset",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setIgnoreFileTypes",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "startMediaDiscoverer",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/VLCUtil$ElfData;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "I"
+      ],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/VLCUtil$MachineSpecs;": [
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/VLCUtil;": [
+    {
+      "name": "<clinit>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "UriFromMrl",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Landroid/net/Uri;"
+    },
+    {
+      "name": "close",
+      "parameters": [
+        "Ljava/io/Closeable;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "encodeVLCString",
+      "parameters": [
+        "Ljava/lang/String;"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "encodeVLCUri",
+      "parameters": [
+        "Landroid/net/Uri;"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getABIList",
+      "parameters": [],
+      "returns": "[Ljava/lang/String;"
+    },
+    {
+      "name": "getABIList21",
+      "parameters": [],
+      "returns": "[Ljava/lang/String;"
+    },
+    {
+      "name": "getErrorMsg",
+      "parameters": [],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getMachineSpecs",
+      "parameters": [],
+      "returns": "Lorg/videolan/libvlc/util/VLCUtil$MachineSpecs;"
+    },
+    {
+      "name": "getString",
+      "parameters": [
+        "Ljava/nio/ByteBuffer;"
+      ],
+      "returns": "Ljava/lang/String;"
+    },
+    {
+      "name": "getUleb128",
+      "parameters": [
+        "Ljava/nio/ByteBuffer;"
+      ],
+      "returns": "I"
+    },
+    {
+      "name": "hasCompatibleCPU",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "readArmAttributes",
+      "parameters": [
+        "Ljava/io/RandomAccessFile;",
+        "Lorg/videolan/libvlc/util/VLCUtil$ElfData;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "readHeader",
+      "parameters": [
+        "Ljava/io/RandomAccessFile;",
+        "Lorg/videolan/libvlc/util/VLCUtil$ElfData;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "readLib",
+      "parameters": [
+        "Ljava/io/File;"
+      ],
+      "returns": "Lorg/videolan/libvlc/util/VLCUtil$ElfData;"
+    },
+    {
+      "name": "readSection",
+      "parameters": [
+        "Ljava/io/RandomAccessFile;",
+        "Lorg/videolan/libvlc/util/VLCUtil$ElfData;"
+      ],
+      "returns": "Z"
+    },
+    {
+      "name": "searchLibrary",
+      "parameters": [
+        "Landroid/content/pm/ApplicationInfo;"
+      ],
+      "returns": "Ljava/io/File;"
+    }
+  ],
+  "Lorg/videolan/libvlc/util/VLCVideoLayout;": [
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "<init>",
+      "parameters": [
+        "Landroid/content/Context;",
+        "Landroid/util/AttributeSet;",
+        "I",
+        "I"
+      ],
+      "returns": "V"
+    },
+    {
+      "name": "onAttachedToWindow",
+      "parameters": [],
+      "returns": "V"
+    },
+    {
+      "name": "setupLayout",
+      "parameters": [
+        "Landroid/content/Context;"
+      ],
+      "returns": "V"
+    }
+  ]
+}

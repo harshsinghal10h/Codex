@@ -1,0 +1,41 @@
+{
+  "version": "0.3.0",
+  "android": [
+    {
+      "file": "VLC-Glass-Android-0.3.0-arm64.apk",
+      "sha256": "afc72433c2c2d534c563f26f429d069434694bbf0f75c48812bdd53b7e6c31c0",
+      "bytes": 41699452,
+      "abis": [
+        "arm64-v8a"
+      ]
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.0-armv7.apk",
+      "sha256": "9fd736790a39273b5ed87e92bfdc5bc154b2e309e484f88b136bd7bbc42c67d9",
+      "bytes": 37517446,
+      "abis": [
+        "armeabi-v7a"
+      ]
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.0-x86_64.apk",
+      "sha256": "a98dd5113c4baccd1bc99f8b32cdb0612147ca8b8b9b845eebcdd7e6b80c5c24",
+      "bytes": 44275821,
+      "abis": [
+        "x86_64"
+      ]
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.0-universal.apk",
+      "sha256": "c513108349b278d3f542c91b6fb37c1b5a1e1ae2e4315341a8b725aaaed1e2f3",
+      "bytes": 101735273,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86_64"
+      ]
+    }
+  ],
+  "device_tested": false,
+  "classifier_accuracy_evaluated": false
+}

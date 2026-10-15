@@ -1,0 +1,103 @@
+name: Build VLC Glass 0.3.0
+on:
+  push:
+    branches: [vlc-glass-0.3.0]
+    paths: ['VLC-Glass/**', '.github/workflows/build-vlc-glass.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            label: Windows-x64
+          - os: macos-15
+            label: macOS-arm64
+          - os: macos-15-intel
+            label: macOS-x64
+          - os: ubuntu-22.04
+            label: Linux-x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: VLC-Glass
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: VLC-Glass/desktop/requirements.txt
+      - name: Install desktop requirements
+        run: python -m pip install -r desktop/requirements.txt
+      - name: Prepare pinned model and search sources
+        run: python tools/prepare_dependencies.py --desktop
+      - name: Install Linux media libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libegl1 libxcb-cursor0 libxkbcommon-x11-0
+      - name: Install official macOS VLC
+        if: runner.os == 'macOS'
+        run: brew install --cask vlc
+      - name: Test timeline policy
+        run: python -m unittest discover -s tests -p 'test_timeline.py' -v
+      - name: Package desktop app
+        run: python tools/build_desktop.py
+      - name: Smoke test Windows package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.0.exe" -ArgumentList "--smoke-report", "desktop-smoke.json" -Wait -PassThru
+          if ($process.ExitCode -ne 0 -or !(Test-Path desktop-smoke.json)) { throw 'Packaged runtime smoke test failed' }
+          Get-Content desktop-smoke.json
+      - name: Smoke test Unix package
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ -d dist/VLC-Glass-0.3.0.app ]; then
+            dist/VLC-Glass-0.3.0.app/Contents/MacOS/VLC-Glass-0.3.0 --smoke-report desktop-smoke.json
+            ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.0.app dist/VLC-Glass-0.3.0-${{ matrix.label }}.zip
+          else
+            dist/VLC-Glass-0.3.0/VLC-Glass-0.3.0 --smoke-report desktop-smoke.json
+            tar -C dist -czf dist/VLC-Glass-0.3.0-${{ matrix.label }}.tar.gz VLC-Glass-0.3.0
+          fi
+          cat desktop-smoke.json
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: VLC-Glass-${{ matrix.label }}
+          path: |
+            VLC-Glass/dist/*.exe
+            VLC-Glass/dist/*.zip
+            VLC-Glass/dist/*.tar.gz
+            VLC-Glass/desktop-smoke.json
+          compression-level: 0
+          retention-days: 14
+  release:
+    needs: [desktop]
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: VLC-Glass-*
+          path: release-assets
+      - name: Publish available development builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          root=Path('release-assets')
+          paths=[p for p in root.rglob('*') if p.suffix in ('.exe','.zip','.gz')]
+          if not paths:raise SystemExit('No verified desktop packages were produced')
+          (root/'SHA256SUMS-desktop.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths))
+          PY
+          gh release view vlc-glass-v0.3.0 || gh release create vlc-glass-v0.3.0 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.0 development builds' --notes-file VLC-Glass/RELEASE.md
+          find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.0 --clobber

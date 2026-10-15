@@ -1,0 +1,106 @@
+package com.harsh.vlcglass;
+
+import android.app.*;
+import android.content.*;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.database.Cursor;
+import android.graphics.*;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
+import android.os.*;
+import android.provider.*;
+import android.view.*;
+import android.webkit.*;
+import android.widget.FrameLayout;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+import org.json.*;
+
+public final class MainActivity extends Activity implements PlaybackService.Listener {
+ private SceneSearchClient sceneSearch;private final ExecutorService searchWorker=Executors.newSingleThreadExecutor();
+ private FrameLayout root;private WebView web;private TextureView video,subtitles;private PlaybackService playback;private boolean ready=false,bound=false,visible=true,playerOpen=false,pip=false;private JSONObject settings=new JSONObject();private final ExecutorService files=Executors.newSingleThreadExecutor();
+ private final ExecutorService previewWorker=Executors.newSingleThreadExecutor();private JSONObject pendingPreview;private boolean previewBusy=false;private long previewMedia=-1;private final LinkedHashMap<Long,String> previewCache=new LinkedHashMap<>();
+ private final ServiceConnection connection=new ServiceConnection(){public void onServiceConnected(ComponentName n,IBinder b){playback=((PlaybackService.LocalBinder)b).service();playback.listener=MainActivity.this;bound=true;playback.settings(settings);attach();if(ready)initial();if(getIntent().getData()!=null){Uri uri=getIntent().getData();getIntent().setData(null);importUri(uri,true);}}public void onServiceDisconnected(ComponentName n){bound=false;playback=null;}};
+ public void onCreate(Bundle b){super.onCreate(b);sceneSearch=new SceneSearchClient(this);getWindow().setStatusBarColor(Color.BLACK);getWindow().setNavigationBarColor(Color.BLACK);getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+  try{settings=new JSONObject(getSharedPreferences("preferences",0).getString("settings","{}"));}catch(Exception ignored){}
+  root=new FrameLayout(this);root.setBackgroundColor(Color.BLACK);video=new TextureView(this);video.setOpaque(true);subtitles=new TextureView(this);subtitles.setOpaque(false);root.addView(video,new FrameLayout.LayoutParams(-1,-1));root.addView(subtitles,new FrameLayout.LayoutParams(-1,-1));
+  web=new WebView(this);web.setBackgroundColor(Color.TRANSPARENT);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);web.getSettings().setMediaPlaybackRequiresUserGesture(true);web.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);web.addJavascriptInterface(new Bridge(),"GlassHost");web.setWebViewClient(new WebViewClient(){
+   public WebResourceResponse shouldInterceptRequest(WebView w,WebResourceRequest r){Uri uri=r.getUrl();if(!uri.getScheme().equals("https")||!uri.getHost().equals("vlcglass.local"))return new WebResourceResponse("text/plain","UTF-8",403,"Blocked",new HashMap<>(),new ByteArrayInputStream(new byte[0]));try{String path=uri.getPath();if(path.startsWith("/thumbs/")){String name=path.substring(8);if(!name.matches("[0-9]+\\.jpg"))throw new IOException();return new WebResourceResponse("image/jpeg",null,new FileInputStream(new File(getCacheDir(),name)));}String name=path.equals("/")?"index.html":path.substring(1);if(!name.matches("[a-zA-Z0-9_.-]+"))throw new IOException();String mime=name.endsWith(".js")?"application/javascript":name.endsWith(".css")?"text/css":name.endsWith(".svg")?"image/svg+xml":"text/html";return new WebResourceResponse(mime,"UTF-8",getAssets().open("ui/"+name));}catch(Exception e){return new WebResourceResponse("text/plain","UTF-8",404,"Not found",new HashMap<>(),new ByteArrayInputStream(new byte[0]));}}
+   public boolean shouldOverrideUrlLoading(WebView w,WebResourceRequest r){return !"vlcglass.local".equals(r.getUrl().getHost());}
+  });web.setWebChromeClient(new WebChromeClient());root.addView(web,new FrameLayout.LayoutParams(-1,-1));setContentView(root);root.addOnLayoutChangeListener((v,l,t,r,b1,ol,ot,or,ob)->{if(playback!=null&&playback.engine!=null)playback.engine.window(video.getWidth(),video.getHeight());});
+  web.loadUrl("https://vlcglass.local/");Intent intent=new Intent(this,PlaybackService.class);startService(intent);bindService(intent,connection,BIND_AUTO_CREATE);applyWindow();
+ }
+ private void attach(){if(playback!=null&&playback.engine!=null)video.post(()->{if(playback!=null)playback.attach(video,subtitles,root.getWidth(),root.getHeight());});}
+ private void initial(){try{JSONObject d=new JSONObject();d.put("media",playback.store.all());d.put("playlists",playback.store.playlists());d.put("settings",settings);d.put("native",true);d.put("refractiveGlass",Build.VERSION.SDK_INT>=33);d.put("reducedMotion",Settings.Global.getFloat(getContentResolver(),Settings.Global.ANIMATOR_DURATION_SCALE,1)==0);d.put("state",playback.state());send("init",d);}catch(Exception e){error(e.getMessage());}}
+ private void send(String type,JSONObject d){runOnUiThread(()->{if(!ready||web==null)return;JSONObject e=new JSONObject();try{e.put("type",type);e.put("data",d);}catch(Exception ignored){}web.evaluateJavascript("window.GlassApp&&window.GlassApp.receive("+e+")",null);});}
+ public void protection(boolean hidden){runOnUiThread(()->{video.setAlpha(hidden?0f:1f);subtitles.setAlpha(hidden?0f:1f);});}
+ public void state(JSONObject s){protection(s.optBoolean("guardMasked",false));if(visible){send("state",s);if(settings.optBoolean("autoPip",false))applyWindow();}}
+ public void library(){if(playback==null)return;try{JSONObject d=new JSONObject();d.put("media",playback.store.all());d.put("playlists",playback.store.playlists());send("library",d);}catch(Exception e){error(e.getMessage());}}
+ public void error(String msg){JSONObject d=new JSONObject();try{d.put("message",msg);}catch(Exception ignored){}send("error",d);}
+ public final class Bridge{@JavascriptInterface public void request(String raw){if(raw==null||raw.length()>100000)return;runOnUiThread(()->{try{JSONObject request=new JSONObject(raw);handle(request.optString("op"),request.optJSONObject("args")==null?new JSONObject():request.getJSONObject("args"));}catch(Exception e){error(e.getMessage());}});}}
+ private void handle(String op,JSONObject a)throws Exception{
+  if(op.equals("ready")){ready=true;if(playback!=null)initial();return;}if(playback==null){error("The playback service is starting. Please try again.");return;}
+  switch(op){
+   case "analysisCredentials":{JSONObject credentials=new JSONObject(a.toString());searchWorker.execute(()->{try{sceneSearch.credentials(credentials);}catch(Exception e){error("The credentials could not be saved on this device.");}});return;}
+   case "sceneIndex":case "sceneSearch":{final long id=playback.current;final JSONObject item=playback.store.media(id),opts=new JSONObject(settings.toString()),args=new JSONObject(a.toString());final String type=op.equals("sceneIndex")?"sceneIndex":"sceneSearch";
+    if(item==null)throw new Exception("Open a video first.");searchWorker.execute(()->{try{if(type.equals("sceneIndex"))sceneSearch.index(id,item,opts,args.optBoolean("allowUpload"),(t,d)->send(t,d),()->playback==null||playback.current!=id||Thread.currentThread().isInterrupted());else send(type,sceneSearch.search(id,opts,args));}catch(Exception e){try{send(type,new JSONObject().put("media",id).put("request",args.optInt("request")).put("error",e.getMessage()==null?"Video search could not finish.":e.getMessage()));}catch(Exception ignored){}}});return;}
+   case "pick":picker(10);return;case "folder":picker(11);return;case "pickSubtitle":picker(12);return;
+   case "settings":settings=a;getSharedPreferences("preferences",0).edit().putString("settings",settings.toString()).apply();playback.settings(settings);applyWindow();return;
+   case "network":{String url=a.optString("url").trim();Uri uri=Uri.parse(url);String scheme=uri.getScheme();if(scheme==null||!Arrays.asList("http","https","rtsp","rtsps","rtmp","rtmps","udp","rtp","smb","ftp","sftp","nfs").contains(scheme))throw new Exception("Enter a media URL using HTTP, HTTPS, RTSP, RTMP, UDP, SMB, FTP or NFS.");if(url.length()>4096)throw new Exception("This URL is too long.");long id=playback.store.add(url,a.optString("title").trim().isEmpty()?uri.getLastPathSegment()==null?"Network stream":uri.getLastPathSegment():a.optString("title"),"stream",0);library();playback.open(id,new JSONArray().put(id));return;}
+   case "favorite":playback.store.favorite(a.optLong("id"),a.optBoolean("value"));library();return;
+   case "remove":{long id=a.optLong("id");if(playback.current==id)playback.command("stop",new JSONObject());playback.store.remove(id);File f=new File(getCacheDir(),id+".jpg");if(f.exists())f.delete();library();return;}
+   case "createPlaylist":{String name=a.optString("name").trim();if(name.length()<1||name.length()>80)throw new Exception("Use a playlist name between 1 and 80 characters.");playback.store.createPlaylist(name);library();return;}
+   case "playlistAdd":playback.store.playlistAdd(a.optLong("playlist"),a.optLong("id"));library();return;
+   case "playlistRemove":playback.store.playlistRemove(a.optLong("playlist"),a.optLong("id"));library();return;
+   case "playlistDelete":playback.store.playlistDelete(a.optLong("id"));library();return;
+   case "bookmark":if(playback.current>0){playback.store.bookmark(playback.current,playback.engine.time(),a.optString("label","Bookmark"));playback.push();}return;
+   case "clearHistory":playback.store.clearHistory();library();return;
+   case "refresh":library();return;
+   case "exit":finish();return;
+   case "playerView":playerOpen=a.optBoolean("open");applyWindow();return;
+   case "rotate":setRequestedOrientation(getRequestedOrientation()==android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);return;
+   case "pip":if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)&&playerOpen){enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new android.util.Rational(16,9)).build());}else error("Picture in picture is unavailable on this device.");return;
+   case "brightness":WindowManager.LayoutParams lp=getWindow().getAttributes();lp.screenBrightness=(float)Math.max(.03,Math.min(1,a.optDouble("value",.7)));getWindow().setAttributes(lp);return;
+   case "fullscreen":setRequestedOrientation(getRequestedOrientation()==android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);applyWindow();return;
+   case "zoom":float zoom=(float)Math.max(1,Math.min(4,a.optDouble("value",1)));video.setScaleX(zoom);video.setScaleY(zoom);return;
+   case "seekPreview":requestPreview(a);return;
+   case "glassRects":float captionTop=(float)(a.optDouble("captionTop",a.optDouble("height",1))*root.getHeight()/a.optDouble("height",1));float lift=a.optBoolean("active")?Math.max(0,subtitles.getBottom()-captionTop+16*getResources().getDisplayMetrics().density):0;subtitles.setTranslationY(-Math.min(lift,subtitles.getHeight()*.4f));if(Build.VERSION.SDK_INT>=33){NativeLens.apply(video,a,settings,root.getWidth(),root.getHeight());}return;
+   case "share":if(playback.current>0){JSONObject item=playback.store.media(playback.current);Intent share=new Intent(Intent.ACTION_SEND);String url=item.optString("uri");if(url.startsWith("content:")){share.setType(item.optString("kind").equals("audio")?"audio/*":"video/*");share.putExtra(Intent.EXTRA_STREAM,Uri.parse(url));share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);}else{share.setType("text/plain");share.putExtra(Intent.EXTRA_TEXT,url);}startActivity(Intent.createChooser(share,"Share media"));}return;
+   default:playback.command(op,a);
+  }
+ }
+ private synchronized void requestPreview(JSONObject a){
+  if(playback==null||a.optLong("id")!=playback.current)return;pendingPreview=a;if(previewBusy||previewWorker.isShutdown())return;previewBusy=true;
+  previewWorker.execute(()->{while(true){JSONObject job;synchronized(MainActivity.this){job=pendingPreview;pendingPreview=null;if(job==null){previewBusy=false;return;}}
+   long id=job.optLong("id"),bucket=Math.max(0,job.optLong("time"))/500;String image=null;
+   try{if(previewMedia!=id){previewMedia=id;previewCache.clear();}image=previewCache.get(bucket);
+    if(image==null&&playback!=null&&playback.current==id){JSONObject item=playback.store.media(id);String uri=item==null?"":item.optString("uri");
+     if(uri.startsWith("content:")){MediaMetadataRetriever retriever=new MediaMetadataRetriever();try{retriever.setDataSource(MainActivity.this,Uri.parse(uri));Bitmap frame=retriever.getScaledFrameAtTime(bucket*500000,MediaMetadataRetriever.OPTION_CLOSEST,320,180);if(frame!=null){ByteArrayOutputStream bytes=new ByteArrayOutputStream();frame.compress(Bitmap.CompressFormat.JPEG,75,bytes);frame.recycle();image="data:image/jpeg;base64,"+android.util.Base64.encodeToString(bytes.toByteArray(),android.util.Base64.NO_WRAP);if(previewCache.size()>=16)previewCache.remove(previewCache.keySet().iterator().next());previewCache.put(bucket,image);}}finally{try{retriever.release();}catch(Exception ignored){}}}
+    }
+   }catch(Exception ignored){}
+   try{JSONObject data=new JSONObject().put("token",job.optLong("token")).put("id",id).put("time",bucket*500);if(image!=null)data.put("image",image);send("seekPreview",data);}catch(Exception ignored){}
+  }});
+ }
+ public void onUserLeaveHint(){super.onUserLeaveHint();if(Build.VERSION.SDK_INT<31&&playerOpen&&!pip&&playback!=null&&playback.engine!=null&&playback.engine.playing()&&settings.optBoolean("autoPip",false)&&getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))try{enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new android.util.Rational(16,9)).build());}catch(Exception ignored){}}
+ private void applyWindow(){if(Build.VERSION.SDK_INT>=31&&getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)){boolean on=playerOpen&&settings.optBoolean("autoPip",false)&&playback!=null&&playback.engine!=null&&playback.engine.playing();try{setPictureInPictureParams(new PictureInPictureParams.Builder().setAutoEnterEnabled(on).setAspectRatio(new android.util.Rational(16,9)).build());}catch(Exception ignored){}}if(playerOpen&&settings.optBoolean("keepAwake",true))getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);getWindow().getDecorView().setSystemUiVisibility(playerOpen?View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_FULLSCREEN|View.SYSTEM_UI_FLAG_HIDE_NAVIGATION|View.SYSTEM_UI_FLAG_LAYOUT_STABLE:View.SYSTEM_UI_FLAG_LAYOUT_STABLE);}
+ private void picker(int code){Intent i=new Intent(code==11?Intent.ACTION_OPEN_DOCUMENT_TREE:Intent.ACTION_OPEN_DOCUMENT);if(code!=11){i.addCategory(Intent.CATEGORY_OPENABLE);i.setType("*/*");if(code==10){i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"video/*","audio/*","application/octet-stream","application/x-matroska"});}else i.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"text/*","application/x-subrip","application/octet-stream"});}i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);startActivityForResult(i,code);}
+ public void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(result!=RESULT_OK||data==null)return;
+  if(req==11&&data.getData()!=null){Uri tree=data.getData();persist(tree,data.getFlags());scanFolder(tree);return;}
+  if(req==12&&data.getData()!=null){persist(data.getData(),data.getFlags());try{JSONObject a=new JSONObject();a.put("uri",data.getData().toString());playback.command("subtitleFile",a);}catch(Exception e){error(e.getMessage());}return;}
+  if(req==10){if(data.getClipData()!=null)for(int i=0;i<data.getClipData().getItemCount();i++){Uri uri=data.getClipData().getItemAt(i).getUri();persist(uri,data.getFlags());importUri(uri,false);}else if(data.getData()!=null){persist(data.getData(),data.getFlags());importUri(data.getData(),false);}}
+ }
+ private void persist(Uri uri,int flags){try{getContentResolver().takePersistableUriPermission(uri,flags&Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(Exception ignored){}}
+ private String kind(String name,String mime){if(mime!=null&&mime.startsWith("audio/"))return "audio";if(name.toLowerCase(Locale.ROOT).matches(".*\\.(mp3|flac|m4a|wav|aac|ogg|opus|aiff|alac|wma|ape)$"))return "audio";return "video";}
+ private void importUri(Uri uri,boolean play){files.execute(()->{if(playback==null)return;try{String name=uri.getLastPathSegment();long size=0;try(Cursor c=getContentResolver().query(uri,new String[]{OpenableColumns.DISPLAY_NAME,OpenableColumns.SIZE},null,null,null)){if(c!=null&&c.moveToFirst()){name=c.getString(0);if(!c.isNull(1))size=c.getLong(1);}}String type=getContentResolver().getType(uri);long id=playback.store.add(uri.toString(),name==null?"Media":name,kind(name==null?"":name,type),size);metadata(uri,id);runOnUiThread(()->{library();if(play)playback.open(id,new JSONArray().put(id));});}catch(Exception e){error("Could not import media: "+e.getMessage());}});}
+ private void metadata(Uri uri,long id){MediaMetadataRetriever m=new MediaMetadataRetriever();try{m.setDataSource(this,uri);String duration=m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);if(duration!=null)playback.store.metadata(id,Long.parseLong(duration));Bitmap thumb=m.getScaledFrameAtTime(1000000,MediaMetadataRetriever.OPTION_CLOSEST_SYNC,480,270);if(thumb!=null){try(OutputStream out=new FileOutputStream(new File(getCacheDir(),id+".jpg"))){thumb.compress(Bitmap.CompressFormat.JPEG,82,out);}thumb.recycle();}}catch(Exception ignored){}finally{try{m.release();}catch(Exception ignored){}}}
+ private void scanFolder(Uri tree){files.execute(()->{ArrayDeque<String> folders=new ArrayDeque<>();folders.add(DocumentsContract.getTreeDocumentId(tree));int count=0,visited=0;try{while(!folders.isEmpty()&&visited++<1000&&count<10000&&!files.isShutdown()){String folder=folders.remove();Uri children=DocumentsContract.buildChildDocumentsUriUsingTree(tree,folder);try(Cursor c=getContentResolver().query(children,new String[]{DocumentsContract.Document.COLUMN_DOCUMENT_ID,DocumentsContract.Document.COLUMN_DISPLAY_NAME,DocumentsContract.Document.COLUMN_MIME_TYPE,DocumentsContract.Document.COLUMN_SIZE},null,null,null)){if(c==null)continue;while(c.moveToNext()&&count<10000){String id=c.getString(0),name=c.getString(1),mime=c.getString(2);if(DocumentsContract.Document.MIME_TYPE_DIR.equals(mime)){folders.add(id);continue;}if(mime.startsWith("audio/")||mime.startsWith("video/")||name.toLowerCase(Locale.ROOT).matches(".*\\.(mkv|mp4|avi|mov|webm|mp3|flac|m4a|ogg|opus|wav|ts|vob|m2ts|wmv)$")){Uri u=DocumentsContract.buildDocumentUriUsingTree(tree,id);long media=playback.store.add(u.toString(),name,kind(name,mime),c.isNull(3)?0:c.getLong(3));count++;if(count<=300)metadata(u,media);if(count%15==0)runOnUiThread(()->library());}}}}
+ final int total=count;runOnUiThread(()->{library();JSONObject d=new JSONObject();try{d.put("message",total+" media files imported");}catch(Exception ignored){}send("notice",d);});}catch(Exception e){error("Folder import stopped: "+e.getMessage());}});}
+ public void onBackPressed(){if(web!=null)web.evaluateJavascript("window.GlassApp&&window.GlassApp.back()",null);else super.onBackPressed();}
+ public void onConfigurationChanged(Configuration c){super.onConfigurationChanged(c);applyWindow();if(playback!=null)attach();}
+ public void onStart(){super.onStart();visible=true;if(web!=null)web.onResume();if(playback!=null){attach();playback.push();}}
+ public void onStop(){super.onStop();visible=pip;if(web!=null&&!pip)web.onPause();if(playback!=null&&!pip){if(!settings.optBoolean("backgroundAudio",true))playback.command("pause",new JSONObject());if(playback.engine!=null)playback.engine.detach();}}
+ public void onPictureInPictureModeChanged(boolean on,Configuration c){super.onPictureInPictureModeChanged(on,c);pip=on;visible=true;JSONObject d=new JSONObject();try{d.put("active",on);}catch(Exception ignored){}send("pip",d);if(!on)attach();}
+ public void onDestroy(){files.shutdownNow();previewWorker.shutdownNow();synchronized(this){pendingPreview=null;}if(bound){if(playback!=null){playback.listener=null;if(playback.engine==null||!playback.engine.playing())stopService(new Intent(this,PlaybackService.class));}unbindService(connection);}if(web!=null){web.removeJavascriptInterface("GlassHost");web.destroy();web=null;}super.onDestroy();}
+}

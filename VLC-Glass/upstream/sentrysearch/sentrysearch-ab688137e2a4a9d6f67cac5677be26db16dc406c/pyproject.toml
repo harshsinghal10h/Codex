@@ -1,0 +1,101 @@
+[project]
+name = "sentrysearch"
+version = "0.1.0"
+description = "Search video footage using natural language queries"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "click>=8.1",
+    "python-dotenv>=1.0",
+    "chromadb>=0.4",
+    "google-genai>=1.0",
+    "imageio-ffmpeg>=0.5",
+    "protobuf>=4.0,<7",
+]
+
+[project.optional-dependencies]
+tesla = ["geopy"]
+local = [
+    "torch>=2.0",
+    "torchvision>=0.15,<0.22",
+    # 5.3.0 drops the per-frame video_grid_thw expansion in get_rope_index,
+    # so multi-frame chunks raise StopIteration.  Fixed in 5.4.0.
+    "transformers>=5.4",
+    "accelerate",
+    "qwen-vl-utils",
+    "torchcodec>=0.6",
+]
+local-quantized = [
+    "torch>=2.0",
+    "torchvision>=0.15,<0.22",
+    # See the note in the `local` extra above.
+    "transformers>=5.4",
+    "accelerate",
+    "qwen-vl-utils",
+    "torchcodec>=0.6",
+    "bitsandbytes",
+]
+qwen-cloud = [
+    "dashscope>=1.25.17",
+]
+# SDK mode only; proxy mode (LITELLM_PROXY_API_BASE) needs no extra. The floor
+# is the release the backend was tested against, and it also keeps installs
+# clear of 1.82.7 and 1.82.8, the two releases compromised on PyPI.
+litellm = [
+    "litellm>=1.101.0",
+]
+# Apple Silicon only. Quantizes on Metal, which the PyTorch path cannot do
+# (its only quantization route is bitsandbytes, which is CUDA-only), so the
+# 2B runs at 4-bit in ~1.8 GB with no measured loss of retrieval accuracy.
+# The video shim in mlx_embedder.py depends on mlx-vlm internals
+# (get_input_embeddings kwargs, language_model._rope_deltas), so the upper
+# bound is deliberate -- widen it only after re-running tests/test_mlx_embedder.py
+# against the newer release.
+mlx = [
+    "mlx>=0.32.2 ; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "mlx-vlm>=0.7.1,<0.9 ; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[project.scripts]
+sentrysearch = "sentrysearch.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sentrysearch"]
+
+[dependency-groups]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.uv]
+constraint-dependencies = [
+    "opentelemetry-exporter-otlp-proto-grpc>=1.25.0",
+    "opentelemetry-proto>=1.25.0",
+]
+
+# PyPI ships CPU-only torch wheels on Windows, so users with NVIDIA GPUs would
+# silently get a CPU build. Pull from PyTorch's CUDA index on Windows only;
+# Linux already gets CUDA-enabled wheels from PyPI, and macOS needs PyPI for MPS.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu124", marker = "sys_platform == 'win32'" }]
+torchvision = [{ index = "pytorch-cu124", marker = "sys_platform == 'win32'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["sentrysearch"]
+omit = ["sentrysearch/dashcam_pb2.py"]
+
+[tool.coverage.report]
+show_missing = true

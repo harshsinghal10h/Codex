@@ -1,0 +1,12 @@
+build/
+dist/
+private/
+__pycache__/
+*.pyc
+vendor/lib/
+vendor/libvlc.dex
+vendor/libvlc-aar/
+vendor/onnx-android/
+vendor/vlc/
+assets/models/320n.onnx
+*.spec
