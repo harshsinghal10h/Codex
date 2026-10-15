@@ -19,6 +19,10 @@ jobs:
         run: python3 publish-0.3.1/check_release_runs.py
       - name: Reassemble and verify signed APKs
         run: python3 publish-0.3.1/reassemble.py
+      - name: Attach phone and tablet playback evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 publish-0.3.1/collect_verification.py
       - name: Prepare matching source archive
         run: |
           SOURCE_SHA=$(python3 -c 'import json;print(json.load(open("publish-0.3.1/manifest.json"))["source_commit"])')
