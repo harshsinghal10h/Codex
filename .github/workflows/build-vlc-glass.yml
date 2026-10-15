@@ -52,10 +52,17 @@ jobs:
         if: runner.os == 'Windows'
         run: python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
       - name: Test source UI on Mac
+        env:
+          DYLD_LIBRARY_PATH: /Applications/VLC.app/Contents/MacOS/lib
         if: runner.os == 'macOS'
-        run: python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
+        run: |
+          python -c "import ctypes;ctypes.CDLL('/Applications/VLC.app/Contents/MacOS/lib/libvlc.dylib')"
+          python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
       - name: Test source UI on Linux
         if: runner.os == 'Linux'
+        env:
+          QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu --disable-dev-shm-usage
+          QT_OPENGL: software
         run: xvfb-run -a python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
       - name: Package desktop app
         run: python tools/build_desktop.py
@@ -71,6 +78,9 @@ jobs:
           Get-Content ui-smoke.json
       - name: Smoke test Unix package
         if: runner.os != 'Windows'
+        env:
+          QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu --disable-dev-shm-usage
+          QT_OPENGL: software
         shell: bash
         run: |
           if [ -d dist/VLC-Glass-0.3.1.app ]; then
@@ -106,7 +116,7 @@ jobs:
           retention-days: 14
   release:
     needs: [desktop]
-    if: always()
+    if: ${{ always() && needs.desktop.result == 'success' }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -130,4 +140,5 @@ jobs:
           (root/'SHA256SUMS-desktop.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths))
           PY
           gh release view vlc-glass-v0.3.1 || gh release create vlc-glass-v0.3.1 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.1 development builds' --notes-file VLC-Glass/RELEASE.md
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/vlc-glass-v0.3.1" -f sha="$GITHUB_SHA" -F force=true
           find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' -o -name '*smoke.json' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.1 --clobber

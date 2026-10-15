@@ -52,7 +52,7 @@ def run(Player,QApplication,QTimer,argv):
                 if evidence['synthetic_skip'] and window.seek_target is None and window.player.is_playing():
                     evidence['clear_position_ms']=position;window.player.set_pause(1)
                     window.web.page().runJavaScript('showHUD()')
-                    window.grab().save(str(report.with_name('ui-smoke.png')))
+                    window.screen().grabWindow(int(window.winId())).save(str(report.with_name('ui-smoke.png')))
                     phase='phone';window.resize(360,760)
                     QTimer.singleShot(600,check_phone)
                 previous=position
@@ -61,7 +61,7 @@ def run(Player,QApplication,QTimer,argv):
         window.web.page().runJavaScript("(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+1;})()",phone_ready)
     def phone_ready(value):
         evidence['responsive_prompt']=bool(value)
-        window.grab().save(str(report.with_name('ui-phone.png')))
+        window.screen().grabWindow(int(window.winId())).save(str(report.with_name('ui-phone.png')))
         finish(None if value else 'The 360 px prompt layout overflowed')
     timer=QTimer();timer.timeout.connect(check);timer.start(50)
     return app.exec()
