@@ -4,10 +4,26 @@ on:
     branches: [vlc-glass-0.3.0]
     paths: ['VLC-Glass/**', '.github/workflows/build-vlc-glass.yml']
   workflow_dispatch:
+concurrency:
+  group: vlc-glass-desktop-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
+  supersede:
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Stop superseded development runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?branch=vlc-glass-0.3.0&status=in_progress&per_page=100" --jq '.workflow_runs[] | select(.name == "Build VLC Glass 0.3.1" and .id < (env.GITHUB_RUN_ID | tonumber)) | .id' > old-runs.txt
+          while read -r id; do gh api --method POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/cancel" || true; done < old-runs.txt
   desktop:
+    needs: [supersede]
     strategy:
       fail-fast: false
       matrix:
