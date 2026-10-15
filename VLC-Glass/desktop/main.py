@@ -82,17 +82,15 @@ class Player(QMainWindow):
         self.sentry=SentryAdapter(self.data/'sentry-index',upstream)
         self.vlc=vlc.Instance('--no-plugins-cache','--no-video-title-show','--no-snapshot-preview','--audio-time-stretch');self.player=self.vlc.media_player_new()
         container=QWidget();self.setCentralWidget(container);layout=QStackedLayout(container);layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
-        self.software_video=sys.platform=='darwin' and os.environ.get('VLCGLASS_NATIVE_VIDEO')!='1'
+        self.software_video=True
         if self.software_video:
             from desktop.video_surface import VideoSurface
             self.surface=VideoSurface();self.surface.attach(self.player)
         else:self.surface=QWidget()
         self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
+        # The frame surface and web controls share Qt's backing store. Native
+        # video child windows bypass that composition and obscure the controls.
         self.web=QWebEngineView(container)
-        self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        # Video owns a native child window. Give the transparent web overlay a
-        # sibling native window so it composes above video on every host.
-        self.web.setAttribute(Qt.WidgetAttribute.WA_NativeWindow)
         page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
         self.assets=Assets(self.web);page.profile().installUrlSchemeHandler(b'vlcglass',self.assets)
         self.bridge=Bridge();self.bridge.incoming.connect(self.request);channel=QWebChannel(page);channel.registerObject('native',self.bridge);page.setWebChannel(channel);self.channel=channel
@@ -101,7 +99,8 @@ class Player(QMainWindow):
         script=QWebEngineScript();script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation);script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld);script.setRunsOnSubFrames(False)
         script.setSourceCode("(()=>{let q=[],bridge;window.GlassHost={request:s=>bridge?bridge.request(s):q.push(s)};"+lib+";new QWebChannel(qt.webChannelTransport,c=>{bridge=c.objects.native;q.forEach(s=>bridge.request(s));q=[];});})();")
         page.scripts().insert(script)
-        handle=int(self.surface.winId())
+        if self.software_video:pass
+        else:handle=int(self.surface.winId())
         if self.software_video:pass
         elif sys.platform=='win32':self.player.set_hwnd(handle)
         elif sys.platform=='darwin':self.player.set_nsobject(handle)
