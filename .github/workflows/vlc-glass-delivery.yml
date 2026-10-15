@@ -1,0 +1,47 @@
+name: Deliver VLC Glass
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'VLC-Glass/.delivery/*.part*'
+      - '.github/workflows/vlc-glass-delivery.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vlc-glass-delivery
+  cancel-in-progress: false
+
+jobs:
+  deliver:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Assemble and verify the exact supplied artifacts
+        run: python3 VLC-Glass/tools/assemble_delivery.py
+      - name: Save APK and complete browsable source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add VLC-Glass/source VLC-Glass/downloads/*.apk VLC-Glass/downloads/SHA256SUMS.txt
+          git rm VLC-Glass/.delivery/*.part*
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish verified VLC Glass 0.2.0 APK and complete source'
+            git push origin HEAD:main
+          fi
+      - name: Publish downloadable development release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create vlc-glass-v0.2.0 \
+            VLC-Glass/downloads/VLC-Glass-Android-0.2.0-arm64.apk \
+            VLC-Glass/downloads/VLC-Glass-Source-0.2.0.zip \
+            VLC-Glass/downloads/SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$(git rev-parse HEAD)" \
+            --prerelease \
+            --title 'VLC Glass 0.2.0 for Android' \
+            --notes-file VLC-Glass/RELEASE_NOTES.md

@@ -1,0 +1,69 @@
+{
+  "version": "0.2.0",
+  "files": [
+    {
+      "name": "VLC-Glass-Android-0.2.0-arm64.apk",
+      "bytes": 22533820,
+      "sha256": "24353a0bae718b8a373b7a281767c469f9bd5cea8d1b705d8e27f0b2237c0623",
+      "git_blob_sha": "ed2e4688220d934afe5f322b59f080490337fdd0",
+      "parts": [
+        {
+          "path": ".delivery/VLC-Glass-Android-0.2.0-arm64.apk.part00",
+          "bytes": 6291264,
+          "sha256": "d0430bd50e3f82b5e4e9976a8156f96eea5f0fa1b4ddcb2c86fd045e79bb9062",
+          "blob_sha": "565139eb7eab740c82dab7bd7326f051d37bdb14"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Android-0.2.0-arm64.apk.part01",
+          "bytes": 6291264,
+          "sha256": "23d29af373afe76e85e4acc25add4efd9f98ac7e009162b46c1565012907f329",
+          "blob_sha": "8d982d2da6701866966a071eebef067ad966d5fc"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Android-0.2.0-arm64.apk.part02",
+          "bytes": 6291264,
+          "sha256": "645108ebb8d53ad27dd20608799f90b3046257450a3b8b6b1dc2e4fe0c8b0790",
+          "blob_sha": "ed508e28a8d00e730b7328eedab8d6995911242e"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Android-0.2.0-arm64.apk.part03",
+          "bytes": 3660028,
+          "sha256": "c5c8fb55696cb209c609cd46ea84f085f8e5f5589020ed5860b54a59128bfe18",
+          "blob_sha": "6cad509859f7bf44d87135f6eb8aac0b32204beb"
+        }
+      ]
+    },
+    {
+      "name": "VLC-Glass-Source-0.2.0.zip",
+      "bytes": 22513374,
+      "sha256": "8fe304ee601010bbf5387ee1766e92ddd49d53b0c195b208566b3bcea0781cf4",
+      "git_blob_sha": "0abb39131cdafbaa69044c223fe5eac520817458",
+      "parts": [
+        {
+          "path": ".delivery/VLC-Glass-Source-0.2.0.zip.part00",
+          "bytes": 6291264,
+          "sha256": "98a13b730746b2f94e479f229aedb3919575f275c2864f0e2ff9a657529919be",
+          "blob_sha": "12f100c6872876cb49c50500c0151224abf676a1"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Source-0.2.0.zip.part01",
+          "bytes": 6291264,
+          "sha256": "61f5391e918b433daed488f35ebb0a4f55756e84e6a35694fe586a646dde65c6",
+          "blob_sha": "0593ecdfdeb42eab585cf875de21deb56aef7246"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Source-0.2.0.zip.part02",
+          "bytes": 6291264,
+          "sha256": "4b57309dd3ca187167721e81179d938da8fef3ec212cef2465ec8d3cb83ea5c4",
+          "blob_sha": "e6d4ffae8fb56168a3295081b6c7561b5a8763df"
+        },
+        {
+          "path": ".delivery/VLC-Glass-Source-0.2.0.zip.part03",
+          "bytes": 3639582,
+          "sha256": "2cedc055d3196f96f7d7f4580f08a216795f154f8e30943fed7d8849e496419c",
+          "blob_sha": "f66476b8f80745338b10672d2c655c1e669a5702"
+        }
+      ]
+    }
+  ]
+}
