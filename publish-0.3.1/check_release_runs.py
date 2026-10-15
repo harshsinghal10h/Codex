@@ -1,8 +1,8 @@
 """Publish only after the concrete desktop and Android integration checks pass."""
 import json,os,re,subprocess,time
-checks=[('93ecbceb98f14ec04a3268d330961001e5fe2327','Build VLC Glass 0.3.1'),('767058ef75f94017f9a9aba774487d07529b43fd','Android playback and form-factor checks')]
+checks=[('74b8a3e09122792389d63fc3066e94f3b4cd4cf6','Build VLC Glass 0.3.1'),('14757e62bfed91ad376d4fb62771ebc18d600870','Android playback and form-factor checks')]
 repo=os.environ['GITHUB_REPOSITORY']
-for i in range(90):
+for i in range(270):
  pending=[]
  for sha,name in checks:
   assert re.fullmatch('[0-9a-f]{40}',sha)
