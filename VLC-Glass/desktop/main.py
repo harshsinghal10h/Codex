@@ -41,11 +41,17 @@ QWebEngineUrlScheme.registerScheme(scheme)
 class Assets(QWebEngineUrlSchemeHandler):
     def requestStarted(self,job):
         from mimetypes import guess_type
+        if job.requestUrl().host()!='local':job.fail(job.Error.UrlNotFound);return
         path=job.requestUrl().path().lstrip('/') or 'index.html'
         if '/' in path or '..' in path:job.fail(job.Error.UrlNotFound);return
         file=ROOT/'assets/ui'/path
         if not file.is_file():job.fail(job.Error.UrlNotFound);return
-        buffer=QBuffer(job);buffer.setData(QByteArray(file.read_bytes()));buffer.open(QIODevice.OpenModeFlag.ReadOnly)
+        data=file.read_bytes()
+        if path=='index.html':
+            # Chromium does not consistently match CSP 'self' for custom schemes.
+            # Name this app's local host explicitly; retain CSP enforcement.
+            data=data.replace(b"'self'",b"'self' vlcglass://local:*")
+        buffer=QBuffer(job);buffer.setData(QByteArray(data));buffer.open(QIODevice.OpenModeFlag.ReadOnly)
         job.reply((guess_type(str(file))[0] or 'application/octet-stream').encode(),buffer)
 
 class Page(QWebEnginePage):

@@ -28,7 +28,7 @@ def run(Player,QApplication,QTimer,argv):
         nonlocal phase
         if not value or phase!='ui':return
         evidence['ui_ready']=True;phase='scan'
-        window.settings['sceneGuard']=True;window.import_files([str(video)])
+        window.settings['sceneGuard']=True;window.settings['resume']=False;window.import_files([str(video)])
         id=window.db.execute('SELECT id FROM media WHERE uri=?',(str(video),)).fetchone()[0]
         window.web.page().runJavaScript('model.settings.sceneGuard=true;playMedia('+str(id)+',['+str(id)+'])')
     def check():

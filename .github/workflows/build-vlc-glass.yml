@@ -46,6 +46,17 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Create safe playback fixture
         run: python tools/make_smoke_video.py
+      - name: Stage native runtime
+        run: python tools/build_desktop.py --prepare-only
+      - name: Test source UI on Windows
+        if: runner.os == 'Windows'
+        run: python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
+      - name: Test source UI on Mac
+        if: runner.os == 'macOS'
+        run: python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
+      - name: Test source UI on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python desktop/main.py --ui-smoke-report ui-source-smoke.json --smoke-video build/safe-smoke.mp4
       - name: Package desktop app
         run: python tools/build_desktop.py
       - name: Smoke test Windows package
