@@ -1,0 +1,2 @@
+24353a0bae718b8a373b7a281767c469f9bd5cea8d1b705d8e27f0b2237c0623  VLC-Glass-Android-0.2.0-arm64.apk
+8fe304ee601010bbf5387ee1766e92ddd49d53b0c195b208566b3bcea0781cf4  VLC-Glass-Source-0.2.0.zip
