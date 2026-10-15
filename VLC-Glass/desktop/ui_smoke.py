@@ -66,7 +66,7 @@ def run(Player,QApplication,QTimer,argv):
                 evidence['protected_previous']=True;window.player.stop();window.request(json.dumps({'op':'play'}))
                 if window.seek_target!=2000:raise RuntimeError('Replay did not mask before starting')
                 phase='replay'
-            elif phase=='replay' and window.seek_target is None and window.player.is_playing():
+            elif phase=='replay' and window.seek_target is None and window.player.is_playing() and (not window.software_video or window.surface.frame is not None):
                 if window.player.get_time()<2000:raise RuntimeError('Replay exposed the opening section')
                 evidence['protected_replay']=True;window.player.set_pause(1)
                 window.web.page().runJavaScript("showHUD();(()=>{const p=document.createElement('div');p.id='qa-composition-probe';p.style.cssText='position:fixed;left:6px;top:6px;width:24px;height:24px;background:#12ab34;z-index:2147483647;pointer-events:none';document.body.appendChild(p)})()")

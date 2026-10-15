@@ -26,7 +26,7 @@ if (ROOT/'vendor/vlc').exists():
 
 import vlc
 from PySide6.QtCore import Qt,QObject,Signal,Slot,QTimer,QUrl,QBuffer,QByteArray,QIODevice,QStandardPaths
-from PySide6.QtGui import QColor,QKeySequence,QShortcut
+from PySide6.QtGui import QColor,QKeySequence,QShortcut,QSurfaceFormat
 from PySide6.QtWidgets import QApplication,QMainWindow,QWidget,QStackedLayout,QFileDialog,QMessageBox
 from PySide6.QtWebEngineCore import QWebEngineUrlScheme,QWebEngineUrlSchemeHandler,QWebEnginePage,QWebEngineScript
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -34,6 +34,8 @@ from PySide6.QtWebChannel import QWebChannel
 from intelligence.vision import Scanner
 from intelligence.timeline import Schedule
 from intelligence.sentry_adapter import SentryAdapter
+
+video_format=QSurfaceFormat.defaultFormat();video_format.setAlphaBufferSize(8);QSurfaceFormat.setDefaultFormat(video_format)
 
 scheme=QWebEngineUrlScheme(b'vlcglass');scheme.setSyntax(QWebEngineUrlScheme.Syntax.HostAndPort);scheme.setDefaultPort(443)
 scheme.setFlags(QWebEngineUrlScheme.Flag.SecureScheme|QWebEngineUrlScheme.Flag.LocalScheme|QWebEngineUrlScheme.Flag.LocalAccessAllowed)
@@ -68,7 +70,7 @@ class Bridge(QObject):
 class Player(QMainWindow):
     worker_event=Signal(object)
     def __init__(self):
-        super().__init__();self.setWindowTitle('VLC Glass');self.resize(1200,780);self.setMinimumSize(320,360)
+        super().__init__();self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground);self.setWindowTitle('VLC Glass');self.resize(1200,780);self.setMinimumSize(320,360)
         self.data=Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppLocalDataLocation));self.data.mkdir(parents=True,exist_ok=True)
         self.db=sqlite3.connect(self.data/'library.sqlite');self.db.execute('CREATE TABLE IF NOT EXISTS media(id INTEGER PRIMARY KEY,uri TEXT UNIQUE,title TEXT,kind TEXT,duration INTEGER DEFAULT 0,size INTEGER DEFAULT 0,position INTEGER DEFAULT 0,favorite INTEGER DEFAULT 0,added INTEGER,lastplayed INTEGER DEFAULT 0)')
         self.db.execute('CREATE TABLE IF NOT EXISTS playlists(id INTEGER PRIMARY KEY,name TEXT,entries TEXT DEFAULT "[]")');self.db.commit();self.db.row_factory=sqlite3.Row
@@ -81,16 +83,16 @@ class Player(QMainWindow):
         upstream=next((ROOT/'upstream/sentrysearch').glob('sentrysearch-*'))
         self.sentry=SentryAdapter(self.data/'sentry-index',upstream)
         self.vlc=vlc.Instance('--no-plugins-cache','--no-video-title-show','--no-snapshot-preview','--audio-time-stretch');self.player=self.vlc.media_player_new()
-        container=QWidget();self.setCentralWidget(container);layout=QStackedLayout(container);layout.setStackingMode(QStackedLayout.StackingMode.StackAll)
+        from desktop.video_surface import VideoSurface
         self.software_video=True
-        if self.software_video:
-            from desktop.video_surface import VideoSurface
-            self.surface=VideoSurface();self.surface.attach(self.player)
-        else:self.surface=QWidget()
-        self.surface.setStyleSheet('background:black');layout.addWidget(self.surface)
+        self.surface=VideoSurface();self.surface.attach(self.player)
+        container=self.surface;self.setCentralWidget(container)
+        layout=QStackedLayout(container);layout.setContentsMargins(0,0,0,0)
         # The frame surface and web controls share Qt's backing store. Native
         # video child windows bypass that composition and obscure the controls.
         self.web=QWebEngineView(container)
+        self.web.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.web.setAttribute(Qt.WidgetAttribute.WA_OpaquePaintEvent,False)
         page=Page(self.web);page.setBackgroundColor(QColor(0,0,0,0));self.web.setPage(page);layout.addWidget(self.web);layout.setCurrentWidget(self.web)
         self.assets=Assets(self.web);page.profile().installUrlSchemeHandler(b'vlcglass',self.assets)
         self.bridge=Bridge();self.bridge.incoming.connect(self.request);channel=QWebChannel(page);channel.registerObject('native',self.bridge);page.setWebChannel(channel);self.channel=channel
@@ -99,13 +101,8 @@ class Player(QMainWindow):
         script=QWebEngineScript();script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation);script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld);script.setRunsOnSubFrames(False)
         script.setSourceCode("(()=>{let q=[],bridge;window.GlassHost={request:s=>bridge?bridge.request(s):q.push(s)};"+lib+";new QWebChannel(qt.webChannelTransport,c=>{bridge=c.objects.native;q.forEach(s=>bridge.request(s));q=[];});})();")
         page.scripts().insert(script)
-        if self.software_video:pass
-        else:handle=int(self.surface.winId())
-        if self.software_video:pass
-        elif sys.platform=='win32':self.player.set_hwnd(handle)
-        elif sys.platform=='darwin':self.player.set_nsobject(handle)
-        else:self.player.set_xwindow(handle)
         self.worker_event.connect(self.handle_worker_event)
+        self.web.loadFinished.connect(self.compose_overlay)
         self.web.setUrl(QUrl('vlcglass://local/index.html'))
         self.clock=QTimer(self);self.clock.timeout.connect(self.tick);self.clock.start(50);self.last_ui=0;self.last_save=0
         QShortcut(QKeySequence('F11'),self,activated=self.fullscreen)
@@ -114,6 +111,15 @@ class Player(QMainWindow):
             key=keyring.get_password('VLCGlass','gemini')
             if key:os.environ['GEMINI_API_KEY']=key
         except Exception:pass
+    def compose_overlay(self,*args):
+        from PySide6.QtQuickWidgets import QQuickWidget
+        for child in self.web.findChildren(QQuickWidget):
+            child.setClearColor(QColor(0,0,0,0))
+            child.setAttribute(Qt.WidgetAttribute.WA_AlwaysStackOnTop,True)
+            child.setAttribute(Qt.WidgetAttribute.WA_OpaquePaintEvent,False)
+        self.web.page().setBackgroundColor(QColor(0,0,0,255))
+        self.web.page().setBackgroundColor(QColor(0,0,0,0))
+        self.web.update();self.surface.update();self.update()
     def row(self,id=None):
         result=self.db.execute('SELECT * FROM media WHERE id=?',(self.current if id is None else id,)).fetchone();return dict(result) if result else None
     def library(self):return [dict(r) for r in self.db.execute('SELECT * FROM media ORDER BY added DESC')]
@@ -127,10 +133,10 @@ class Player(QMainWindow):
         return {'version':vlc.libvlc_get_version().decode(),'videoWidth':w,'videoHeight':h,'audioTracks':tracks(self.player.audio_get_track_description()),'subtitleTracks':tracks(self.player.video_get_spu_description()),'videoTracks':tracks(self.player.video_get_track_description()),'audioTrack':self.player.audio_get_track(),'subtitleTrack':self.player.video_get_spu(),'videoTrack':self.player.video_get_track(),'chapters':[]}
     def state(self):
         status={vlc.State.NothingSpecial:0,vlc.State.Opening:1,vlc.State.Buffering:2,vlc.State.Playing:3,vlc.State.Paused:4,vlc.State.Stopped:5,vlc.State.Ended:6,vlc.State.Error:7}.get(self.player.get_state(),0)
-        return {'current':self.current,'item':self.row(),'playing':bool(self.player.is_playing()),'time':max(0,self.player.get_time()),'duration':max(0,self.player.get_length()) or self.guard.get('duration',0),'seekable':bool(self.player.is_seekable()),'status':status,'speed':self.player.get_rate() or 1,'volume':self.player.audio_get_volume(),'queue':self.queue,'cursor':self.cursor,'repeat':self.repeat,'shuffle':self.shuffle,'sleepAt':self.sleep_at,'abA':self.ab_a,'abB':self.ab_b,'guard':self.guard,'details':self.details() if self.current>0 else {},'bookmarks':self.bookmarks.get(str(self.current),[]),'error':self.fault}
+        return {'current':self.current,'item':self.row(),'playing':bool(self.player.is_playing()),'time':max(0,self.player.get_time()),'duration':max(0,self.player.get_length()) or self.guard.get('duration',0),'seekable':bool(self.player.is_seekable()),'status':status,'speed':self.player.get_rate() or 1,'volume':max(0,self.player.audio_get_volume()) if self.player.audio_get_volume()>=0 else int(self.settings.get('volume',80)),'queue':self.queue,'cursor':self.cursor,'repeat':self.repeat,'shuffle':self.shuffle,'sleepAt':self.sleep_at,'abA':self.ab_a,'abB':self.ab_b,'guard':self.guard,'details':self.details() if self.current>0 else {},'bookmarks':self.bookmarks.get(str(self.current),[]),'error':self.fault}
     def protect(self,hidden):
         if self.software_video:self.surface.set_masked(hidden)
-        self.surface.setVisible(not hidden);self.player.audio_set_mute(bool(hidden))
+        self.player.audio_set_mute(bool(hidden))
         if not hidden:self.web.raise_()
     def save_progress(self):
         if self.current>0 and self.player.get_length()>0:
