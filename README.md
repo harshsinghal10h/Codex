@@ -1,15 +1,12 @@
-# VLC Glass 0.2.0
+# VLC Glass
 
-Independent VLC-powered Android media player with two switchable liquid-glass appearances, responsive controls and looping Anatomy SVG artwork.
+A VLC powered media player with responsive liquid glass controls, natural-language video search using SentrySearch, and local scene skipping.
 
-The release workflow publishes the signed ARM64 APK and complete source ZIP as normal downloadable release assets under the tag `vlc-glass-v0.2.0`.
+- [Downloads and checksums](https://github.com/harshsinghal10h/Codex/releases/tag/vlc-glass-v0.3.1)
+- [Application source and setup](VLC-Glass/README.md)
+- [Verification scope](VLC-Glass/QA.md)
+- [Build status](https://github.com/harshsinghal10h/Codex/actions/workflows/build-vlc-glass.yml)
 
-## Reconstruct locally
+Android packages cover ARM64, ARMv7 and x86-64, plus a universal APK. Desktop packages are built independently for Windows x64, macOS ARM64/Intel and Linux x64 and published after their checks pass. These are development builds, with no all-device or classifier-accuracy certification.
 
-```sh
-python3 publish/reassemble.py
-```
-
-The complete files appear in `dist/` only after every transfer part, size and final SHA-256 has been checked. Binary parts keep individual ChatGPT GitHub connector requests small. They do not modify, recompress or re-sign the APK.
-
-See `publish/RELEASE.md` for features and testing limits. Extract the source ZIP for native Android and interface source, dependency provenance, licenses, build tools and the detailed verification record. No private signing key is committed.
+Scene guard scans local videos before playback and reuses a content-hashed cache. Search indexing requires your Gemini API key or a separately installed local Qwen model; Android uses the authenticated desktop companion. The supplied LAYA text SDK has an optional cached advisory adapter. No LAYA checkpoint weights were provided.

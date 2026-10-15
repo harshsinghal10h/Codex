@@ -1,0 +1,91 @@
+{
+  "version": "0.3.1",
+  "source_commit": "cf880d08d71dd94128400b2dd9a421e518871cfc",
+  "files": [
+    {
+      "name": "VLC-Glass-Android-0.3.1-arm64.apk",
+      "bytes": 42121494,
+      "sha256": "3f0c4bee1d39bcd105e5225531428c71eb89ea25f4d469acdb4ed6783e23a2b3",
+      "chunks": [
+        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+        "c4b63bd42c5cb7f51476783d3e189217324021a7",
+        "e31e2c3b2391abb368e30ad92a9608ef55577d4c",
+        "baf642888e49cd71158ea4264ce8de6d439cb004",
+        "2b797cbb714829a6fa1ae19656dd264a6a6c4541",
+        "95226286f9924f8f764b34aa5852da1b16f8a3ab",
+        "dbd731f23e445e0abdf490f171bbbb385e424f59",
+        "91ac101b1a1e036ce039df92801d390e2a665222",
+        "93c71ab9454ec1069faf9d2a24b0b8bfecfeba4f",
+        "f09561efdb09bb78d22fd31e793b77ce889bb03d",
+        "c06ae4266f9aebcce1e75391a77340ddd2a938fe"
+      ]
+    },
+    {
+      "name": "VLC-Glass-Android-0.3.1-armv7.apk",
+      "bytes": 37767456,
+      "sha256": "61f832c031a5ce4afa0d21c024732e223208e24601d92e8e48b37aac7a404992",
+      "chunks": [
+        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+        "c4b63bd42c5cb7f51476783d3e189217324021a7",
+        "af09372046dc6da62af4490186c90e0743a3af63",
+        "6000ecae542c4f46e42f38fa26ee86ef28dea783",
+        "8f75e1837f2f961cd4749da605babe9c5177e3be",
+        "04eb0a55859823fcc107448688b8bd3392d6dbcc",
+        "0b7d7f151619d3bf23c3b9089e68e6542f2d0505",
+        "7f1c877eb66fd71650d433d3d103fcc1f7971f33",
+        "4e912c8b33f95d8bb614608d88a625cf306c0749",
+        "cc5eb9293358486f2da374cb98c9a7892c6718fb"
+      ]
+    },
+    {
+      "name": "VLC-Glass-Android-0.3.1-universal.apk",
+      "bytes": 103242755,
+      "sha256": "eed8842e73f2977281fdbbab123f3fa34498daf6c08f631f6886c8e1fdc7a08f",
+      "chunks": [
+        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+        "c4b63bd42c5cb7f51476783d3e189217324021a7",
+        "e31e2c3b2391abb368e30ad92a9608ef55577d4c",
+        "baf642888e49cd71158ea4264ce8de6d439cb004",
+        "2b797cbb714829a6fa1ae19656dd264a6a6c4541",
+        "95226286f9924f8f764b34aa5852da1b16f8a3ab",
+        "dbd731f23e445e0abdf490f171bbbb385e424f59",
+        "91ac101b1a1e036ce039df92801d390e2a665222",
+        "93c71ab9454ec1069faf9d2a24b0b8bfecfeba4f",
+        "f09561efdb09bb78d22fd31e793b77ce889bb03d",
+        "f76d24136998da0e00305de50e5f4286e1547318",
+        "6d7acb7f0ba30a60c50c9ac6b4012435615526c5",
+        "fbcfe72e091bb3f20824dc28583c8d2c9765a705",
+        "67e29780b7880567950a33c29d29c160d196e7f1",
+        "8c1f370d0d44dbd545ea729ea060b7f339212323",
+        "3c5c555731a6780fe553d4ebbe8b27c6b22b9c32",
+        "a1a1c34980de176e4459dde447e6cdf41ec343b3",
+        "d82ac248861511ff9a6fdd9793ac17fd9be4efad",
+        "2ddf9222100adf1408d334b01afb9e46ae36362d",
+        "48f52469c479fa3456fe3af6e3d4a50ffdf19e7d",
+        "59eacba748437f59e6314d4373d351219b3c7f78",
+        "9abaa416effb2062b7696e807003523c107b36ef",
+        "0e91a8e9deef2f97d720abed6a779e8eab7b0152",
+        "4f54ef1b388ff7970addd23a3db1585ecce649c4",
+        "edf01ce994135e21182c3d1636ccb016fa834950"
+      ]
+    },
+    {
+      "name": "VLC-Glass-Android-0.3.1-x86_64.apk",
+      "bytes": 45140231,
+      "sha256": "52143639186c0e7e00c9fa3d7b6ddb8786c50d7034eb05f80ecfa1104d9c71d4",
+      "chunks": [
+        "d24f27f928e5e5ceb8d5a35a2c5f05f54fb0273f",
+        "c4b63bd42c5cb7f51476783d3e189217324021a7",
+        "4c5634e8279b3b0c5d9f077e1132bbd99d6d959e",
+        "081bad77d41f7a6aca4d88789eb925354da1bc98",
+        "f4e9ba040c57415fb343b508552227c41f3fdb69",
+        "46e777e3c6af15347ccd5c8d088aebfc761114db",
+        "7dc145b1c207958d27eab2a384504fbe4fd2a862",
+        "ba8f76411b99caa4539a8187815cd9735e1e806b",
+        "4741386392a3998f6b48d978738b2dcc0aa102e1",
+        "0005b234fd88cd25dfc8a757b767f965b6829bcf",
+        "15046600220776328f9e398650c1db366623bed1"
+      ]
+    }
+  ]
+}
