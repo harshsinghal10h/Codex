@@ -1,0 +1,35 @@
+name: Publish verified Android 0.3.1
+on:
+  push:
+    branches: [vlc-glass-0.3.0]
+    paths: ['publish-0.3.1/**', '.github/workflows/publish-vlc-glass-android.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require successful integration checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 publish-0.3.1/check_release_runs.py
+      - name: Reassemble and verify signed APKs
+        run: python3 publish-0.3.1/reassemble.py
+      - name: Prepare matching source archive
+        run: |
+          SOURCE_SHA=$(python3 -c 'import json;print(json.load(open("publish-0.3.1/manifest.json"))["source_commit"])')
+          git fetch --depth=1 origin "$SOURCE_SHA"
+          git archive --format=zip --output=publish-0.3.1/release/VLC-Glass-0.3.1-source.zip "$SOURCE_SHA" VLC-Glass
+          cd publish-0.3.1/release
+          sha256sum VLC-Glass-0.3.1-source.zip > SHA256SUMS-source.txt
+      - name: Publish verified Android packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SOURCE_SHA=$(python3 -c 'import json;print(json.load(open("publish-0.3.1/manifest.json"))["source_commit"])')
+          gh release view vlc-glass-v0.3.1 || gh release create vlc-glass-v0.3.1 --target "$SOURCE_SHA" --prerelease --title 'VLC Glass 0.3.1 development builds' --notes-file VLC-Glass/RELEASE.md || gh release view vlc-glass-v0.3.1
+          gh release upload vlc-glass-v0.3.1 publish-0.3.1/release/* --clobber
