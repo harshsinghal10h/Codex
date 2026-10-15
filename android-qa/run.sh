@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 trap 'adb logcat -d -t 2000 > android-qa/logcat.txt || true; adb pull /sdcard/Android/data/com.harsh.vlcglass/files/android-error.png android-qa/ || true' EXIT
+adb shell settings put secure immersive_mode_confirmations confirmed
 adb install -r publish-0.3.1/release/VLC-Glass-Android-0.3.1-x86_64.apk
 adb install -r android-qa/VLC-Glass-QA-0.3.1.apk
 adb shell am instrument -w com.harsh.vlcglass.qa/.Smoke | tee android-qa/instrumentation.log
