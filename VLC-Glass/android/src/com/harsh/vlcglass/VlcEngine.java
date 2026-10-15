@@ -10,7 +10,7 @@ import org.json.*;
 
 /** Public LibVLC calls; implementation classes remain unmodified in vendor DEX. */
 public final class VlcEngine {
- public Object lib,player;private AssetFileDescriptor descriptor;private Object eq;private JSONObject cachedDetails;private long detailsAt;private volatile int videoWidth=0,videoHeight=0;
+ public Object lib,player;private AssetFileDescriptor descriptor;private Object eq;private JSONObject cachedDetails;private long detailsAt;private volatile int videoWidth=0,videoHeight=0;private TextureView attachedView,attachedSubtitles;private float displayRatio=0;
  private final ArrayList<Object> discoverers=new ArrayList<>();private final LinkedHashMap<Integer,Object> renderers=new LinkedHashMap<>();private int rendererSequence=0;public int renderer=-1;private android.net.wifi.WifiManager.MulticastLock multicast;
  public VlcEngine(Context c)throws Exception{
   Class<?> lc=Class.forName("org.videolan.libvlc.LibVLC");
@@ -46,9 +46,26 @@ public final class VlcEngine {
   call(player,"setRate",(float)settings.optDouble("speed",1));call(player,"setVolume",settings.optInt("volume",80));call(player,"play");
  }
  public void seek(long ms)throws Exception{if(!seekable())throw new Exception("This stream does not support seeking.");long end=length();call(player,"setTime",Math.max(0,end>0?Math.min(ms,end):ms));}
- public void attach(TextureView view,TextureView subtitles,int width,int height)throws Exception{Object out=call(player,"getVLCVout");call(out,"detachViews");call(out,"setVideoView",view);call(out,"setSubtitlesView",subtitles);call(out,"setWindowSize",Math.max(1,width),Math.max(1,height));Class<?> listener=Class.forName("org.videolan.libvlc.interfaces.IVLCVout$OnNewVideoLayoutListener");Object callback=Proxy.newProxyInstance(listener.getClassLoader(),new Class<?>[]{listener},(p,m,args)->{if(m.getName().equals("onNewVideoLayout")&&args.length>=7){int vw=((Number)args[3]).intValue(),vh=((Number)args[4]).intValue(),sn=((Number)args[5]).intValue(),sd=((Number)args[6]).intValue();if(vw>0&&vh>0){videoWidth=vw;videoHeight=vh;detailsAt=0;float ratio=vw*(sn>0&&sd>0?(float)sn/sd:1f)/vh;view.post(()->{android.view.View parent=(android.view.View)view.getParent();int pw=parent.getWidth(),ph=parent.getHeight();int w=pw,h=(int)(pw/ratio);if(h>ph){h=ph;w=(int)(ph*ratio);}android.widget.FrameLayout.LayoutParams lp=new android.widget.FrameLayout.LayoutParams(w,h,android.view.Gravity.CENTER);view.setLayoutParams(lp);subtitles.setLayoutParams(new android.widget.FrameLayout.LayoutParams(w,h,android.view.Gravity.CENTER));window(w,h);});}}return null;});call(out,"attachViews",callback);}
+ private void fitVideo(TextureView view,TextureView subtitles){
+  if(displayRatio<=0)return;
+  view.post(()->{if(view!=attachedView||subtitles!=attachedSubtitles)return;android.view.View parent=(android.view.View)view.getParent();if(parent==null)return;int pw=parent.getWidth(),ph=parent.getHeight();if(pw<=0||ph<=0)return;int w=pw,h=Math.max(1,(int)(pw/displayRatio));if(h>ph){h=ph;w=Math.max(1,(int)(ph*displayRatio));}view.setLayoutParams(new android.widget.FrameLayout.LayoutParams(w,h,android.view.Gravity.CENTER));subtitles.setLayoutParams(new android.widget.FrameLayout.LayoutParams(w,h,android.view.Gravity.CENTER));window(w,h);});
+ }
+ public void attach(TextureView view,TextureView subtitles,int width,int height)throws Exception{
+  Object out=call(player,"getVLCVout");
+  // A configuration resize keeps the same TextureViews. Detaching a live
+  // surface here races its asynchronous lifecycle and can stop video output.
+  if(view==attachedView&&subtitles==attachedSubtitles&&Boolean.TRUE.equals(call(out,"areViewsAttached"))){fitVideo(view,subtitles);return;}
+  call(out,"detachViews");attachedView=view;attachedSubtitles=subtitles;
+  call(out,"setVideoView",view);call(out,"setSubtitlesView",subtitles);call(out,"setWindowSize",Math.max(1,width),Math.max(1,height));
+  Class<?> listener=Class.forName("org.videolan.libvlc.interfaces.IVLCVout$OnNewVideoLayoutListener");
+  Object callback=Proxy.newProxyInstance(listener.getClassLoader(),new Class<?>[]{listener},(proxy,m,args)->{
+   if(m.getName().equals("hashCode"))return System.identityHashCode(proxy);if(m.getName().equals("equals"))return proxy==args[0];if(m.getName().equals("toString"))return "VLC Glass video layout listener";
+   if(m.getName().equals("onNewVideoLayout")&&args!=null&&args.length>=7){int vw=((Number)args[3]).intValue(),vh=((Number)args[4]).intValue(),sn=((Number)args[5]).intValue(),sd=((Number)args[6]).intValue();if(vw>0&&vh>0){videoWidth=vw;videoHeight=vh;detailsAt=0;displayRatio=vw*(sn>0&&sd>0?(float)sn/sd:1f)/vh;fitVideo(view,subtitles);}}
+   return null;
+  });call(out,"attachViews",callback);
+ }
  public void window(int w,int h){try{call(call(player,"getVLCVout"),"setWindowSize",Math.max(1,w),Math.max(1,h));}catch(Exception ignored){}}
- public void detach(){try{call(call(player,"getVLCVout"),"detachViews");}catch(Exception ignored){}}
+ public void detach(){attachedView=null;attachedSubtitles=null;try{call(call(player,"getVLCVout"),"detachViews");}catch(Exception ignored){}}
  public void stop(){try{call(player,"stop");}catch(Exception ignored){}if(descriptor!=null){try{descriptor.close();}catch(Exception ignored){}descriptor=null;}}
  public void release(){stop();detach();stopDiscovery();for(Object item:renderers.values())try{call(item,"release");}catch(Exception ignored){}renderers.clear();try{call(player,"release");call(lib,"release");}catch(Exception ignored){}}
  public void discover(Context context,Runnable changed)throws Exception{
