@@ -96,7 +96,7 @@ class Player(QMainWindow):
         script=QWebEngineScript();script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation);script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld);script.setRunsOnSubFrames(False)
         script.setSourceCode("(()=>{let q=[],bridge;window.GlassHost={request:s=>bridge?bridge.request(s):q.push(s)};"+lib+";new QWebChannel(qt.webChannelTransport,c=>{bridge=c.objects.native;q.forEach(s=>bridge.request(s));q=[];});})();")
         page.scripts().insert(script)
-        handle=0 if self.software_video else int(self.surface.winId())
+        handle=int(self.surface.winId())
         if self.software_video:pass
         elif sys.platform=='win32':self.player.set_hwnd(handle)
         elif sys.platform=='darwin':self.player.set_nsobject(handle)

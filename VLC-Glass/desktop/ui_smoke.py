@@ -4,6 +4,7 @@ Only safe colour bars are used. A synthetic skip interval tests scheduling;
 this is not an evaluation of nudity-recognition accuracy.
 """
 import json
+import sys
 from pathlib import Path
 import time
 
@@ -23,6 +24,7 @@ def run(Player,QApplication,QTimer,argv):
         closed=True;timer.stop()
         if error:evidence['error']=str(error)
         evidence['passed']=not error and all(evidence[k] for k in ['ui_ready','native_playback','scan_complete','synthetic_skip','responsive_prompt','video_output'])
+        if sys.stdout is not None:print(json.dumps(evidence),flush=True)
         report.write_text(json.dumps(evidence,indent=2));window.close();app.exit(0 if evidence['passed'] else 1)
     def ready(value):
         nonlocal phase
