@@ -8,7 +8,7 @@ python3 - <<'PY'
 from pathlib import Path
 import re,json
 p=Path('android-qa');text=(p/'instrumentation.log').read_text()
-m=re.search(r'INSTRUMENTATION_RESULT: stream=(.*)',text)
+m=re.search(r'(?:INSTRUMENTATION_RESULT: stream=)?(\{[^\n]+\})',text)
 if not m:raise SystemExit('No Android instrumentation report returned')
 report=json.loads(m.group(1));(p/'android-smoke.json').write_text(json.dumps(report,indent=2))
 if not report.get('passed'):raise SystemExit('Android smoke test failed: '+str(report))
