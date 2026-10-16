@@ -317,7 +317,7 @@ class Player(QMainWindow):
         def run():
             try:
                 if op=='sceneIndex':emit('sceneIndex',self.sentry.index(media,item['uri'],backend,lambda p:emit('sceneIndex',p)))
-                else:emit('sceneSearch',{**self.sentry.search(media,args.get('query','')),'request':args.get('request')})
+                else:emit('sceneSearch',{**self.sentry.search(media,args.get('query',''),item['uri'],backend),'request':args.get('request')})
             except Exception as e:emit(op,{'error':str(e),'request':args.get('request')})
         self.searches.submit(run)
     def tick(self):

@@ -40,7 +40,7 @@ def main():
       'libvlc-all-3.7.6.aar': 'https://repo.maven.apache.org/maven2/org/videolan/android/libvlc-all/3.7.6/libvlc-all-3.7.6.aar',
       'build-tools_r35_linux.zip': 'https://dl.google.com/android/repository/build-tools_r35_linux.zip',
       'platform-35_r02.zip': 'https://dl.google.com/android/repository/platform-35_r02.zip',
-      'sentrysearch-ab688137.zip': 'https://github.com/ssrajadh/sentrysearch/archive/ab688137e2a4a9d6f67cac5677be26db16dc406c.zip',
+      'sentrysearch-ab688137.zip': 'https://codeload.github.com/ssrajadh/sentrysearch/zip/ab688137e2a4a9d6f67cac5677be26db16dc406c',
     }
     if '--desktop' in sys.argv:
         urls={k:v for k,v in urls.items() if k.startswith('sentrysearch')}
@@ -50,7 +50,7 @@ def main():
     urls[wheel['filename']]=wheel['url']
     results={}
     with cf.ThreadPoolExecutor(max_workers=6) as pool:
-        futures={pool.submit(fetch,url,name,wheel['digests']['sha256'] if name==wheel['filename'] else None):name for name,url in urls.items()}
+        futures={pool.submit(fetch,url,name,wheel['digests']['sha256'] if name==wheel['filename'] else ('4cd02d0bd0c3c711a881257b1b4cccf9716e21614c43746f3fd121c51fa12087' if name.startswith('sentrysearch') else None)):name for name,url in urls.items()}
         for f in cf.as_completed(futures):
             name=futures[f]
             try:

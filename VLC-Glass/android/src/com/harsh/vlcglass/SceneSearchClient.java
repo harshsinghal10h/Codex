@@ -10,7 +10,7 @@ import org.json.*;
 /** Native client for the bundled, authenticated SentrySearch companion. */
 public final class SceneSearchClient {
  public interface Callback{void send(String type,JSONObject data);}
- private final Context context;private final CredentialStore secrets;
+ private final Context context;private final CredentialStore secrets;private SemanticVideoSearch direct;
  public SceneSearchClient(Context c){context=c.getApplicationContext();secrets=new CredentialStore(c);}
  public void credentials(JSONObject a)throws Exception{secrets.put("gemini",a.optString("key"));secrets.put("companion",a.optString("token"));}
  private String base(JSONObject settings)throws Exception{
@@ -33,7 +33,10 @@ public final class SceneSearchClient {
    try(InputStream in=c.getInputStream();ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1){if(out.size()+n>1000000)throw new IOException("The companion response is too large");out.write(b,0,n);}JSONObject result=new JSONObject(out.toString("UTF-8"));if(result.has("error"))throw new IOException(result.getString("error"));return result;}
   }finally{c.disconnect();}
  }
+ private SemanticVideoSearch direct(){if(direct==null)direct=new SemanticVideoSearch(context);return direct;}
+ private boolean nativeSearch(JSONObject settings){return !settings.optString("searchConnection","direct").equals("companion")&&!settings.optString("searchBackend","gemini").equals("local");}
  public void index(long media,JSONObject item,JSONObject settings,boolean consent,Callback callback,BooleanSupplier cancel)throws Exception{
+  if(nativeSearch(settings)){direct().index(media,item,consent,callback,cancel);return;}
   if(!consent)throw new IOException("Indexing needs permission to send this selected video to the companion.");String endpoint=base(settings),uri=item.optString("uri");if(!uri.startsWith("content:"))throw new IOException("Index a local video selected through Open media.");
   JSONObject upload;
   try(InputStream in=context.getContentResolver().openInputStream(Uri.parse(uri))){if(in==null)throw new IOException("Cannot open this video");upload=call(endpoint+"/v1/media",null,in,item.optString("title","video.mp4"));}
@@ -49,7 +52,8 @@ public final class SceneSearchClient {
    if(state.optString("phase").equals("indexed"))return;if(state.has("error"))throw new IOException(state.getString("error"));Thread.sleep(1000);
   }
  }
- public JSONObject search(long media,JSONObject settings,JSONObject args)throws Exception{
+ public JSONObject search(long media,JSONObject item,JSONObject settings,JSONObject args,BooleanSupplier cancel)throws Exception{
+  if(nativeSearch(settings))return direct().search(media,item,args,cancel);
   String endpoint=base(settings),remote=context.getSharedPreferences("scene-indices",0).getString(endpoint+":"+media,"");if(remote.isEmpty())throw new IOException("Index this video with SentrySearch before searching.");
   JSONObject result=call(endpoint+"/v1/search",new JSONObject().put("media_id",remote).put("query",args.optString("query")),null,null);
   result.put("media",media).put("request",args.optInt("request"));return result;

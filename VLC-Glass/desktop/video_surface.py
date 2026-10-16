@@ -37,7 +37,7 @@ class VideoSurface(QWidget):
         planes[0]=ctypes.addressof(self.buffer);return 0
     def display(self,opaque,picture):
         self.frame_count+=1
-        if self.masked or self.buffer is None:return
+        if self.masked or self.buffer is None or self.pending:return
         # Keep bytes alive alongside the QImage; no GUI work runs on this thread.
         data=bytes(self.buffer);image=QImage(data,self.width_px,self.height_px,self.pitch,QImage.Format.Format_RGB32)
         self.frame=(data,image)

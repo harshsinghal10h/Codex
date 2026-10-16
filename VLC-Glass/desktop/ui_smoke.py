@@ -16,7 +16,7 @@ def run(Player,QApplication,QTimer,argv):
     QStandardPaths.setTestModeEnabled(True)
     app=QApplication(argv);app.setOrganizationName('VLCGlassTests');app.setApplicationName('VLC Glass tests')
     window=Player();window.show();started=time.monotonic();last_check=0
-    required=['ui_ready','native_playback','video_output','scan_complete','synthetic_skip','protected_previous','protected_replay','visible_overlay','visible_video','responsive_prompt']
+    required=['ui_ready','native_playback','video_output','scan_complete','synthetic_skip','protected_previous','protected_replay','visible_overlay','visible_video','responsive_prompt','compact_controls','controls_fit','steady_dom','semantic_result_seek']
     evidence={k:False for k in required};evidence['physical_device']=False
     phase='ui';previous=0;closed=False
     def finish(error=None):
@@ -102,8 +102,21 @@ def run(Player,QApplication,QTimer,argv):
     def check_phone():
         window.web.page().runJavaScript("(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()",phone_ready)
     def phone_ready(value):
-        evidence['responsive_prompt']=bool(value);QTimer.singleShot(700,lambda:finish_phone(value))
+        evidence['responsive_prompt','compact_controls','controls_fit','steady_dom','semantic_result_seek']=bool(value);QTimer.singleShot(700,lambda:finish_phone(value))
     def finish_phone(value):
-        snapshot('ui-phone.png');finish(None if value else 'The 360 px prompt layout overflowed')
+        snapshot('ui-phone.png')
+        if not value:finish('The 360 px prompt layout overflowed');return
+        source=(Path(__file__).resolve().parents[1]/'assets/ui/qa-contract.js').read_text()
+        window.web.page().runJavaScript(source)
+        QTimer.singleShot(700,read_contract)
+    def read_contract():
+        window.web.page().runJavaScript('JSON.stringify(window.__qaContract||null)',contract_done)
+    def contract_done(value):
+        try:
+            result=json.loads(value or 'null')
+            if not result:raise ValueError('UI contract did not finish')
+            evidence.update(result)
+            finish(None if all(result.get(k) for k in ('compact_controls','controls_fit','steady_dom','semantic_result_seek')) else 'UI/search contract failed: '+str(result))
+        except Exception as error:finish(error)
     timer=QTimer();timer.timeout.connect(check);timer.start(50)
     return app.exec()

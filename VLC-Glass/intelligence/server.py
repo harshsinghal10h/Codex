@@ -29,7 +29,17 @@ def main(argv=None):
     root=Path(args.data);root.mkdir(parents=True,exist_ok=True)
     package=Path(__file__).resolve().parents[1]
     adapter=SentryAdapter(root/'index',next((package/'upstream/sentrysearch').glob('sentrysearch-*')))
-    media={};jobs={};lock=threading.Lock();pool=ThreadPoolExecutor(max_workers=1);busy=threading.BoundedSemaphore(2)
+    media={};backends={};registry=root/'media.json'
+    if registry.exists():
+        for id, value in json.loads(registry.read_text()).items():
+            file=(root/Path(value['file']).name).resolve()
+            if file.parent==root.resolve() and file.is_file():
+                media[id]=str(file);backends[id]=value.get('backend','gemini')
+    def persist():
+        temporary=registry.with_suffix('.tmp')
+        temporary.write_text(json.dumps({id:{'file':Path(file).name,'backend':backends.get(id,'gemini')} for id,file in media.items()}))
+        temporary.replace(registry)
+    jobs={};lock=threading.Lock();pool=ThreadPoolExecutor(max_workers=1);busy=threading.BoundedSemaphore(2)
 
     class Handler(BaseHTTPRequestHandler):
         protocol_version='HTTP/1.1'
@@ -84,7 +94,8 @@ def main(argv=None):
                                 out.write(data);digest.update(data);remain-=count
                                 if chunked and self.rfile.read(2)!=b'\r\n':raise ValueError('Malformed upload chunk')
                         if total==0:raise ValueError('Empty video')
-                        with lock:media[id]=str(file.resolve())
+                        with lock:
+                            media[id]=str(file.resolve());persist()
                         self.output({'media_id':id,'media_sha256':digest.hexdigest()})
                     except Exception:file.unlink(missing_ok=True);raise
                 elif path=='/v1/index':
@@ -92,6 +103,8 @@ def main(argv=None):
                     with lock:file=media.get(id)
                     if not file:raise ValueError('Upload the selected video first')
                     if backend not in ('gemini','local'):raise ValueError('Unsupported backend')
+                    with lock:
+                        backends[id]=backend;persist()
                     if not busy.acquire(blocking=False):self.output({'error':'The analysis queue is full. Try again later.'},429);return
                     job_id=secrets.token_hex(16)
                     with lock:jobs[job_id]={'phase':'indexing','progress':0}
@@ -106,7 +119,7 @@ def main(argv=None):
                     data=self.read_json();id=str(data.get('media_id',''))
                     with lock:exists=id in media
                     if not exists:raise ValueError('Unknown media ID')
-                    self.output(adapter.search(id,str(data.get('query',''))))
+                    self.output(adapter.search(id,str(data.get('query','')),media[id],backends.get(id,'gemini')))
                 else:self.output({'error':'Not found'},404)
             except (ValueError,OSError,KeyError) as e:self.close_connection=True;self.output({'error':str(e)},400)
             except Exception:self.close_connection=True;self.output({'error':'Analysis could not finish. Check the companion model and credentials.'},500)

@@ -1,77 +1,34 @@
-# VLC Glass 0.3.1
+# VLC Glass 0.3.2
 
-An independent LibVLC player for Android and desktop with shared, responsive liquid glass controls. It is not an official VideoLAN release.
+A LibVLC player for Android, Windows x64, macOS Intel / Apple Silicon, and Linux x64, with a shared responsive glass interface.
 
-## Play and protect a video
+This update uses the supplied `sentrysearch-master.zip`. Every source file matches revision `ab688137e2a4a9d6f67cac5677be26db16dc406c`; `vendor/search-source.json` records the ZIP digest and per-file hashes. The prior link happened to identify the same revision. The actual search failure was the upstream Gemini Embedding 2 request format, plus a manual indexing flow and indexes that could not reopen after restarting. The adapter now uses the current model's query prefix without `task_type` and reopens content-addressed indexes.
 
-Open a local video. Select the shield in the player or **More → Scene guard**, then enable **Automatic scene skipping**. The first scan runs locally before protected playback starts. Thumbnails and image seek previews are hidden while Scene guard is enabled. Replay, chapter navigation and Previous use the same protected seeking path. Reopening an unchanged file reuses a map verified against its complete SHA-256, the detector hash, and the analysis policy.
+Open a local video, enter a scene description in the glass prompt, and submit. If preparation is needed, open search settings, enter your Gemini key, and choose **Prepare & search**. Preparation sends selected video clips to Google and uses your API quota; subsequent queries reuse vectors. Results show start/end timestamps and a similarity score (not a probability). Tap a result to seek through the normal Scene Guard checks. No filenames, transcripts, or generated captions substitute for video embeddings.
 
-The bundled NudeNet ONNX detector samples frames every 500 ms, checks near detected boundaries at 100 ms, and adds padding. Playback uses a 50 ms schedule lookup with a speed-adjusted lead, masking and muting during a protected seek. Failed scans keep protected playback paused. This can miss content or skip innocent scenes. It does not guarantee frame-exact recognition, detect every kind of sexual activity, or protect live streams and casting.
+Android supports direct Gemini search with the key encrypted in Android Keystore. It remuxes overlapping 8-second windows into MP4 clips without encoding on the playback thread, stores normalized 768-dimension vectors in SQLite, and streams cosine comparisons with a bounded candidate pool. Keyframe starts are preserved in the returned timestamps. Large frames, sparse keyframes, unsupported codecs, or clips over 12 MiB require the desktop companion, which uses the ZIP's 320p / 2 fps preprocessing. Direct Android and desktop indexes remain separate because their video preprocessing differs. Local Qwen is available through a desktop environment with its optional dependencies and model weights installed; those multi-gigabyte weights are not bundled.
 
-## Find a described moment
+The player has one compact rewind / play / forward row. Previous/next, queue, volume, tracks and other secondary actions are in Player settings. The library's mini-player and navigation bar are hidden while watching. Expensive SVG displacement and full-video GPU refraction are off by default; advanced refraction remains opt-in in Appearance. Hidden artwork stops updating, unchanged labels are not rebuilt on playback ticks, and desktop frames are dropped before copying when a UI paint is already pending.
 
-The glass prompt above the timeline searches the current video's SentrySearch index. Results show timestamp ranges and embedding similarity, not a calibrated probability. Choose a result to seek to that range. Weak matches are labelled.
+Scene Guard retains its opt-in local detector and precomputed skip map. It prepares a scan before playback, masks and mutes protected seeks, and pauses on failed/incomplete scans. It cannot guarantee recognition of every explicit scene. LAYA remains an optional decision SDK integration; the provided archive had no trained visual weights.
 
-On desktop, open video search setup, save your Gemini API key and select **Index this video**. Cloud indexing sends overlapping video chunks to Google. It is an explicit action and needs your own API access. No key is included. Local Qwen indexing is available from a source installation with the upstream optional dependencies and weights; these large dependencies are not included in the desktop executable.
+## Development and verification
 
-On Android, scene skipping runs on the phone. Description search connects to the SentrySearch companion included in the desktop/source distribution. Start it with a token file:
-
-```sh
-python desktop/main.py --companion --token-file /private/path/companion-token.txt
-```
-
-Set `GEMINI_API_KEY` in the companion's environment. It listens on localhost by default. A LAN listener requires HTTPS:
+Use Python 3.12 and Node 20+:
 
 ```sh
-python desktop/main.py --companion --bind 0.0.0.0 --cert certificate.pem --key private-key.pem --token-file /private/path/companion-token.txt
-```
-
-Use a certificate trusted by the phone. Enter its URL and token in the Android search setup, then explicitly index the selected video. The companion accepts uploaded media IDs, not arbitrary filesystem paths. Raw uploads and indexes are stored in the companion's selected data directory. API tokens and prompts are excluded from request logs. The first index can take substantial time; searching an existing index is a separate operation.
-
-## LAYA
-
-The supplied LAYA SDK is preserved under `upstream/laya`. It is a text decision model, not a visual nudity detector. `intelligence/laya_video.py` adds a single resident checkpoint, warm-up, batched questions, bounded evidence, inference mode and an LRU cache. Its output is advisory and cannot clear positive visual detections or unscanned video.
-
-No trained weights were present in the supplied archive. No video-domain fine-tuning, calibration, recognition-accuracy improvement or device-wide latency figure is claimed. For a source installation with LAYA's dependencies and a local checkpoint, set `LAYA_MODEL_DIR` and optionally `LAYA_DEVICE`. The desktop executable does not bundle PyTorch or LAYA weights. Inference stays outside playback scheduling.
-
-## Platforms and builds
-
-| Target | Package | Minimum target / scope |
-| --- | --- | --- |
-| Android arm64 | APK | Android 9+, phones, tablets and compatible TVs |
-| Android armv7 | APK | Android 9+, 32-bit ARM |
-| Android x86_64 | APK | Android 9+, compatible x86 devices/emulators |
-| Android universal | APK | Includes the three architectures above |
-| Windows x64 | EXE | Windows 10/11 target; packaged runtime tested in CI |
-| macOS arm64 / x64 | App ZIP | Separate native builds; see individual CI results |
-| Linux x64 | TAR.GZ | Built on Ubuntu 22.04; other distributions require validation |
-
-These are development builds. Native iOS, Windows ARM64, Android before 9, commercial signing/notarization, and an exhaustive OS/device certification matrix are not supplied. Browser preview supports ordinary media playback; native analysis features explain their limits.
-
-```sh
-python3 tools/prepare_dependencies.py
+python -m pip install -r desktop/requirements.txt
 npm ci
-python3 tools/build.py --keystore /private/path/signing.p12 --universal
-```
-
-The Android build needs JDK 17. It uses pinned official LibVLC and ONNX Runtime AARs. Runtime 1.23.2 supplies 16 KB-aligned 64-bit native libraries. Production signing keys must stay private. Rebuilding without the existing development key creates a different signer.
-
-For desktop, install `desktop/requirements.txt`, prepare inputs with `python tools/prepare_dependencies.py --desktop`, and run `python tools/build_desktop.py`. Official platform VLC libraries are collected by the build script. Native binaries and detector bytes are fetched at build time and bundled for playback; they are not downloaded while watching.
-
-```sh
+python tools/prepare_dependencies.py --desktop
 python -m unittest discover -s tests -p 'test_*.py' -v
-npm run check
-npm run dev -- --host 0.0.0.0 --port 4173
+python desktop/main.py
 ```
 
-## Included controls
+For Android, run `python tools/prepare_dependencies.py` and `python tools/build.py --keystore /private/path/signing.p12 --universal`. Reuse your existing signer. Android 9 / API 28 is the minimum; separate ARM64, ARMv7, x86_64 and universal APKs are built.
 
-Local library, folders, playlists, favorites, saved positions, queue, tracks and captions, playback speed, equalizer, bookmarks, A–B loop, gestures, picture in picture on Android, two saved glass finishes, reduced motion and animated Anatomy artwork. The desktop host uses native LibVLC; desktop receiver discovery is not implemented. Desktop bookmarks are currently session-local. This does not implement every VLC feature.
+The companion runs with `python -m intelligence.server --token-file /private/path/token.txt`; LAN use requires `--bind`, `--cert`, and `--key`. Configure `GEMINI_API_KEY` on the companion, or install the ZIP's local Qwen extra. The authenticated server keeps selected uploaded videos in its data directory and restores registered media/indexes after restarting.
 
-## Notices
+CI exercises actual packaged native playback and screen composition on Windows, both Mac architectures, and Linux, plus Android 9 phone and Android 15 tablet emulators. The additional UI contract checks compact controls, prompt/timeline/transport bounds, repeated-update DOM mutations, and result-to-timestamp seeking. Android also remuxes and decodes a real safe clip and tests vector math and request formatting. Synthetic embeddings and safe fixtures test integration, not semantic accuracy or adult-content recognition. Live paid API calls and physical-device performance are not claimed as evaluated.
 
-Application source retains GPL-3.0. SentrySearch and LAYA retain Apache-2.0. NudeNet's bundled license text is AGPL-3.0, despite conflicting MIT package metadata; the supplied license is included rather than assuming a permissive grant. Full corresponding application/adapter source is provided. See `NOTICE.md` and `licenses/` for dependencies and attribution.
+Development packages are unsigned by OS vendors (Android uses the existing development signer). iOS, Windows ARM64, Linux ARM and every OS/device combination are not delivered or certified. See the release assets and their attached reports for the exact tested packages.
 
-Android packages lower UI JavaScript/CSS syntax for the stock Android 9 WebView and include small API/layout fallbacks. Modern WebViews retain their supported glass effects. Desktop builds use a LibVLC frame-callback surface so video and transparent controls share Qt composition; it keeps only the latest frame and bounds software presentation to 3840×2160. Physical-device frame rate, HDR, and high-resolution energy use remain unmeasured.
-
-Low-memory Android devices and software-rendered emulators use the efficient glass fallback instead of live AGSL refraction. This preserves the prompt layout and clear glass controls without repeated full-frame shader work.
