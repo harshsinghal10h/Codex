@@ -3,7 +3,7 @@
  const prompt=document.createElement('section');prompt.id='momentDock';
  prompt.innerHTML=`<section id="momentResults" class="glass hidden" aria-label="Matching moments"><div class="moment-heading"><span>Matching moments</span><button class="icon-button" data-action="dismissMoments" aria-label="Close results">${icon('close')}</button></div><div id="momentResultsBody" aria-live="polite"></div></section><form id="momentForm" class="moment-field glass" role="search" aria-label="Search inside this video"><span class="moment-lens">${icon('search')}</span><input id="momentQuery" type="search" maxlength="1000" autocomplete="off" placeholder="Describe a moment in this video…" aria-label="Describe a moment in this video"><button id="momentSubmit" type="submit" aria-label="Find moment">${icon('up')}</button></form>`;
  $('playerHUD').querySelector('.player-bottom').prepend(prompt);
- const guardButton=document.createElement('button');guardButton.id='guardButton';guardButton.className='guard-button glass';guardButton.dataset.action='sceneGuard';guardButton.setAttribute('aria-label','Scene guard settings');
+ const guardButton=document.createElement('button');guardButton.id='guardButton';guardButton.className='guard-button';guardButton.dataset.action='sceneGuard';guardButton.setAttribute('aria-label','Scene guard settings');
  guardButton.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3 4 6v6c0 4 8 9 8 9s8-5 8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><span>Scene guard</span>';
  $('playerHUD').querySelector('.player-top .tools').prepend(guardButton);
  const curtain=document.createElement('div');curtain.id='guardCurtain';curtain.className='hidden';curtain.setAttribute('role','status');
