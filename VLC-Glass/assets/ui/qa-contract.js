@@ -9,7 +9,11 @@
  const before={...model.state};let mutations=0;const observer=new MutationObserver(m=>{mutations+=m.filter(v=>v.type==='childList').length});observer.observe($('playerHUD'),{childList:true,subtree:true});
  const started=performance.now();for(let i=0;i<100;i++)updatePlayer();result.update_100_ms=Math.round((performance.now()-started)*100)/100;
  await new Promise(resolve=>setTimeout(resolve,0));observer.disconnect();result.steady_child_mutations=mutations;result.steady_dom=mutations<=2;
- let seeks=[];const original=window.GlassHost.request;window.GlassHost.request=function(raw){const request=JSON.parse(raw);if(request.op==='seek')seeks.push(request.args.time);};
- try{model.state.seekable=true;model.state.duration=200000;window.GlassIntelligence.receive('sceneSearch',{request:window.GlassIntelligence.requestId(),media:model.state.current,results:[{start:165000,end:173000,similarity:.83,source:'SentrySearch'}]});const hit=document.querySelector('.moment-hit');if(hit)hit.click();result.semantic_result_seek=seeks[0]===165000;}finally{window.GlassHost.request=original;model.state=before;updatePlayer();}
+ const target=4000;
+ window.GlassIntelligence.receive('sceneSearch',{request:window.GlassIntelligence.requestId(),media:model.state.current,results:[{start:target,end:target+1000,similarity:.83,source:'SentrySearch'}]});
+ const hit=document.querySelector('.moment-hit'),correct=hit&&+hit.dataset.time===target;if(hit)hit.click();
+ for(let i=0;i<30&&Math.abs(model.state.time-target)>700;i++)await new Promise(resolve=>setTimeout(resolve,100));
+ result.semantic_result_seek=!!correct&&Math.abs(model.state.time-target)<=700&&$('momentResults').classList.contains('hidden');
+ result.result_seek_position_ms=model.state.time;
  window.__qaContract=result;return result;
 })()
