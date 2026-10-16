@@ -100,35 +100,65 @@ def run(Player,QApplication,QTimer,argv):
             snapshot('ui-error.png');finish('The actual screen did not show both web controls and video');return
         window.web.page().runJavaScript("document.getElementById('qa-composition-probe').remove();showHUD()")
         phase='snapshot';QTimer.singleShot(500,snapshot_desktop)
+    fullscreen_started=0;fullscreen_stable=0;fullscreen_geometry=None
     def snapshot_desktop():
-        nonlocal phase
-        snapshot('ui-smoke.png');phase='screen-control'
+        nonlocal phase,fullscreen_started,fullscreen_stable,fullscreen_geometry
+        snapshot('ui-smoke.png');phase='fullscreen-enter'
+        fullscreen_started=time.monotonic();fullscreen_stable=0;fullscreen_geometry=None
         window.web.page().runJavaScript("document.getElementById('screenButton').click()")
-        QTimer.singleShot(500,fullscreen_ready)
+        QTimer.singleShot(100,fullscreen_ready)
     def fullscreen_ready():
-        evidence['fullscreen_control']=window.isFullScreen()
-        window.web.page().runJavaScript("document.getElementById('screenButton').click()")
-        QTimer.singleShot(500,fullscreen_restored)
-    def fullscreen_restored():
-        nonlocal phase
-        evidence['fullscreen_control']=evidence['fullscreen_control'] and not window.isFullScreen()
-        phase='layouts';next_layout()
-    layouts=iter([(320,640,False),(684,360,False),(360,760,True),(684,360,True),(800,600,False)])
-    layout_results=[]
+        nonlocal phase,fullscreen_started,fullscreen_stable,fullscreen_geometry
+        entering=phase=='fullscreen-enter';now=time.monotonic()
+        geometry=(window.web.width(),window.web.height());screen_size=window.screen().geometry().size()
+        matched=window.isFullScreen()==entering and (not entering or geometry==(screen_size.width(),screen_size.height()))
+        if matched and geometry==fullscreen_geometry:
+            if not fullscreen_stable:fullscreen_stable=now
+        else:fullscreen_stable=0
+        fullscreen_geometry=geometry
+        # Cocoa performs a native Space transition asynchronously. Observe the
+        # actual state and settled geometry before issuing the reverse action.
+        if matched and fullscreen_stable and now-fullscreen_stable>=.8:
+            evidence.setdefault('fullscreen_transitions',[]).append({'entered':entering,'elapsed_ms':round((now-fullscreen_started)*1000),'width':geometry[0],'height':geometry[1]})
+            if entering:
+                phase='fullscreen-exit';fullscreen_started=now;fullscreen_stable=0;fullscreen_geometry=None
+                window.web.page().runJavaScript("document.getElementById('screenButton').click()")
+                QTimer.singleShot(100,fullscreen_ready)
+            else:
+                evidence['fullscreen_control']=True;phase='layouts';next_layout()
+            return
+        if now-fullscreen_started>10:
+            snapshot('ui-fullscreen-error.png');finish('Fullscreen did not settle during '+phase+'; state='+str(window.isFullScreen())+' geometry='+str(geometry));return
+        QTimer.singleShot(100,fullscreen_ready)
+    layouts=iter([(320,640,False),(684,360,False),(360,700,True),(684,360,True),(800,600,False)])
+    layout_results=[];layout_target=None;layout_started=0
     def next_layout():
+        nonlocal layout_target,layout_started
         try:w,h,legacy=next(layouts)
         except StopIteration:
             evidence['responsive_layouts']=all(r.get('passed') for r in layout_results)
             evidence['layout_checks']=layout_results
             window.web.page().runJavaScript("document.documentElement.classList.remove('legacy-ui')")
-            window.resize(360,760);QTimer.singleShot(500,check_phone);return
-        window.resize(w,h)
+            resize_for_check(360,700,check_phone);return
         window.web.page().runJavaScript("document.documentElement.classList.toggle('legacy-ui',"+str(legacy).lower()+")")
-        QTimer.singleShot(500,check_layout)
+        resize_for_check(w,h,check_layout)
+    def resize_for_check(w,h,callback):
+        nonlocal layout_target,layout_started
+        layout_target=(w,h,callback);layout_started=time.monotonic();window.resize(w,h)
+        QTimer.singleShot(100,resize_ready)
+    def resize_ready():
+        w,h,callback=layout_target
+        if window.web.width()==w and window.web.height()==h:
+            QTimer.singleShot(150,callback);return
+        if time.monotonic()-layout_started>6:
+            finish('Resize did not reach '+str((w,h))+'; got '+str((window.web.width(),window.web.height())));return
+        window.resize(w,h);QTimer.singleShot(100,resize_ready)
     def check_layout():
         window.web.page().runJavaScript("(()=>{showHUD();const nodes=[document.getElementById('momentDock'),...document.querySelectorAll('#playerHUD button,#playerHUD input')].filter(e=>e.offsetWidth&&e.offsetHeight&&!e.closest('.hidden'));return JSON.stringify({width:innerWidth,height:innerHeight,legacy:document.documentElement.classList.contains('legacy-ui'),passed:nodes.every(e=>{const r=e.getBoundingClientRect();return r.left>=-1&&r.top>=-1&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1})});})()",layout_done)
     def layout_done(value):
-        try:layout_results.append(json.loads(value))
+        try:
+            item=json.loads(value);item['expected_width'],item['expected_height']=layout_target[:2]
+            item['passed']=item['passed'] and item['width']==item['expected_width'] and item['height']==item['expected_height'];layout_results.append(item)
         except Exception as error:finish(error);return
         next_layout()
     def check_phone():
