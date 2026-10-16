@@ -57,6 +57,11 @@ class SemanticSearchTests(unittest.TestCase):
                 reopened=SentryAdapter(base/'cache',ROOT)
                 again=reopened.search(7,'a cyclist turning left',media,'local')
                 self.assertEqual(again['results'],result['results'])
+            # Chroma owns native mmap files; Windows requires stopping the test
+            # store before TemporaryDirectory can unlink them.
+            store._client._system.stop()
+            from chromadb.api.shared_system_client import SharedSystemClient
+            SharedSystemClient.clear_system_cache()
             # A changed video cannot reuse the prior content-addressed index.
             media.write_bytes(b'another-video')
             with self.assertRaisesRegex(ValueError,'Prepare this video'):

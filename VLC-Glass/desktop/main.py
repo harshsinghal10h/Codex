@@ -303,6 +303,7 @@ class Player(QMainWindow):
                         keyring.set_password('VLCGlass','gemini',a['key'])
                     except Exception:self.send('notice',{'message':'The key is available for this session. Set GEMINI_API_KEY to reuse it when secure storage is unavailable.'})
             elif op in ('sceneIndex','sceneSearch'):self.analysis_request(op,a)
+            elif op=='glassRects':return  # Android caption/refraction geometry has no desktop side effect.
             elif op=='scanCast':raise ValueError('Receiver discovery is not available in this desktop build.')
             elif op=='seekPreview':self.send('seekPreview',{'id':a['id'],'token':a['token'],'time':a.get('time',0)})
             elif op=='exit':self.close()

@@ -15,6 +15,9 @@ def run(Player,QApplication,QTimer,argv):
     video=Path(argv[argv.index('--smoke-video')+1]).resolve()
     QStandardPaths.setTestModeEnabled(True)
     app=QApplication(argv);app.setOrganizationName('VLCGlassTests');app.setApplicationName('VLC Glass tests')
+    import faulthandler
+    diagnostic=report.with_name('ui-thread-dump.log').open('w')
+    faulthandler.dump_traceback_later(110,file=diagnostic,exit=True)
     window=Player();window.show();started=time.monotonic();last_check=0
     required=['ui_ready','native_playback','video_output','scan_complete','synthetic_skip','protected_previous','protected_replay','visible_overlay','visible_video','responsive_prompt','compact_controls','controls_fit','steady_dom','semantic_result_seek']
     evidence={k:False for k in required};evidence['physical_device']=False
@@ -22,7 +25,7 @@ def run(Player,QApplication,QTimer,argv):
     def finish(error=None):
         nonlocal closed
         if closed:return
-        closed=True;timer.stop()
+        closed=True;timer.stop();faulthandler.cancel_dump_traceback_later()
         if error:evidence['error']=str(error)
         evidence['passed']=not error and all(evidence[k] for k in required)
         if sys.stdout is not None:print(json.dumps(evidence),flush=True)
