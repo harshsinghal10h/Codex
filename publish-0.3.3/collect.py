@@ -10,6 +10,7 @@ for label in ('Windows-x64','macOS-arm64','macOS-x64','Linux-x64'):
  report=json.loads((directory/'ui-smoke.json').read_text())
  if not all(report.get(k) for k in required):raise ValueError('Incomplete native UI evidence: '+label)
  for file in directory.glob('*smoke.json'):shutil.copyfile(file,out/('VLC-Glass-'+label+'-'+file.name))
+ for image in directory.glob('ui-*.png'):shutil.copyfile(image,out/('VLC-Glass-'+label+'-'+image.name))
  paths=[p for p in directory.rglob('*') if p.is_file() and p.suffix in ('.exe','.zip','.gz')]
  if len(paths)!=1:raise ValueError('Expected one native package: '+label)
  file=paths[0];shutil.copyfile(file,out/file.name);packages.append({'file':file.name,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'bytes':file.stat().st_size});desktop_reports.append({'platform':label,**report})
@@ -20,6 +21,7 @@ for label in ('Android-9-phone','Android-15-tablet'):
  if not all(report.get(k) for k in flags):raise ValueError('Incomplete Android playback evidence: '+label)
  for orientation in ('portrait','landscape'):
   if not all(report.get(orientation+'_contract',{}).get(k) for k in ('direct_controls','touch_targets','controls_fit','steady_dom','semantic_result_seek','play_pause_control','seek_buttons','speed_control','track_queue_access','volume_control','dialog_focus','keyboard_button','lock_controls','queue_navigation')):raise ValueError('Android UI/search contract failed: '+orientation)
+ for image in directory.glob('android-*.png'):shutil.copyfile(image,out/('VLC-Glass-'+label+'-'+image.name))
  android_reports.append({'form_factor':label,**report})
 manifest=json.loads((P/'manifest.json').read_text())
 if manifest['source_commit']!=gate['source_commit']:raise ValueError('Unexpected Android source identity')
