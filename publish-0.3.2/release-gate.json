@@ -2,5 +2,6 @@
   "version": "0.3.2",
   "source_commit": "10a7584eda82e7d304bf9fccfda4014338e86ede",
   "desktop_test_commit": "10a7584eda82e7d304bf9fccfda4014338e86ede",
-  "android_test_commit": "6abf7f84e4000168dc9fcd47f90a4854ca331add"
+  "android_test_commit": "6abf7f84e4000168dc9fcd47f90a4854ca331add",
+  "publication_revision": 2
 }

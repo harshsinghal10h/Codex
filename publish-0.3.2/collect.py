@@ -9,8 +9,8 @@ for label in ('Windows-x64','macOS-arm64','macOS-x64','Linux-x64'):
  directory=P/'verified'/label;download(runs['desktop_test_commit']['run_id'],'VLC-Glass-'+label,directory)
  report=json.loads((directory/'ui-smoke.json').read_text())
  if not all(report.get(k) for k in required):raise ValueError('Incomplete native UI evidence: '+label)
- for file in directory.glob('*smoke.json'):shutil.copyfile(file,out/(label+'-'+file.name))
- paths=[p for p in directory.iterdir() if p.suffix in ('.exe','.zip','.gz')]
+ for file in directory.glob('*smoke.json'):shutil.copyfile(file,out/('VLC-Glass-'+label+'-'+file.name))
+ paths=[p for p in directory.rglob('*') if p.is_file() and p.suffix in ('.exe','.zip','.gz')]
  if len(paths)!=1:raise ValueError('Expected one native package: '+label)
  file=paths[0];shutil.copyfile(file,out/file.name);packages.append({'file':file.name,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'bytes':file.stat().st_size});desktop_reports.append({'platform':label,**report})
 android_reports=[]
