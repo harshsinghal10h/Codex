@@ -25,7 +25,7 @@ def elf_alignment(data):
    align=struct.unpack_from('<Q',data,at+48)[0]
    assert align>=16384,('64-bit ELF needs 16 KB load alignment',align)
 for suffix,abis in EXPECTED.items():
- apk=P/'dist'/('VLC-Glass-Android-0.3.2-'+suffix+'.apk')
+ apk=P/'dist'/('VLC-Glass-Android-0.3.3-'+suffix+'.apk')
  with zipfile.ZipFile(apk) as z:
   names=set(z.namelist());bundled={n.split('/')[1] for n in names if n.startswith('lib/')}
   assert bundled==abis,(suffix,bundled)
@@ -46,7 +46,7 @@ for suffix,abis in EXPECTED.items():
  signature=subprocess.run([str(BT/'apksigner'),'verify','--verbose','--print-certs',str(apk)],text=True,capture_output=True,check=True)
  certificate=re.search(r'certificate SHA-256 digest: (\w+)',signature.stdout).group(1)
  badging=subprocess.run([str(BT/'aapt2'),'dump','badging',str(apk)],text=True,capture_output=True,check=True).stdout
- assert "versionCode='5'" in badging and "versionName='0.3.2'" in badging
+ assert "versionCode='6'" in badging and "versionName='0.3.3'" in badging
  assert "minSdkVersion:'28'" in badging and "targetSdkVersion:'35'" in badging
  assert 'leanback-launchable-activity:' in badging
  print(json.dumps({'file':apk.name,'verified':True,'certificate_sha256':certificate,'abis':sorted(abis),'64_bit_elf_alignment':'16 KB or greater'}))

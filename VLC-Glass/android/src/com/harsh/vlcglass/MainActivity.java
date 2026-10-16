@@ -60,10 +60,10 @@ public final class MainActivity extends Activity implements PlaybackService.List
    case "refresh":library();return;
    case "exit":finish();return;
    case "playerView":playerOpen=a.optBoolean("open");applyWindow();return;
-   case "rotate":setRequestedOrientation(getRequestedOrientation()==android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);return;
+   case "rotate":setRequestedOrientation(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);return;
    case "pip":if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)&&playerOpen){enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new android.util.Rational(16,9)).build());}else error("Picture in picture is unavailable on this device.");return;
    case "brightness":WindowManager.LayoutParams lp=getWindow().getAttributes();lp.screenBrightness=(float)Math.max(.03,Math.min(1,a.optDouble("value",.7)));getWindow().setAttributes(lp);return;
-   case "fullscreen":setRequestedOrientation(getRequestedOrientation()==android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);applyWindow();return;
+   case "fullscreen":setRequestedOrientation(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE?android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT:android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);applyWindow();return;
    case "zoom":float zoom=(float)Math.max(1,Math.min(4,a.optDouble("value",1)));video.setScaleX(zoom);video.setScaleY(zoom);return;
    case "seekPreview":requestPreview(a);return;
    case "glassRects":float captionTop=(float)(a.optDouble("captionTop",a.optDouble("height",1))*root.getHeight()/a.optDouble("height",1));float lift=a.optBoolean("active")?Math.max(0,subtitles.getBottom()-captionTop+16*getResources().getDisplayMetrics().density):0;subtitles.setTranslationY(-Math.min(lift,subtitles.getHeight()*.4f));if(nativeRefraction){if(settings.optBoolean("advancedOptics",false))NativeLens.apply(video,a,settings,root.getWidth(),root.getHeight());else video.setRenderEffect(null);}return;

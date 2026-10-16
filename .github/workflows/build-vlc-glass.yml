@@ -1,4 +1,4 @@
-name: Build VLC Glass 0.3.2
+name: Build VLC Glass 0.3.3
 on:
   push:
     branches: [vlc-glass-0.3.0]
@@ -8,7 +8,7 @@ concurrency:
   group: vlc-glass-desktop-${{ github.ref }}
   cancel-in-progress: true
 permissions:
-  contents: write
+  contents: read
 jobs:
   supersede:
     runs-on: ubuntu-22.04
@@ -20,7 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/actions/runs?branch=vlc-glass-0.3.0&status=in_progress&per_page=100" --jq '.workflow_runs[] | select(.name == "Build VLC Glass 0.3.2" and .id < (env.GITHUB_RUN_ID | tonumber)) | .id' > old-runs.txt
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?branch=vlc-glass-0.3.0&status=in_progress&per_page=100" --jq '.workflow_runs[] | select(.name == "Build VLC Glass 0.3.3" and .id < (env.GITHUB_RUN_ID | tonumber)) | .id' > old-runs.txt
           while read -r id; do gh api --method POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/cancel" || true; done < old-runs.txt
   desktop:
     needs: [supersede]
@@ -90,10 +90,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.2.exe" -ArgumentList "--smoke-report", "desktop-smoke.json" -Wait -PassThru
+          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.3.exe" -ArgumentList "--smoke-report", "desktop-smoke.json" -Wait -PassThru
           if ($process.ExitCode -ne 0 -or !(Test-Path desktop-smoke.json)) { throw 'Packaged runtime smoke test failed' }
           Get-Content desktop-smoke.json
-          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.2.exe" -ArgumentList "--ui-smoke-report", "ui-smoke.json", "--smoke-video", "build/safe-smoke.mp4" -Wait -PassThru
+          $process = Start-Process -FilePath "dist/VLC-Glass-0.3.3.exe" -ArgumentList "--ui-smoke-report", "ui-smoke.json", "--smoke-video", "build/safe-smoke.mp4" -Wait -PassThru
           if ($process.ExitCode -ne 0 -or !(Test-Path ui-smoke.json)) { throw 'Packaged UI playback test failed' }
           Get-Content ui-smoke.json
       - name: Smoke test Unix package
@@ -104,14 +104,14 @@ jobs:
           QT_OPENGL: software
         shell: bash
         run: |
-          if [ -d dist/VLC-Glass-0.3.2.app ]; then
-            dist/VLC-Glass-0.3.2.app/Contents/MacOS/VLC-Glass-0.3.2 --smoke-report desktop-smoke.json
-            dist/VLC-Glass-0.3.2.app/Contents/MacOS/VLC-Glass-0.3.2 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4
-            ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.2.app dist/VLC-Glass-0.3.2-${{ matrix.label }}.zip
+          if [ -d dist/VLC-Glass-0.3.3.app ]; then
+            dist/VLC-Glass-0.3.3.app/Contents/MacOS/VLC-Glass-0.3.3 --smoke-report desktop-smoke.json
+            dist/VLC-Glass-0.3.3.app/Contents/MacOS/VLC-Glass-0.3.3 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4
+            ditto -c -k --sequesterRsrc --keepParent dist/VLC-Glass-0.3.3.app dist/VLC-Glass-0.3.3-${{ matrix.label }}.zip
           else
-            dist/VLC-Glass-0.3.2/VLC-Glass-0.3.2 --smoke-report desktop-smoke.json
-            xvfb-run -a sh -c 'xcompmgr -a & exec dist/VLC-Glass-0.3.2/VLC-Glass-0.3.2 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4'
-            tar -C dist -czf dist/VLC-Glass-0.3.2-${{ matrix.label }}.tar.gz VLC-Glass-0.3.2
+            dist/VLC-Glass-0.3.3/VLC-Glass-0.3.3 --smoke-report desktop-smoke.json
+            xvfb-run -a sh -c 'xcompmgr -a & exec dist/VLC-Glass-0.3.3/VLC-Glass-0.3.3 --ui-smoke-report ui-smoke.json --smoke-video build/safe-smoke.mp4'
+            tar -C dist -czf dist/VLC-Glass-0.3.3-${{ matrix.label }}.tar.gz VLC-Glass-0.3.3
           fi
           cat desktop-smoke.json
       - uses: actions/upload-artifact@v4
@@ -136,30 +136,3 @@ jobs:
             VLC-Glass/ui-phone.png
           compression-level: 0
           retention-days: 14
-  release:
-    needs: [desktop]
-    if: ${{ always() && needs.desktop.result == 'success' }}
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: VLC-Glass-*
-          path: release-assets
-      - name: Publish available development builds
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          root=Path('release-assets')
-          paths=[p for p in root.rglob('*') if p.suffix in ('.exe','.zip','.gz')]
-          if not paths:raise SystemExit('No verified desktop packages were produced')
-          for p in root.glob('VLC-Glass-*/*smoke.json'):
-              p.rename(p.with_name(p.parent.name+'-'+p.name))
-          (root/'SHA256SUMS-desktop.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in paths))
-          PY
-          gh release view vlc-glass-v0.3.2 || gh release create vlc-glass-v0.3.2 --target "$GITHUB_SHA" --prerelease --title 'VLC Glass 0.3.2 development builds' --notes-file VLC-Glass/RELEASE.md
-          find release-assets -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.gz' -o -name 'SHA256SUMS-desktop.txt' -o -name '*smoke.json' \) -print0 | xargs -0 -r gh release upload vlc-glass-v0.3.2 --clobber

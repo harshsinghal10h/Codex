@@ -19,7 +19,7 @@ def run(Player,QApplication,QTimer,argv):
     diagnostic=report.with_name('ui-thread-dump.log').open('w')
     faulthandler.dump_traceback_later(110,file=diagnostic,exit=True)
     window=Player();window.show();started=time.monotonic();last_check=0
-    required=['ui_ready','native_playback','video_output','scan_complete','synthetic_skip','protected_previous','protected_replay','visible_overlay','visible_video','responsive_prompt','compact_controls','controls_fit','steady_dom','semantic_result_seek']
+    required=['ui_ready','native_playback','video_output','scan_complete','synthetic_skip','protected_previous','protected_replay','visible_overlay','visible_video','responsive_prompt','fullscreen_control','responsive_layouts','direct_controls','touch_targets','controls_fit','steady_dom','semantic_result_seek','play_pause_control','seek_buttons','speed_control','track_queue_access','volume_control','dialog_focus','keyboard_button','lock_controls','queue_navigation']
     evidence={k:False for k in required};evidence['physical_device']=False
     phase='ui';previous=0;closed=False
     def finish(error=None):
@@ -33,9 +33,12 @@ def run(Player,QApplication,QTimer,argv):
         nonlocal phase
         if not value or phase!='ui':return
         evidence['ui_ready']=True;phase='scan'
-        window.settings['sceneGuard']=True;window.settings['resume']=False;window.import_files([str(video)])
+        window.settings['sceneGuard']=True;window.settings['resume']=False
+        import shutil
+        second=video.with_name('safe-second.mp4');shutil.copyfile(video,second);window.import_files([str(video),str(second)])
         id=window.db.execute('SELECT id FROM media WHERE uri=?',(str(video),)).fetchone()[0]
-        window.web.page().runJavaScript('model.settings.sceneGuard=true;playMedia('+str(id)+',['+str(id)+'])')
+        next_id=window.db.execute('SELECT id FROM media WHERE uri=?',(str(second),)).fetchone()[0]
+        window.web.page().runJavaScript('model.settings.sceneGuard=true;playMedia('+str(id)+','+json.dumps([id,next_id])+')')
     def check():
         nonlocal phase,previous,last_check
         if closed:return
@@ -99,8 +102,35 @@ def run(Player,QApplication,QTimer,argv):
         phase='snapshot';QTimer.singleShot(500,snapshot_desktop)
     def snapshot_desktop():
         nonlocal phase
-        snapshot('ui-smoke.png');phase='phone';window.resize(360,760)
-        QTimer.singleShot(1000,check_phone)
+        snapshot('ui-smoke.png');phase='screen-control'
+        window.web.page().runJavaScript("document.getElementById('screenButton').click()")
+        QTimer.singleShot(500,fullscreen_ready)
+    def fullscreen_ready():
+        evidence['fullscreen_control']=window.isFullScreen()
+        window.web.page().runJavaScript("document.getElementById('screenButton').click()")
+        QTimer.singleShot(500,fullscreen_restored)
+    def fullscreen_restored():
+        nonlocal phase
+        evidence['fullscreen_control']=evidence['fullscreen_control'] and not window.isFullScreen()
+        phase='layouts';next_layout()
+    layouts=iter([(320,640,False),(684,360,False),(360,760,True),(684,360,True),(800,600,False)])
+    layout_results=[]
+    def next_layout():
+        try:w,h,legacy=next(layouts)
+        except StopIteration:
+            evidence['responsive_layouts']=all(r.get('passed') for r in layout_results)
+            evidence['layout_checks']=layout_results
+            window.web.page().runJavaScript("document.documentElement.classList.remove('legacy-ui')")
+            window.resize(360,760);QTimer.singleShot(500,check_phone);return
+        window.resize(w,h)
+        window.web.page().runJavaScript("document.documentElement.classList.toggle('legacy-ui',"+str(legacy).lower()+")")
+        QTimer.singleShot(500,check_layout)
+    def check_layout():
+        window.web.page().runJavaScript("(()=>{showHUD();const nodes=[document.getElementById('momentDock'),...document.querySelectorAll('#playerHUD button,#playerHUD input')].filter(e=>e.offsetWidth&&e.offsetHeight&&!e.closest('.hidden'));return JSON.stringify({width:innerWidth,height:innerHeight,legacy:document.documentElement.classList.contains('legacy-ui'),passed:nodes.every(e=>{const r=e.getBoundingClientRect();return r.left>=-1&&r.top>=-1&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1})});})()",layout_done)
+    def layout_done(value):
+        try:layout_results.append(json.loads(value))
+        except Exception as error:finish(error);return
+        next_layout()
     def check_phone():
         window.web.page().runJavaScript("(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()",phone_ready)
     def phone_ready(value):
@@ -118,7 +148,7 @@ def run(Player,QApplication,QTimer,argv):
             result=json.loads(value or 'null')
             if not result:QTimer.singleShot(100,read_contract);return
             evidence.update(result)
-            finish(None if all(result.get(k) for k in ('compact_controls','controls_fit','steady_dom','semantic_result_seek')) else 'UI/search contract failed: '+str(result))
+            finish(None if all(result.get(k) for k in ('direct_controls','touch_targets','controls_fit','steady_dom','semantic_result_seek','play_pause_control','seek_buttons','speed_control','track_queue_access','volume_control','dialog_focus','keyboard_button','lock_controls','queue_navigation')) else 'UI/search contract failed: '+str(result))
         except Exception as error:finish(error)
     timer=QTimer();timer.timeout.connect(check);timer.start(50)
     return app.exec()

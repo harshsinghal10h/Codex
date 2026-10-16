@@ -1,26 +1,40 @@
-/* One transport surface. Secondary actions remain in Player settings. */
-#playerHUD{display:flex;flex-direction:column;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
-#playerHUD .player-top{display:flex;flex-wrap:nowrap;gap:12px;align-items:center}
-#playerHUD .player-top>.control-group:first-child{max-width:calc(100% - 108px);min-width:0;flex:1;justify-self:auto;background:none;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
-#playerHUD .playing-title{min-width:0;padding-right:0}#playerHUD .playing-title strong{max-width:100%;font-size:14px;overflow:hidden;text-overflow:ellipsis}#playerHUD .playing-title span{display:none}
-#playerHUD .tools{flex:0 0 auto;padding:2px;gap:0}#playerHUD .tools>[data-action="share"],#playerHUD .tools>[data-action="cast"],#playerHUD .quality-button{display:none}
+/* Shared responsive player: direct transport and tools, with one clear hierarchy. */
+#playerHUD{display:flex;flex-direction:column;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#playerHUD .player-top{display:flex;flex-wrap:nowrap;gap:8px;align-items:center}
+#playerHUD .player-top>.control-group:first-child{min-width:0;max-width:none;flex:1;padding:0;gap:4px;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+#playerHUD .playing-title{min-width:0;padding:0;flex:1}#playerHUD .playing-title strong{max-width:100%;font-size:14px;overflow:hidden;text-overflow:ellipsis}#playerHUD .playing-title span{display:none}
+#playerHUD .tools{flex:0 0 auto;padding:2px;gap:0;min-width:0}#playerHUD .tools .icon-button,#playerHUD .player-top .icon-button{width:44px;height:44px;flex-shrink:0}
 #playerHUD .guard-button{width:44px;height:44px;justify-content:center;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}#playerHUD .guard-button span{display:none}
-#playerHUD .player-bottom{position:relative;display:flex;flex-direction:column;align-self:center;width:100%;max-width:720px;margin-top:auto;padding:0;gap:10px}
-#playerHUD .player-tool-row,#playerHUD .volume-row{display:none!important}
-#playerHUD .transport{position:static;display:flex;flex:0 0 auto;align-items:center;justify-content:center;align-self:center;margin:0;gap:20px;padding:4px 20px;width:auto;min-height:56px;border-radius:40px;transform:none}
-#playerHUD .transport>[data-action="previous"],#playerHUD .transport>[data-action="next"]{display:none}
-#playerHUD .transport .skip,#playerHUD .transport .play-button{width:48px;height:48px;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
-#playerHUD .transport .play-button{background:rgba(255,255,255,.13)}#playerHUD .transport svg{width:23px;height:23px}
-#playerHUD .transport .play-button svg{width:24px;height:24px}
+#playerHUD .player-bottom{position:relative;display:flex;flex-direction:column;align-self:center;width:100%;max-width:940px;margin-top:auto;padding:0;gap:8px;background:none;box-shadow:none;border:0}
+#playerHUD .player-bottom::before,#playerHUD .player-bottom::after{display:none}
+#playerHUD .playback-deck{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;gap:6px}
+#playerHUD .transport{position:static;display:flex;flex:0 0 auto;align-items:center;justify-content:center;align-self:center;margin:0;gap:8px;padding:0;width:auto;min-height:64px;transform:none;background:none;border:0;box-shadow:none}
+#playerHUD .transport .icon-button,#playerHUD .transport .skip{display:flex;width:48px;height:48px;align-items:center;justify-content:center;flex:0 0 auto;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:50%}
+#playerHUD .transport .play-button{display:flex;width:60px;height:60px;align-items:center;justify-content:center;flex:0 0 auto;border-radius:50%;margin:0 4px}
+#playerHUD .transport svg{width:25px;height:25px}#playerHUD .transport .play-button svg{width:27px;height:27px}
+#playerHUD .transport button:active,#playerHUD .player-tool:active{background-color:#ffffff20}
+#playerHUD .player-tool-row{display:flex;align-items:stretch;justify-content:space-between;flex-wrap:nowrap;gap:0;width:100%;max-width:360px;margin:0;min-height:48px}
+#playerHUD .player-tool{display:flex;flex:1 1 0;min-width:0;min-height:48px;align-items:center;justify-content:center;flex-direction:column;background:none;color:#e2e5eb;padding:4px 1px;border-radius:12px;gap:4px}
+#playerHUD .player-tool>span{display:flex;align-items:center;justify-content:center;min-height:22px;font-size:15px;font-weight:550}#playerHUD .player-tool svg{width:22px;height:22px}#playerHUD .player-tool small{font-size:10px;line-height:14px;white-space:nowrap;color:#c3c8d1}#playerHUD .player-tool.active{color:#fff;background:#ffffff12}
 #playerHUD #momentDock{position:relative;left:auto;bottom:auto;transform:none;width:100%;max-width:630px;margin:0;align-self:center}
-#playerHUD .moment-field{height:52px}#playerHUD .moment-field input{font-size:14px}
-#playerHUD .seek-pill{min-height:44px;padding:0 14px;background:none;border-color:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+#playerHUD .moment-field{height:50px}#playerHUD .moment-field input{font-size:14px}
+#playerHUD .seek-pill{min-height:44px;padding:0 4px;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;gap:10px}#playerHUD .seek-pill span{font-size:11px;min-width:34px}#playerHUD .seek-track input{height:44px}
 #playerHUD .chapter-readout{display:none}
+#volumePanel{position:absolute;bottom:calc(100% + 8px);right:0;z-index:8;display:flex;align-items:center;padding:8px;gap:8px;width:100%;max-width:360px;border-radius:24px;pointer-events:auto;background-color:rgba(15,18,24,.95)!important}
+#volumePanel .icon-button{width:44px;height:44px;flex-shrink:0}#volumePanel input{flex:1;min-width:0;width:100%;height:44px}#volumeReadout{font-size:12px;min-width:32px;text-align:center;font-variant-numeric:tabular-nums}
 .player-open #miniPlayer,.player-open #bottomNav{display:none!important}.player-open #appShell{visibility:hidden;pointer-events:none}
 .native .glass{--optics:blur(2px) saturate(1.08)}.native .ambient{display:none}
-#playerHUD.quiet{pointer-events:none}#playerHUD.quiet .transport,#playerHUD.quiet #momentDock{pointer-events:none}
-.keyboard-open #playerHUD .transport,.keyboard-open #playerHUD .seek-wrap{display:none!important}
-@media(orientation:landscape) and (max-height:580px){#playerHUD{padding:8px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left))}#playerHUD .player-bottom{max-width:650px;gap:2px}#playerHUD .moment-field{height:44px}#playerHUD .moment-field>button{width:34px;height:34px}#playerHUD .transport{min-height:46px;padding:0 18px;gap:22px}#playerHUD .transport .skip,#playerHUD .transport .play-button{width:44px;height:44px}#playerHUD .seek-pill{min-height:40px}#playerHUD .tools .icon-button,#playerHUD .guard-button{width:44px;height:44px}}
-@media(max-height:340px){#playerHUD .player-top{display:none}#playerHUD .player-bottom{gap:0}#playerHUD .moment-field{height:42px}}
-@media(min-width:1200px){#playerHUD{padding:24px 36px}#playerHUD .player-bottom{gap:12px;margin-bottom:8px}}
-.legacy-ui #playerHUD .player-top>.control-group:first-child{max-width:calc(100% - 108px)}.legacy-ui #playerHUD .transport>*+*{margin-left:20px}.legacy-ui #playerHUD .tools>*+*{margin-left:0}.legacy-ui #playerHUD #momentDock{max-width:630px}.legacy-ui #playerHUD .player-bottom{max-width:720px}.legacy-ui #playerHUD .player-bottom>*+*{margin-top:6px}
+#playerHUD.quiet{pointer-events:none}#playerHUD.quiet *,#player.locked #playerHUD *{pointer-events:none!important}
+#playerHUD .player-top button:focus-visible,#playerHUD .transport button:focus-visible,#playerHUD .player-tool:focus-visible{outline:2px solid white;outline-offset:2px;background-color:#ffffff20}
+.keyboard-open #playerHUD .playback-deck,.keyboard-open #playerHUD .seek-wrap{display:none!important}
+/* Old WebView does not implement flex gap; use explicit transport margins. */
+.legacy-ui #playerHUD .transport{gap:0}.legacy-ui #playerHUD .transport>*+*{margin-left:8px}.legacy-ui #playerHUD .transport .play-button{margin-right:0;margin-left:12px}.legacy-ui #playerHUD .transport .play-button+button{margin-left:12px}.legacy-ui #playerHUD .tools>*+*{margin-left:0}.legacy-ui #playerHUD .player-bottom>*+*{margin-top:8px}.legacy-ui #playerHUD .playback-deck>*+*{margin-top:6px}
+@media(min-width:840px),(orientation:landscape) and (min-width:620px){#playerHUD .playback-deck{flex-direction:row;justify-content:space-between;gap:20px}#playerHUD .player-tool-row{max-width:340px;width:50%}.legacy-ui #playerHUD .playback-deck>*+*{margin-top:0}}
+@media(orientation:landscape) and (max-height:580px){#playerHUD{padding:8px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left))}#playerHUD .player-bottom{gap:2px}#playerHUD .moment-field{height:44px}#playerHUD .moment-field>button{width:34px;height:34px}#playerHUD .transport{min-height:56px;display:flex!important;gap:4px}#playerHUD .transport .play-button{width:52px;height:52px}#playerHUD .transport .skip,#playerHUD .transport .icon-button{width:44px;height:44px}#playerHUD .seek-pill{min-height:40px}.legacy-ui #playerHUD .player-bottom>*+*{margin-top:2px}.legacy-ui #playerHUD .transport>*+*{margin-left:4px}.legacy-ui #playerHUD .transport .play-button,.legacy-ui #playerHUD .transport .play-button+button{margin-left:8px}}
+@media(max-height:340px){#playerHUD .moment-field{height:44px}#playerHUD .player-bottom{gap:0}#playerHUD .transport{display:flex!important}#playerHUD .player-top{min-height:44px}}
+@media(min-width:1200px){#playerHUD{padding:24px 36px}#playerHUD .player-bottom{gap:10px;margin-bottom:8px}}
+
+@media(max-width:360px){#playerHUD .transport .icon-button,#playerHUD .transport .skip{width:44px;height:44px}#playerHUD .transport{gap:6px}.legacy-ui #playerHUD .transport>*+*{margin-left:6px}}
+@media(max-height:480px){.search-focused #playerHUD .playback-deck,.search-focused #playerHUD .seek-wrap{display:none!important}}
+
+#playerHUD .transport>.icon-button svg{stroke:currentColor;stroke-width:1.8}#playerHUD .playing-title:focus-visible{outline:2px solid white;outline-offset:4px;border-radius:4px}
