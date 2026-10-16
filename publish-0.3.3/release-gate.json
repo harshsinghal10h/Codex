@@ -2,5 +2,7 @@
   "source_commit": "65d0d8e629409794c339150d6ab43a1f3cc0b465",
   "desktop_test_commit": "589429d7ed935c8c6f515eb0fad27a4a9f3571e6",
   "android_test_commit": "53f86a6e8a464291bd5a4de90ce467149f216e3f",
-  "android_source_commit": "abeeaee179d67104e9200771735021f10d128c33"
+  "android_source_commit": "abeeaee179d67104e9200771735021f10d128c33",
+  "release_source_ref": "vlc-glass-release-0.3.3",
+  "publication_attempt": 2
 }
