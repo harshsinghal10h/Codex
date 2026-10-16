@@ -8,6 +8,6 @@ VLC Glass 0.3.2 development builds
 
 Gemini requires your key and uses API quota. Local Qwen requires optional dependencies and weights. CI uses safe clips and deterministic embeddings; live semantic accuracy, real explicit-scene detection accuracy and physical-device latency are not evaluated. These development packages do not certify every device or OS version. Android APKs share the previous development signing identity; desktop packages are not vendor-notarized.
 
-Product source: `9111c0ea36fbc14b007d7ceff4589ea9afffbefc`. Use the attached `VLC-Glass-0.3.2-source.zip` for the exact product source. `Build-checks-0.3.2.json` records the six successful native platform jobs, screen checks, actual-clock search seeking, and exact package hashes.
+Product source: `10a7584eda82e7d304bf9fccfda4014338e86ede`. Use the attached `VLC-Glass-0.3.2-source.zip` for the exact product source. `Build-checks-0.3.2.json` records the six successful native platform jobs, screen checks, actual-clock search seeking, and exact package hashes.
 
 On Android, open a local video, describe a scene, open search setup if prompted, add your Gemini key and choose **Prepare & search**. On desktop, use the same prompt and preparation flow. No matching scene is invented when the API or index is unavailable.
