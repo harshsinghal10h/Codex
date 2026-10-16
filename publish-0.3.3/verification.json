@@ -1,0 +1,112 @@
+{
+  "release": "https://github.com/harshsinghal10h/Codex/releases/tag/vlc-glass-v0.3.3",
+  "tag": "vlc-glass-v0.3.3",
+  "source_commit": "65d0d8e629409794c339150d6ab43a1f3cc0b465",
+  "android_source_commit": "abeeaee179d67104e9200771735021f10d128c33",
+  "runs": {
+    "desktop_test_commit": {
+      "sha": "589429d7ed935c8c6f515eb0fad27a4a9f3571e6",
+      "run_id": 38855789896,
+      "url": "https://github.com/harshsinghal10h/Codex/actions/runs/38855789896",
+      "jobs": [
+        {
+          "name": "supersede",
+          "conclusion": "success"
+        },
+        {
+          "name": "desktop (ubuntu-22.04, Linux-x64)",
+          "conclusion": "success"
+        },
+        {
+          "name": "desktop (windows-2022, Windows-x64)",
+          "conclusion": "success"
+        },
+        {
+          "name": "desktop (macos-15, macOS-arm64)",
+          "conclusion": "success"
+        },
+        {
+          "name": "desktop (macos-15-intel, macOS-x64)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "android_test_commit": {
+      "sha": "53f86a6e8a464291bd5a4de90ce467149f216e3f",
+      "run_id": 38837983078,
+      "url": "https://github.com/harshsinghal10h/Codex/actions/runs/38837983078",
+      "jobs": [
+        {
+          "name": "android (35, pixel_tablet, Android-15-tablet)",
+          "conclusion": "success"
+        },
+        {
+          "name": "android (28, pixel_2, Android-9-phone)",
+          "conclusion": "success"
+        }
+      ]
+    }
+  },
+  "packages": [
+    {
+      "file": "VLC-Glass-0.3.3.exe",
+      "bytes": 366875580,
+      "sha256": "9273e59ef9e800861a041b2504f6f8c909339f633d7d87e01e02e5a1e3a14112",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-0.3.3-macOS-arm64.zip",
+      "bytes": 332518187,
+      "sha256": "83aeb8df11e6fcecd10e7414e5fcdebbe7c425468de4953d856841704897e2e0",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-0.3.3-macOS-x64.zip",
+      "bytes": 365521262,
+      "sha256": "04b57bf99bd351c25043d4197bbf5a6286708d4c55894c188cff6f8a6f02b060",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-0.3.3-Linux-x64.tar.gz",
+      "bytes": 450320378,
+      "sha256": "f235dcae451c83e4b11d7555788e11fb93c933e83ebf35a8ebbd344c32d39d5a",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.3-arm64.apk",
+      "bytes": 39959011,
+      "sha256": "a5443d40e9db4903265fbed000f82b7907f199fd46f2b3107ccf5a1484381c04",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.3-armv7.apk",
+      "bytes": 37784045,
+      "sha256": "93529a16376f13981dcdfd03073e22ae326f7207665c0b9b3d16be232b9bf26e",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.3-universal.apk",
+      "bytes": 101080272,
+      "sha256": "23eaf2507370d8673feb8298b7cebc2dbae25ef188b5748c7edbac43d4ef27e6",
+      "github_digest_matches": true
+    },
+    {
+      "file": "VLC-Glass-Android-0.3.3-x86_64.apk",
+      "bytes": 45156820,
+      "sha256": "b34b54cec212848c5c3f87a305adbdfaa693f145688d9b43d8d7ad03bf76dde7",
+      "github_digest_matches": true
+    }
+  ],
+  "source_zip": {
+    "file": "VLC-Glass-0.3.3-source.zip",
+    "sha256": "d57a1a666b6cb9f626c29eb10b324cc6da0026dbe347d9e346a97f268bd850a4",
+    "all_git_blobs_match": true,
+    "file_count": 115
+  },
+  "six_native_jobs_passed": true,
+  "android_build_inputs_match": true,
+  "desktop_source_inputs_match": true,
+  "physical_device_tested": false,
+  "live_cloud_search_tested": false,
+  "recognition_accuracy_evaluated": false
+}
