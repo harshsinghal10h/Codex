@@ -8,8 +8,8 @@ if [ "$(adb shell getprop ro.build.version.sdk | tr -d '\r')" -ge 31 ]; then
   adb shell wm set-ignore-orientation-request false
   adb shell wm set-letterbox-style --isEducationEnabled false
 fi
-adb install -r publish-0.3.1/release/VLC-Glass-Android-0.3.1-x86_64.apk
-adb install -r android-qa/VLC-Glass-QA-0.3.1.apk
+adb install -r publish-0.3.2/release/VLC-Glass-Android-0.3.2-x86_64.apk
+adb install -r android-qa/VLC-Glass-QA-0.3.2.apk
 adb shell am instrument -w com.harsh.vlcglass.qa/.Smoke | tee android-qa/instrumentation.log
 python3 - <<'PY'
 from pathlib import Path

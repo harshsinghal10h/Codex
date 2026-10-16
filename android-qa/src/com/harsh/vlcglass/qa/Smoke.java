@@ -54,6 +54,22 @@ public final class Smoke extends Instrumentation {
   }
   Bitmap bitmap=getUiAutomation().takeScreenshot();if(bitmap==null)throw new Exception("No screenshot");try(OutputStream out=new FileOutputStream(new File(getTargetContext().getExternalFilesDir(null),name))){bitmap.compress(Bitmap.CompressFormat.PNG,100,out);}finally{bitmap.recycle();}
  }
+ private void contract(String orientation)throws Exception{
+  String source;try(InputStream in=getTargetContext().getAssets().open("ui/qa-contract.js");ByteArrayOutputStream out=new ByteArrayOutputStream()){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1)out.write(b,0,n);source=out.toString("UTF-8");}
+  js("window.__qaContract=null;"+source);Thread.sleep(700);JSONObject value=new JSONObject(js("window.__qaContract"));report.put(orientation+"_contract",value);
+  for(String key:new String[]{"compact_controls","controls_fit","steady_dom","semantic_result_seek"})if(!value.optBoolean(key))throw new Exception(orientation+" UI contract failed: "+value);
+ }
+ private void nativeSearchContract(File video)throws Exception{
+  Class<?> type=Class.forName("com.harsh.vlcglass.SemanticVideoSearch");Object search=type.getConstructor(Context.class).newInstance(getTargetContext());
+  Method clip=type.getDeclaredMethod("clip",String.class,long.class,long.class,File.class,java.util.function.BooleanSupplier.class);clip.setAccessible(true);File part=new File(getTargetContext().getCacheDir(),"qa-search-clip.mp4");
+  long[] range=(long[])clip.invoke(search,Uri.fromFile(video).toString(),5000L,13000L,part,(java.util.function.BooleanSupplier)()->false);
+  android.media.MediaMetadataRetriever reader=new android.media.MediaMetadataRetriever();long length;try{reader.setDataSource(part.toString());length=Long.parseLong(reader.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION));if(reader.getFrameAtTime(1000000)==null)throw new Exception("Search clip did not decode");}finally{reader.release();part.delete();}
+  if(range[0]>5000||range[1]<12000||length<7000||length>14000)throw new Exception("Search clip timestamps invalid");
+  Method normalize=type.getDeclaredMethod("normalized",JSONArray.class);normalize.setAccessible(true);JSONArray values=new JSONArray();for(int i=0;i<768;i++)values.put(i==0?3:0);float[] query=(float[])normalize.invoke(null,values);
+  java.nio.ByteBuffer buffer=java.nio.ByteBuffer.allocate(768*4).order(java.nio.ByteOrder.LITTLE_ENDIAN);for(float v:query)buffer.putFloat(v);Method cosine=type.getDeclaredMethod("similarity",float[].class,byte[].class);cosine.setAccessible(true);if(Math.abs((Double)cosine.invoke(null,query,buffer.array())-1)>.0001)throw new Exception("Cosine retrieval is invalid");
+  Method body=type.getDeclaredMethod("requestBody",JSONObject.class);body.setAccessible(true);JSONObject request=(JSONObject)body.invoke(null,new JSONObject().put("text","task: search result | query: a cyclist"));if(request.has("taskType")||request.optInt("outputDimensionality")!=768)throw new Exception("Embedding 2 request contract invalid");
+  report.put("native_video_chunk",true).put("native_vector_retrieval",true).put("embedding2_request_contract",true);
+ }
  public void onStart(){Bundle result=new Bundle();boolean passed=false;
   try{
    report.put("webview",WebView.getCurrentWebViewPackage().versionName).put("api",Build.VERSION.SDK_INT).put("abi",Build.SUPPORTED_ABIS[0]).put("physical_device",false);
@@ -63,6 +79,7 @@ public final class Smoke extends Instrumentation {
    if(service==null||!"true".equals(js("!!window.GlassApp&&!!document.getElementById('momentQuery')")))throw new Exception("Native UI bridge did not become ready");report.put("ui_ready",true);
    File video=new File(getTargetContext().getCacheDir(),"safe-smoke.mp4");
    try(InputStream in=getContext().getAssets().open("safe-smoke.mp4");OutputStream out=new FileOutputStream(video)){byte[] b=new byte[65536];int n;while((n=in.read(b))!=-1)out.write(b,0,n);}
+   nativeSearchContract(video);
    AtomicReference<Long> id=new AtomicReference<>();ui(()->{Object store=field(service,"store");id.set((Long)store.getClass().getMethod("add",String.class,String.class,String.class,long.class).invoke(store,Uri.fromFile(video).toString(),"Safe playback test","video",video.length()));activity.getClass().getMethod("library").invoke(activity);});
    js("model.settings.sceneGuard=true;model.settings.resume=false;save();playMedia("+id.get()+",["+id.get()+"]);true");
    JSONObject s=null;until=SystemClock.uptimeMillis()+120000;
@@ -94,9 +111,9 @@ public final class Smoke extends Instrumentation {
    if(!clear)throw new Exception("Replay exposed or failed to skip the protected opening: "+s);report.put("protected_replay",true);
    js("host('pause');showHUD();true");dismissTutorial();rotate(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);verifyRotationPlayback("portrait");
    String fits="(()=>{if(!model.player)return false;showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()";
-   if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");if(!"true".equals(js("innerHeight>innerWidth")))throw new Exception("The display did not enter portrait orientation");report.put("responsive_prompt",true).put("portrait_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-portrait.png");
+   if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the portrait viewport");if(!"true".equals(js("innerHeight>innerWidth")))throw new Exception("The display did not enter portrait orientation");report.put("responsive_prompt",true).put("portrait_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));contract("portrait");screenshot("android-portrait.png");
    rotate(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);verifyRotationPlayback("landscape");
-   if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the landscape viewport");if(!"true".equals(js("innerWidth>innerHeight")))throw new Exception("The display did not enter landscape orientation");report.put("landscape_prompt",true).put("landscape_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));screenshot("android-landscape.png");passed=true;
+   if(!"true".equals(js(fits)))throw new Exception("Prompt overflowed the landscape viewport");if(!"true".equals(js("innerWidth>innerHeight")))throw new Exception("The display did not enter landscape orientation");report.put("landscape_prompt",true).put("landscape_layout",new JSONObject(js("(()=>{const r=document.getElementById(\"momentDock\").getBoundingClientRect();return {width:innerWidth,height:innerHeight,prompt_top:r.top,prompt_bottom:r.bottom};})()")));contract("landscape");screenshot("android-landscape.png");passed=true;
   }catch(Throwable error){try{if(activity!=null)screenshot("android-error.png");}catch(Exception ignored){}try{report.put("error",error.toString());}catch(Exception ignored){}error.printStackTrace();}
   try{report.put("passed",passed);result.putString("stream",report.toString());}catch(Exception ignored){}
   finish(passed?Activity.RESULT_OK:Activity.RESULT_CANCELED,result);
