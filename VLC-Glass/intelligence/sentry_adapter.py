@@ -13,7 +13,12 @@ class SentryAdapter:
     def __init__(self, cache, upstream):
         sys.path.insert(0, str(upstream))
         self.cache = Path(cache); self.cache.mkdir(parents=True, exist_ok=True)
-        self.lock = threading.RLock(); self.indices = {}; self.identities = {}
+        self.lock = threading.RLock(); self.indices = {}; self.identities = {}; self.engines = {}
+
+    def credentials_changed(self):
+        with self.lock:
+            self.engines.pop('gemini',None)
+            self.indices={key:value for key,value in self.indices.items() if value[4]!='gemini'}
 
     def _identity(self, path):
         from .vision import sha256_file
@@ -39,9 +44,11 @@ class SentryAdapter:
             complete = directory / 'complete.json'
             if not prepare and not complete.exists():
                 raise ValueError('Prepare this video for semantic search first.')
-            embedder.reset_embedder()
-            engine = embedder.get_embedder(backend, **({'model': model} if model else {}))
-            if backend == 'gemini': engine = GeminiEmbedding2(engine)
+            if backend not in self.engines:
+                embedder.reset_embedder()
+                engine = embedder.get_embedder(backend, **({'model': model} if model else {}))
+                self.engines[backend] = GeminiEmbedding2(engine) if backend == 'gemini' else engine
+            engine = self.engines[backend]
             store = SentryStore(db_path=str(directory), backend=backend, model=model)
             cached = complete.exists() and store.collection.count() > 0
             if not cached:

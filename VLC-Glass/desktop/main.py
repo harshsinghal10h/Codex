@@ -297,7 +297,7 @@ class Player(QMainWindow):
             elif op=='refresh':self.refresh()
             elif op=='analysisCredentials':
                 if a.get('key'):
-                    os.environ['GEMINI_API_KEY']=a['key']
+                    os.environ['GEMINI_API_KEY']=a['key'];self.sentry.credentials_changed()
                     try:
                         import keyring
                         keyring.set_password('VLCGlass','gemini',a['key'])

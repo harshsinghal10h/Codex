@@ -119,7 +119,9 @@ def main(argv=None):
                     data=self.read_json();id=str(data.get('media_id',''))
                     with lock:exists=id in media
                     if not exists:raise ValueError('Unknown media ID')
-                    self.output(adapter.search(id,str(data.get('query','')),media[id],backends.get(id,'gemini')))
+                    indexed_backend=backends.get(id,'gemini')
+                    if data.get('backend',indexed_backend)!=indexed_backend:raise ValueError('Prepare this video with the selected backend before searching.')
+                    self.output(adapter.search(id,str(data.get('query','')),media[id],indexed_backend))
                 else:self.output({'error':'Not found'},404)
             except (ValueError,OSError,KeyError) as e:self.close_connection=True;self.output({'error':str(e)},400)
             except Exception:self.close_connection=True;self.output({'error':'Analysis could not finish. Check the companion model and credentials.'},500)

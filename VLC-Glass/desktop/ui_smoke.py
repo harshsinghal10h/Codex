@@ -25,11 +25,10 @@ def run(Player,QApplication,QTimer,argv):
     def finish(error=None):
         nonlocal closed
         if closed:return
-        closed=True;timer.stop();faulthandler.cancel_dump_traceback_later()
         if error:evidence['error']=str(error)
         evidence['passed']=not error and all(evidence[k] for k in required)
         if sys.stdout is not None:print(json.dumps(evidence),flush=True)
-        report.write_text(json.dumps(evidence,indent=2));window.close();app.exit(0 if evidence['passed'] else 1)
+        report.write_text(json.dumps(evidence,indent=2));closed=True;timer.stop();window.close();faulthandler.cancel_dump_traceback_later();app.exit(0 if evidence['passed'] else 1)
     def ready(value):
         nonlocal phase
         if not value or phase!='ui':return
@@ -105,7 +104,7 @@ def run(Player,QApplication,QTimer,argv):
     def check_phone():
         window.web.page().runJavaScript("(()=>{showHUD();const r=document.getElementById('momentDock').getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1&&document.documentElement.scrollWidth<=innerWidth+1;})()",phone_ready)
     def phone_ready(value):
-        evidence['responsive_prompt','compact_controls','controls_fit','steady_dom','semantic_result_seek']=bool(value);QTimer.singleShot(700,lambda:finish_phone(value))
+        evidence['responsive_prompt']=bool(value);QTimer.singleShot(700,lambda:finish_phone(value))
     def finish_phone(value):
         snapshot('ui-phone.png')
         if not value:finish('The 360 px prompt layout overflowed');return
@@ -117,7 +116,7 @@ def run(Player,QApplication,QTimer,argv):
     def contract_done(value):
         try:
             result=json.loads(value or 'null')
-            if not result:raise ValueError('UI contract did not finish')
+            if not result:QTimer.singleShot(100,read_contract);return
             evidence.update(result)
             finish(None if all(result.get(k) for k in ('compact_controls','controls_fit','steady_dom','semantic_result_seek')) else 'UI/search contract failed: '+str(result))
         except Exception as error:finish(error)

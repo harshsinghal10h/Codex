@@ -55,7 +55,7 @@ public final class SceneSearchClient {
  public JSONObject search(long media,JSONObject item,JSONObject settings,JSONObject args,BooleanSupplier cancel)throws Exception{
   if(nativeSearch(settings))return direct().search(media,item,args,cancel);
   String endpoint=base(settings),remote=context.getSharedPreferences("scene-indices",0).getString(endpoint+":"+media,"");if(remote.isEmpty())throw new IOException("Index this video with SentrySearch before searching.");
-  JSONObject result=call(endpoint+"/v1/search",new JSONObject().put("media_id",remote).put("query",args.optString("query")),null,null);
+  JSONObject result=call(endpoint+"/v1/search",new JSONObject().put("media_id",remote).put("backend",settings.optString("searchBackend","gemini")).put("query",args.optString("query")),null,null);
   result.put("media",media).put("request",args.optInt("request"));return result;
  }
 }
