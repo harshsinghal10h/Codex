@@ -1,11 +1,11 @@
 {
   "version": "0.3.2",
-  "source_commit": "9111c0ea36fbc14b007d7ceff4589ea9afffbefc",
+  "source_commit": "10a7584eda82e7d304bf9fccfda4014338e86ede",
   "files": [
     {
       "name": "VLC-Glass-Android-0.3.2-arm64.apk",
       "bytes": 39959010,
-      "sha256": "ead1671ceec269cda59afac60ecc3139525931d4714be2c1cf21c41e87835ed3",
+      "sha256": "f72350015f2af49a6e03999a4c3efa04620d72d4c2fcb31ad93ad2990aaed241",
       "chunks": [
         {
           "sha": "cfc81786512f4c76553f1dc4c67ba4a9d246f2b6",
@@ -93,9 +93,9 @@
           "bytes": 2068
         },
         {
-          "sha": "ba6ad3de83e1c6ffec34a71716b0009dfc75e0e6",
+          "sha": "8d1005be1887eaf1eefeb94cb5e23e618a487d28",
           "offset": 0,
-          "bytes": 16378
+          "bytes": 16449
         },
         {
           "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
@@ -143,9 +143,9 @@
           "bytes": 1265
         },
         {
-          "sha": "d5396b764f50e3c506447c12194dd844275f2158",
+          "sha": "919e81fce0c9420dfa2f48d076a23b61e6188a53",
           "offset": 0,
-          "bytes": 4752
+          "bytes": 4765
         },
         {
           "sha": "b4e9df092d918b78104a888a516b8f3d1750c39b",
@@ -158,9 +158,9 @@
           "bytes": 10945
         },
         {
-          "sha": "8600db64dafe7a1eb381e4d495047f52aacb78db",
+          "sha": "8add2f2f67c517f652af225f6635edcd84dfc576",
           "offset": 0,
-          "bytes": 161171
+          "bytes": 161173
         },
         {
           "sha": "6a20d3534774722196f180c65f561b21f7033bb5",
@@ -238,31 +238,31 @@
           "bytes": 29149
         },
         {
-          "sha": "db42b68adb8af595112b55bddb8c7806d36ce99a",
+          "sha": "a9b439702b5ee7fe9c00999aae1fcd7a4735ceef",
           "offset": 0,
-          "bytes": 1689
+          "bytes": 1690
         },
         {
-          "sha": "7e7b9cbd0e1f66d05c3df84f42ef5a9c0db9e070",
+          "sha": "189bd938686af2a9e7eca3cb58ad0a64c0955ef9",
           "offset": 0,
-          "bytes": 1529
+          "bytes": 1530
         },
         {
-          "sha": "e5f9a15aacc3f9d823ae0c3d114dc36f3f2d7b4e",
+          "sha": "1279ddf162cf2cea464e22b892a68ede74211bcc",
           "offset": 0,
-          "bytes": 1597
+          "bytes": 1600
         },
         {
-          "sha": "56c71dea9ec740e64869fcae40b6ab6aad9bed00",
+          "sha": "7dc5c4219d56af029201b6d89a0c9a3e30f00f28",
           "offset": 0,
-          "bytes": 10516
+          "bytes": 10425
         }
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.2-armv7.apk",
       "bytes": 37784044,
-      "sha256": "6eac1ca507d9f2da2f8b88ff86a535263b31e5f6d6ed52595b70d5a9b315ee9c",
+      "sha256": "4beb871e9ecd7392612ef27027809e0f547036077228f90cadd22060fa2b0506",
       "chunks": [
         {
           "sha": "cfc81786512f4c76553f1dc4c67ba4a9d246f2b6",
@@ -350,9 +350,9 @@
           "bytes": 2068
         },
         {
-          "sha": "ba6ad3de83e1c6ffec34a71716b0009dfc75e0e6",
+          "sha": "8d1005be1887eaf1eefeb94cb5e23e618a487d28",
           "offset": 0,
-          "bytes": 16378
+          "bytes": 16449
         },
         {
           "sha": "e4a73452f2d926590bb199ea2b49599647495efa",
@@ -400,9 +400,9 @@
           "bytes": 1265
         },
         {
-          "sha": "d5396b764f50e3c506447c12194dd844275f2158",
+          "sha": "919e81fce0c9420dfa2f48d076a23b61e6188a53",
           "offset": 0,
-          "bytes": 4752
+          "bytes": 4765
         },
         {
           "sha": "b4e9df092d918b78104a888a516b8f3d1750c39b",
@@ -415,9 +415,9 @@
           "bytes": 10945
         },
         {
-          "sha": "8600db64dafe7a1eb381e4d495047f52aacb78db",
+          "sha": "8add2f2f67c517f652af225f6635edcd84dfc576",
           "offset": 0,
-          "bytes": 161171
+          "bytes": 161173
         },
         {
           "sha": "df5b1c132c7afd515bd7b47ffaa429bfbd86cc9c",
@@ -505,31 +505,31 @@
           "bytes": 11003
         },
         {
-          "sha": "59dee75c1e5239d7620eddcd73d0597e5dd7bdbe",
+          "sha": "e77a6970050d20b2dc64d484c3b1d4aefdcedc98",
           "offset": 0,
-          "bytes": 1690
+          "bytes": 1692
         },
         {
-          "sha": "98297ddecdc0407a903fa0607145dc3f2dedd328",
+          "sha": "4ba045dff7edc3cf2e8c7169407f79706b0bd18c",
           "offset": 0,
-          "bytes": 1535
+          "bytes": 1530
         },
         {
-          "sha": "01ec11f236714acd6d9a307d947c79541b5b8a06",
+          "sha": "c9afff8a9772b5745b20f6e17ce92cb20c77f9e1",
           "offset": 0,
-          "bytes": 1601
+          "bytes": 1600
         },
         {
-          "sha": "c904102798755677a0f6fc9de218072dbb1e28e4",
+          "sha": "c9c55573742fb8bf2ab6db24d86689a4aae0ffd0",
           "offset": 0,
-          "bytes": 10436
+          "bytes": 10354
         }
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.2-universal.apk",
       "bytes": 101080271,
-      "sha256": "33361c3d597f1d0279d5a066174d01b3b5cac336fcd75dde42d71f5e1caf5ca5",
+      "sha256": "0e23dcdbc9598fae079da4ff0d5e87d8b6e96d4689b714e86271cfa0de825f3e",
       "chunks": [
         {
           "sha": "cfc81786512f4c76553f1dc4c67ba4a9d246f2b6",
@@ -617,9 +617,9 @@
           "bytes": 2068
         },
         {
-          "sha": "ba6ad3de83e1c6ffec34a71716b0009dfc75e0e6",
+          "sha": "8d1005be1887eaf1eefeb94cb5e23e618a487d28",
           "offset": 0,
-          "bytes": 16378
+          "bytes": 16449
         },
         {
           "sha": "6b9a6a2ec76085b4ee572a4faf7f80f7384e4ee4",
@@ -667,9 +667,9 @@
           "bytes": 1265
         },
         {
-          "sha": "d5396b764f50e3c506447c12194dd844275f2158",
+          "sha": "919e81fce0c9420dfa2f48d076a23b61e6188a53",
           "offset": 0,
-          "bytes": 4752
+          "bytes": 4765
         },
         {
           "sha": "b4e9df092d918b78104a888a516b8f3d1750c39b",
@@ -682,9 +682,9 @@
           "bytes": 10945
         },
         {
-          "sha": "8600db64dafe7a1eb381e4d495047f52aacb78db",
+          "sha": "8add2f2f67c517f652af225f6635edcd84dfc576",
           "offset": 0,
-          "bytes": 161171
+          "bytes": 161173
         },
         {
           "sha": "6a20d3534774722196f180c65f561b21f7033bb5",
@@ -932,31 +932,31 @@
           "bytes": 27371
         },
         {
-          "sha": "467e236a8ccccae5795a09f5d0b36e095152352d",
+          "sha": "4aa6892c0097fef0e1cc1d3474f5e3b628becd3f",
           "offset": 0,
-          "bytes": 2077
+          "bytes": 2079
         },
         {
-          "sha": "88dc6513dcfa163b69a3dcc5a3a9455d40e83f33",
+          "sha": "d5747170d1efbf4af466b085a4fdca8eab12dee0",
           "offset": 0,
-          "bytes": 1529
+          "bytes": 1530
         },
         {
-          "sha": "6965bb74fa78f74fd0ef910700a2266b12c969aa",
+          "sha": "9447936a56ae8ed2c9206ca7a3466de0c8af02d9",
           "offset": 0,
-          "bytes": 1991
+          "bytes": 1990
         },
         {
-          "sha": "38f8582779b6f53bfd4f315d16b8b329d72a52d7",
+          "sha": "5e9fc75d2220f48630e0f23208e53ded12ce0983",
           "offset": 0,
-          "bytes": 10460
+          "bytes": 10372
         }
       ]
     },
     {
       "name": "VLC-Glass-Android-0.3.2-x86_64.apk",
       "bytes": 45152723,
-      "sha256": "1fcb4adf015cc407a286f326b460d4d45ae16025cdd8a40795d93d2f599f4b19",
+      "sha256": "b53ea192fcea0c4b40387f9674d60a88e966aa5eafdfed2e964101b18d41a5fb",
       "chunks": [
         {
           "sha": "cfc81786512f4c76553f1dc4c67ba4a9d246f2b6",
@@ -1044,9 +1044,9 @@
           "bytes": 2068
         },
         {
-          "sha": "ba6ad3de83e1c6ffec34a71716b0009dfc75e0e6",
+          "sha": "8d1005be1887eaf1eefeb94cb5e23e618a487d28",
           "offset": 0,
-          "bytes": 16378
+          "bytes": 16449
         },
         {
           "sha": "31562824d7db4591706edae68d082ea2047c0c49",
@@ -1074,9 +1074,9 @@
           "bytes": 5793
         },
         {
-          "sha": "8dcb1711515516e4f83b8c3899011166fbb16c7f",
+          "sha": "cb72d7106e389a35ae5aef87061c8bf62f0837bb",
           "offset": 0,
-          "bytes": 2255
+          "bytes": 2253
         },
         {
           "sha": "31562824d7db4591706edae68d082ea2047c0c49",
@@ -1084,9 +1084,9 @@
           "bytes": 2883
         },
         {
-          "sha": "2018aa25176e79d89d5e65fb74826a4fa274f629",
+          "sha": "30e11ba85a88a3aa90d1c4311c75c6a06fa457cc",
           "offset": 0,
-          "bytes": 4702
+          "bytes": 4699
         },
         {
           "sha": "87f5d6969a01d320a84ce6fbdf87d1b7751a6848",
@@ -1094,9 +1094,9 @@
           "bytes": 1265
         },
         {
-          "sha": "d5396b764f50e3c506447c12194dd844275f2158",
+          "sha": "919e81fce0c9420dfa2f48d076a23b61e6188a53",
           "offset": 0,
-          "bytes": 4752
+          "bytes": 4765
         },
         {
           "sha": "b4e9df092d918b78104a888a516b8f3d1750c39b",
@@ -1109,9 +1109,9 @@
           "bytes": 10945
         },
         {
-          "sha": "7564069a64e1406e22794707ac13d3d79579a06b",
+          "sha": "8add2f2f67c517f652af225f6635edcd84dfc576",
           "offset": 0,
-          "bytes": 161171
+          "bytes": 161173
         },
         {
           "sha": "d7d66f4149c6f6515a2335b56b9d326213e781fe",
@@ -1204,24 +1204,24 @@
           "bytes": 27371
         },
         {
-          "sha": "684db6dcc3f321f14734962e504d8c1200b88888",
+          "sha": "c8f22924a14f28dfa0c5364ee479e95bed0072a1",
           "offset": 0,
-          "bytes": 1686
+          "bytes": 1688
         },
         {
-          "sha": "0d7d960384e5c1009552a27da8446a34e7890ebb",
+          "sha": "6a50b806b08fde91c446c303564d27acfba76e73",
           "offset": 0,
           "bytes": 1534
         },
         {
-          "sha": "d73d7d68dfaf9f5a7cc927424b2ff7439801fe75",
+          "sha": "35944677a1461204dcf9f8679261324d2bbd1137",
           "offset": 0,
-          "bytes": 1598
+          "bytes": 1596
         },
         {
-          "sha": "22c76685d9c4687df0f6341b8b49d05d6bfa9a20",
+          "sha": "4d79ac8f6a661b5431d1314da46cd8ddd45c6921",
           "offset": 0,
-          "bytes": 7189
+          "bytes": 7108
         }
       ]
     }
