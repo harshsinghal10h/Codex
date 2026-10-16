@@ -26,12 +26,20 @@ for label in ('Android-9-phone','Android-15-tablet'):
 manifest=json.loads((P/'manifest.json').read_text())
 android_source=gate.get('android_source_commit',gate['source_commit'])
 if manifest['source_commit']!=android_source:raise ValueError('Unexpected Android source identity')
+source_trees={}
+def source_tree(commit):
+ if commit not in source_trees:
+  tree=json.loads(subprocess.check_output(['gh','api','repos/'+repo+'/git/trees/'+commit+'?recursive=1']))
+  if tree.get('truncated'):raise ValueError('Truncated source tree')
+  source_trees[commit]=tree
+ return source_trees[commit]
 def android_inputs(commit):
- tree=json.loads(subprocess.check_output(['gh','api','repos/'+repo+'/git/trees/'+commit+'?recursive=1']))
- if tree.get('truncated'):raise ValueError('Truncated source tree')
+ tree=source_tree(commit)
  prefixes=('VLC-Glass/android/','VLC-Glass/assets/','VLC-Glass/vendor/','VLC-Glass/upstream/','VLC-Glass/tools/')
  files=('VLC-Glass/package.json','VLC-Glass/package-lock.json')
  return {entry['path']:entry['sha'] for entry in tree['tree'] if entry['type']=='blob' and (entry['path'].startswith(prefixes) or entry['path'] in files)}
+def product_inputs(commit):return {e['path']:e['sha'] for e in source_tree(commit)['tree'] if e['type']=='blob' and e['path'].startswith('VLC-Glass/')}
+if product_inputs(gate['source_commit'])!=product_inputs(gate['desktop_test_commit']):raise ValueError('Desktop package source differs from the archived product source')
 # The follow-up source change is confined to desktop QA. Reuse the already
 # tested signed APKs only when every Android build input is byte-identical.
 if android_inputs(android_source)!=android_inputs(gate['source_commit']):raise ValueError('Android build inputs changed; fresh APK tests required')
@@ -39,5 +47,5 @@ desktop_packages=list(packages)
 for item in manifest['files']:packages.append({'file':item['name'],'bytes':item['bytes'],'sha256':item['sha256']})
 (out/'SHA256SUMS-desktop.txt').write_text(''.join(p['sha256']+'  '+p['file']+'\n' for p in desktop_packages))
 (out/'SHA256SUMS-packages.txt').write_text(''.join(p['sha256']+'  '+p['file']+'\n' for p in packages))
-(out/'Build-checks-0.3.3.json').write_text(json.dumps({'source_commit':gate['source_commit'],'android_source_commit':android_source,'android_build_inputs_match':True,'runs':runs,'packages':packages,'desktop_reports':desktop_reports,'android_reports':android_reports,'physical_device_tested':False,'live_cloud_search_tested':False,'recognition_accuracy_evaluated':False},indent=2)+'\n')
+(out/'Build-checks-0.3.3.json').write_text(json.dumps({'source_commit':gate['source_commit'],'android_source_commit':android_source,'android_build_inputs_match':True,'desktop_source_inputs_match':True,'runs':runs,'packages':packages,'desktop_reports':desktop_reports,'android_reports':android_reports,'physical_device_tested':False,'live_cloud_search_tested':False,'recognition_accuracy_evaluated':False},indent=2)+'\n')
 print('Verified all package reports and artifact hashes')
