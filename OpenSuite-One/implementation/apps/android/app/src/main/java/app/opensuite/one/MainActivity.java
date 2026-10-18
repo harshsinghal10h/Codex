@@ -95,7 +95,7 @@ public final class MainActivity extends Activity {
     private TextView caption(String s) {TextView v=text(s,13,MUTED,false);v.setLineSpacing(dp(2),1f);return v;}
     private Button button(String text,boolean primary) {
         Button b=new Button(this);
-        b.setText(text);b.setTextAllCaps(false);b.setTextSize(14);
+        b.setText(text);b.setTextSize(14);
         b.setMinHeight(dp(48));b.setMinimumHeight(dp(48));
         b.setTextColor(primary?Color.WHITE:INK);
         b.setBackground(primary?fill(ACCENT,14):outlined(SURFACE));
