@@ -1,0 +1,28 @@
+name: OpenSuite Core CI
+on:
+  push:
+    paths:
+      - 'apps/**'
+      - 'connectors/**'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'connectors/**'
+      - 'tests/**'
+      - 'package.json'
+      - '.github/workflows/ci.yml'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - run: npm run check
+      - run: npm test
