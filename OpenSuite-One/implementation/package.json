@@ -1,0 +1,16 @@
+{
+  "name": "opensuite-one",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Independent unified productivity suite - verified web-first foundation",
+  "type": "module",
+  "engines": {"node": ">=22.13"},
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning apps/api/server.mjs",
+    "dev": "node --disable-warning=ExperimentalWarning apps/api/server.mjs",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.mjs",
+    "bootstrap": "node --disable-warning=ExperimentalWarning scripts/bootstrap.mjs",
+    "check": "node --check apps/api/server.mjs && node --check apps/api/db.mjs && node --check apps/web/public/app.js && node --check connectors/nextcloud/dav.mjs"
+  },
+  "license": "MIT"
+}
