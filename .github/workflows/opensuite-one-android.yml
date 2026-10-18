@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-debug-apk:
@@ -59,3 +59,21 @@ jobs:
             OpenSuite-One/implementation/apps/android/app/build/outputs/apk/debug/SHA256SUMS
           if-no-files-found: error
           retention-days: 90
+
+      - name: Publish Android development pre-release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/opensuite-one-android-v0-2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="opensuite-one-android-v0.2.0-debug"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Pre-release already exists; not overwriting."
+            exit 0
+          fi
+          gh release create "$TAG" \
+            "app/build/outputs/apk/debug/app-debug.apk#OpenSuite-One-v0.2.0-debug.apk" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "OpenSuite One Android v0.2.0 (development APK)" \
+            --notes "Debug-signed development client; external OpenSuite One backend required. Native device QA and production security hardening are not complete. See PR #3."
