@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "ANDROID_HOME=${ANDROID_HOME}" 
           echo "${ANDROID_HOME}/cmdline-tools/latest/bin" >> "${GITHUB_PATH}"
-          sdkmanager --version
+          "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --version
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
