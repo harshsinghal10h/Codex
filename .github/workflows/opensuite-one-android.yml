@@ -1,0 +1,79 @@
+name: OpenSuite One Android APK
+
+on:
+  pull_request:
+    paths:
+      - 'OpenSuite-One/implementation/apps/android/**'
+      - '.github/workflows/opensuite-one-android.yml'
+  push:
+    branches:
+      - 'feat/opensuite-one-android-v0-2'
+      - main
+    paths:
+      - 'OpenSuite-One/implementation/apps/android/**'
+      - '.github/workflows/opensuite-one-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-debug-apk:
+    name: Compile and package Android debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: OpenSuite-One/implementation/apps/android
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Use runner-provided Android SDK
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME}" 
+          echo "${ANDROID_HOME}/cmdline-tools/latest/bin" >> "${GITHUB_PATH}"
+          "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --version
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Install platform and build tools
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Build debug APK
+        run: gradle --no-daemon --stacktrace :app:assembleDebug
+      - name: Check APK existence and checksum
+        run: |
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk | tee app/build/outputs/apk/debug/SHA256SUMS
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenSuite-One-v0.2.0-Android-debug-APK
+          path: |
+            OpenSuite-One/implementation/apps/android/app/build/outputs/apk/debug/app-debug.apk
+            OpenSuite-One/implementation/apps/android/app/build/outputs/apk/debug/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish Android development pre-release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/opensuite-one-android-v0-2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="opensuite-one-android-v0.2.0-debug"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Pre-release already exists; not overwriting."
+            exit 0
+          fi
+          gh release create "$TAG" \
+            "app/build/outputs/apk/debug/app-debug.apk#OpenSuite-One-v0.2.0-debug.apk" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "OpenSuite One Android v0.2.0 (development APK)" \
+            --notes "Debug-signed development client; external OpenSuite One backend required. Native device QA and production security hardening are not complete. See PR #3."
