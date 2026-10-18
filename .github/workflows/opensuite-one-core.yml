@@ -1,0 +1,26 @@
+name: OpenSuite One Core
+on:
+  pull_request:
+    paths:
+      - 'OpenSuite-One/implementation/**'
+      - '.github/workflows/opensuite-one-core.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'OpenSuite-One/implementation/**'
+      - '.github/workflows/opensuite-one-core.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: OpenSuite-One/implementation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.16.0'
+      - run: npm run check
+      - run: npm test
