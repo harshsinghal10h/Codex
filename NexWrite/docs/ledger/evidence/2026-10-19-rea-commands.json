@@ -1,0 +1,33 @@
+[
+  {
+    "command": [
+      "/workspace/.toolchains/nexwrite/rea/node_modules/.bin/rea",
+      "--version"
+    ],
+    "exitCode": 0,
+    "timestamp": "2026-10-19T10:41:53.039108+00:00",
+    "output": "2026-10-19-rea-version.txt",
+    "sha256": "3754366908ac60b46e7aab559e5d23fa7eea0ff51835fb9fd72ba76aab3bcafd"
+  },
+  {
+    "command": [
+      "/workspace/.toolchains/nexwrite/rea/node_modules/.bin/rea",
+      "--help"
+    ],
+    "exitCode": 0,
+    "timestamp": "2026-10-19T10:41:55.852105+00:00",
+    "output": "2026-10-19-rea-help.txt",
+    "sha256": "ce84b712833dc72d71688318b16bc015e0bfb790c4b8c9c8bebbeb26bbcc9b26"
+  },
+  {
+    "command": [
+      "/workspace/.toolchains/nexwrite/rea/node_modules/.bin/rea",
+      "analyze-javascript-application",
+      "--help"
+    ],
+    "exitCode": 0,
+    "timestamp": "2026-10-19T10:41:59.157153+00:00",
+    "output": "2026-10-19-rea-javascript-help.txt",
+    "sha256": "89521d09bf28c86e3fcff748149d6be98d25a07e8317936683538e241b6848d5"
+  }
+]

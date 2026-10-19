@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+title = "NexWrite source secret scanning"
+[extend]
+useDefault = true
+[[allowlists]]
+description = "Build outputs and dependency directories are not committed source"
+paths = ['''(^|/)(node_modules|target|\.git|\.pnpm-store)(/|$)''']

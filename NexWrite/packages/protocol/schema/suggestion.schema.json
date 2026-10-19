@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexwrite.local/schema/suggestion.schema.json",
+  "x-spdx": "SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary",
+  "title": "Suggestion",
+  "description": "Canonical suggestion wire contract. Offsets are half-open; confidence is bounded and telemetry is disabled.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "rule_id", "category", "subcategory", "severity", "span", "original", "replacements", "explanation", "flags", "source", "doc_version", "locale", "goals_applied", "provenance", "telemetry_class"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "rule_id": {"type": "string", "minLength": 1},
+    "category": {"$ref": "#/$defs/Category"},
+    "subcategory": {"type": "string", "minLength": 1},
+    "severity": {"$ref": "#/$defs/Severity"},
+    "span": {"$ref": "#/$defs/Span"},
+    "original": {"type": "string"},
+    "replacements": {"type": "array", "items": {"$ref": "#/$defs/Replacement"}},
+    "explanation": {"$ref": "#/$defs/Explanation"},
+    "flags": {"$ref": "#/$defs/Flags"},
+    "source": {"$ref": "#/$defs/Source"},
+    "doc_version": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+    "locale": {"type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"},
+    "goals_applied": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "string", "pattern": "^(?:own|oss:[A-Za-z0-9._-]+)$"},
+    "telemetry_class": {"$ref": "#/$defs/TelemetryClass"}
+  },
+  "$defs": {
+    "Category": {"type": "string", "enum": ["correctness", "clarity", "engagement", "delivery"]},
+    "Severity": {"type": "integer", "enum": [1, 2, 3]},
+    "ReplacementKind": {"type": "string", "enum": ["replace", "delete", "insert", "rewrite"]},
+    "Source": {"type": "string", "enum": ["rule", "model", "llm"]},
+    "TelemetryClass": {"type": "string", "enum": ["none"]},
+    "Span": {
+      "type": "object", "additionalProperties": false,
+      "required": ["utf8", "utf16", "scalar"],
+      "properties": {
+        "utf8": {"$ref": "#/$defs/OffsetRange"},
+        "utf16": {"$ref": "#/$defs/OffsetRange"},
+        "scalar": {"$ref": "#/$defs/OffsetRange"}
+      }
+    },
+    "OffsetRange": {
+      "type": "array", "minItems": 2, "maxItems": 2, "items": false,
+      "prefixItems": [
+        {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        {"type": "integer", "minimum": 0, "maximum": 4294967295}
+      ]
+    },
+    "Replacement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["text", "confidence", "kind"],
+      "properties": {
+        "text": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "kind": {"$ref": "#/$defs/ReplacementKind"}
+      }
+    },
+    "Explanation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["short", "long", "examples"],
+      "properties": {
+        "short": {"type": "string"}, "long": {"type": "string"},
+        "examples": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "Flags": {
+      "type": "object", "additionalProperties": false,
+      "required": ["autofix_safe", "needs_context", "style_guide", "user_rule"],
+      "properties": {
+        "autofix_safe": {"type": "boolean"}, "needs_context": {"type": "boolean"},
+        "style_guide": {"type": "boolean"}, "user_rule": {"type": "boolean"}
+      }
+    }
+  }
+}

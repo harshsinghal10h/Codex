@@ -1,0 +1,38 @@
+{
+  "info": {
+    "author": "NexWrite token generator",
+    "version": 1
+  },
+  "colors": [
+    {
+      "idiom": "universal",
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": "0x07",
+          "green": "0x5B",
+          "blue": "0x9E",
+          "alpha": "1.000"
+        }
+      }
+    },
+    {
+      "idiom": "universal",
+      "appearances": [
+        {
+          "appearance": "luminosity",
+          "value": "dark"
+        }
+      ],
+      "color": {
+        "color-space": "srgb",
+        "components": {
+          "red": "0x4D",
+          "green": "0xA3",
+          "blue": "0xFF",
+          "alpha": "1.000"
+        }
+      }
+    }
+  ]
+}

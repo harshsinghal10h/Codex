@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+[package]
+name = "nw-cli"
+version.workspace = true
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "nw"
+path = "src/main.rs"
+
+[dependencies]
+nw-engine.workspace = true
+nw-rules.workspace = true
+nw-schema.workspace = true
+serde_json.workspace = true

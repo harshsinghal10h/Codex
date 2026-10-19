@@ -1,0 +1,12 @@
+{
+  "name": "@nexwrite/protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "LicenseRef-NexWrite-Proprietary",
+  "x-spdx": "SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary",
+  "types": "./dist/suggestion.d.ts",
+  "exports": {".": {"types": "./dist/suggestion.d.ts", "default": "./dist/suggestion.js"}},
+  "scripts": {"build": "tsc -p tsconfig.json", "check": "tsc --noEmit -p tsconfig.json"},
+  "devDependencies": {"ajv": "8.20.0", "typescript": "7.0.2"}
+}

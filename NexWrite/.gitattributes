@@ -1,0 +1,4 @@
+# First-party text uses LF; uploaded archival input and raw evidence retain bytes.
+* text=auto eol=lf
+docs/MASTER_PROMPT.md -text -whitespace
+docs/ledger/evidence/** -text -whitespace

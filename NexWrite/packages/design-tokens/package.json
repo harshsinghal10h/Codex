@@ -1,0 +1,17 @@
+{
+  "name": "@nexwrite/design-tokens",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": { ".": "./tokens.json", "./css": "./generated/tokens.css" },
+  "scripts": {
+    "build": "node generate.mjs",
+    "test": "node --test tokens.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0"
+  }
+}

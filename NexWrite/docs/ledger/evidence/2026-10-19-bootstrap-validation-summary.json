@@ -1,0 +1,95 @@
+{
+  "evidence_id": "EV-20261019-001",
+  "kind": "local-runtime",
+  "platform": "Linux x86_64",
+  "commands": [
+    {
+      "command": [
+        "just",
+        "check"
+      ],
+      "started_at": "2026-10-19T10:58:14.372883+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.764
+    },
+    {
+      "command": [
+        "just",
+        "test"
+      ],
+      "started_at": "2026-10-19T10:58:16.137335+00:00",
+      "exit_code": 0,
+      "duration_seconds": 9.482
+    },
+    {
+      "command": [
+        "just",
+        "build",
+        "core"
+      ],
+      "started_at": "2026-10-19T10:58:25.619234+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.133
+    },
+    {
+      "command": [
+        "just",
+        "build",
+        "wasm"
+      ],
+      "started_at": "2026-10-19T10:58:25.778412+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.868
+    },
+    {
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "started_at": "2026-10-19T10:58:26.650880+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.274
+    },
+    {
+      "command": [
+        "pnpm",
+        "--filter",
+        "@nexwrite/protocol",
+        "check"
+      ],
+      "started_at": "2026-10-19T10:58:26.925294+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.95
+    },
+    {
+      "command": [
+        "just",
+        "compose-check"
+      ],
+      "started_at": "2026-10-19T10:58:27.877349+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.337
+    },
+    {
+      "command": [
+        "just",
+        "secrets"
+      ],
+      "started_at": "2026-10-19T10:58:28.214348+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.574
+    },
+    {
+      "command": [
+        "just",
+        "supply-chain"
+      ],
+      "started_at": "2026-10-19T10:58:29.789275+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.918
+    }
+  ],
+  "passed": 9,
+  "failed": 0,
+  "ci_verified": false
+}

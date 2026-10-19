@@ -1,0 +1,712 @@
+{
+  "recordedAt": "2026-10-19T10:56:26.852118+00:00",
+  "evidenceClass": "E5 own-artifact",
+  "reaEvidenceId": "ev_d98118749b6c2c558c515e9ea1ba3ad7d93243754e91f151854c56965ec867fd",
+  "artifactTreeSha256": "3579a1a426b4489b4d3fddc91825b0ad9450683104d61f8f22fa3f661b3f1123",
+  "jsSha256": "4e41048233023957199af0e5d467d243696f68b45269a8561d9bae7bd4eca978",
+  "wasmSha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300",
+  "checks": {
+    "sourceMaps": {
+      "type": "observation",
+      "mapFiles": [],
+      "jsSourceMappingDirectives": [],
+      "scope": "Five-file artifact inventory plus generated JavaScript only; WASM debug custom sections were not decoded"
+    },
+    "externalNetworkUrlLiterals": {
+      "type": "observation",
+      "urls": [],
+      "scope": "Literal URL scan over generated JavaScript; dynamic targets and binary semantics remain unknown"
+    },
+    "entrypoints": {
+      "type": "observation",
+      "commonJsExports": [
+        "check_json"
+      ],
+      "fsDependency": "Node builtin fs reads sibling nw_wasm_bg.wasm through generated __dirname template",
+      "ledgerScope": "Core bootstrap bridge only; not a browser/extension/desktop surface"
+    },
+    "permissions": {
+      "type": "inference",
+      "status": "not-applicable-to-node-library",
+      "scope": "No extension/mobile/package permission manifest in selected five-file Node artifact; runtime inherits caller Node filesystem permissions"
+    },
+    "secrets": {
+      "type": "observation",
+      "command": [
+        "/workspace/.toolchains/nexwrite/bin/gitleaks",
+        "dir",
+        "/workspace/Codex/NexWrite/target/wasm-node",
+        "--redact=100",
+        "--no-banner",
+        "--report-format",
+        "json",
+        "--report-path",
+        "/workspace/Codex/NexWrite/docs/ledger/evidence/2026-10-19-rea-wasm-node-gitleaks.json"
+      ],
+      "exitCode": 0,
+      "findingCount": 0,
+      "report": "2026-10-19-rea-wasm-node-gitleaks.json",
+      "scope": "Text scan only; no binary WASM secret audit or proof of absence"
+    },
+    "wasmSize": {
+      "type": "derivation",
+      "rawBytes": 1587592,
+      "gzipBytes": 525052,
+      "budgetBytes": 3145728,
+      "status": "within-budget",
+      "scope": "Local exact artifact gzip only; not browser perf or complete release size",
+      "gzipMethod": "Python gzip.compress(compresslevel=9, mtime=0)",
+      "gzipLevel6Bytes": 528320,
+      "pythonZlibVersion": "1.3.2",
+      "nodeGzip": {
+        "sha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300",
+        "nodeVersion": "v24.19.0",
+        "zlibVersion": "1.3.2.1-motley-3246f1b",
+        "defaultGzipBytes": 541253,
+        "gzipLevel9Bytes": 540874
+      }
+    },
+    "dependencyInventory": {
+      "type": "observation",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "exitCode": 0,
+      "packages": [
+        {
+          "name": "aho-corasick",
+          "version": "1.1.5",
+          "license": "Unlicense OR MIT",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "annotate-snippets",
+          "version": "0.12.16",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "anstyle",
+          "version": "1.0.14",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "arraydeque",
+          "version": "0.5.1",
+          "license": "MIT/Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "autocfg",
+          "version": "1.5.1",
+          "license": "Apache-2.0 OR MIT",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "bumpalo",
+          "version": "3.20.3",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "cfg-if",
+          "version": "1.0.5",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "core_detect",
+          "version": "1.0.0",
+          "license": "MIT/Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "encoding_rs",
+          "version": "0.8.42",
+          "license": "(Apache-2.0 OR MIT) AND BSD-3-Clause",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "encoding_rs_io",
+          "version": "0.1.8",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "granit-parser",
+          "version": "2.0.0",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "itoa",
+          "version": "1.0.18",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "js-sys",
+          "version": "0.3.106",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "memchr",
+          "version": "2.8.3",
+          "license": "Unlicense OR MIT",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "multiversion_no_op",
+          "version": "1.0.0",
+          "license": "Apache-2.0 OR MIT",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "num-traits",
+          "version": "0.2.19",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "nw-engine",
+          "version": "0.1.0",
+          "license": null,
+          "licenseFile": "LICENSE",
+          "source": null
+        },
+        {
+          "name": "nw-rules",
+          "version": "0.1.0",
+          "license": null,
+          "licenseFile": "LICENSE",
+          "source": null
+        },
+        {
+          "name": "nw-schema",
+          "version": "0.1.0",
+          "license": null,
+          "licenseFile": "LICENSE",
+          "source": null
+        },
+        {
+          "name": "nw-text",
+          "version": "0.1.0",
+          "license": null,
+          "licenseFile": "LICENSE",
+          "source": null
+        },
+        {
+          "name": "nw-wasm",
+          "version": "0.1.0",
+          "license": null,
+          "licenseFile": "LICENSE",
+          "source": null
+        },
+        {
+          "name": "once_cell",
+          "version": "1.21.4",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "proc-macro2",
+          "version": "1.0.107",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "quote",
+          "version": "1.0.47",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "regex",
+          "version": "1.13.1",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "regex-automata",
+          "version": "0.4.18",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "regex-syntax",
+          "version": "0.8.11",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "rustversion",
+          "version": "1.0.23",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "scopeguard",
+          "version": "1.2.0",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "serde",
+          "version": "1.0.229",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "serde-saphyr",
+          "version": "2.0.0",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "serde_core",
+          "version": "1.0.229",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "serde_derive",
+          "version": "1.0.229",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "serde_json",
+          "version": "1.0.154",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "simdutf8",
+          "version": "0.1.5",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "smallvec",
+          "version": "1.16.3",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "syn",
+          "version": "3.0.9",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "unicode-ident",
+          "version": "1.0.27",
+          "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "unicode-segmentation",
+          "version": "1.13.3",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "unicode-width",
+          "version": "0.2.2",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "wasm-bindgen",
+          "version": "0.2.129",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "wasm-bindgen-macro",
+          "version": "0.2.129",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "wasm-bindgen-macro-support",
+          "version": "0.2.129",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "wasm-bindgen-shared",
+          "version": "0.2.129",
+          "license": "MIT OR Apache-2.0",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        },
+        {
+          "name": "zmij",
+          "version": "1.0.23",
+          "license": "MIT",
+          "licenseFile": null,
+          "source": "registry+https://github.com/rust-lang/crates.io-index"
+        }
+      ],
+      "scope": "Declared resolved nw-wasm dependency closure including build/proc-macro dependencies; does not prove every crate is linked into this WASM, license clearance, or final release SBOM",
+      "registryPackageCount": 40,
+      "workspacePackageCount": 5
+    }
+  },
+  "coverage": {
+    "application": {
+      "status": "complete",
+      "truncated": false,
+      "omitted_count": 0,
+      "limits": []
+    },
+    "semantic": {
+      "status": "unknown",
+      "truncated": false,
+      "omitted_nodes": 0,
+      "omitted_relations": 0,
+      "limits": [],
+      "families": [
+        {
+          "family": "boundary",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "call-flow",
+          "status": "partial",
+          "retained_relations": 96,
+          "omitted_relations": 0,
+          "unknown_ids": [
+            "jsrg_unknown_0a0bcb3082a1e09afc3d975af52701b47ceb1a6c3c405fb6ce3c1efb25f679e6",
+            "jsrg_unknown_1103c61009952813f3e082e7d64fb9a3927fff30b4791c73a274d2073dfb3cac",
+            "jsrg_unknown_1319d9620ae5d26ad9c28ae5f5169dafb653367f6df96c834f7a966181875402",
+            "jsrg_unknown_1a4c47eb903483763a57282e00dadd888ea47243ef67e81f33bf3b13a95029ad",
+            "jsrg_unknown_2cfd0afa135fb26b09d07ef3ed7efb3ba2502e301167ae8ef750fab9a23e3179",
+            "jsrg_unknown_2fe3b29cc346be08efdc38a6b52795ea5ee46916c97de9c26399d8f118f3186d",
+            "jsrg_unknown_33ba6fd82328b9bb77b9deabcbe0c117257e716ec5fb2e4d4f77c643db575bf2",
+            "jsrg_unknown_3539d655c9abd6f7cb972929e35e842884e337f3c8e7e1feece3571df598c85b",
+            "jsrg_unknown_386aa3496ff289719b371dffd42ef96b2eea706cd6669659d8402da643056a96",
+            "jsrg_unknown_38c2490255a96b72d8e60d5222a9a828057fab084b48f01b62b679834e0104ca",
+            "jsrg_unknown_4013802778f83b08b725350ee2d0d4c8c95f53f6e6807ed1f85b8313fc2e4db2",
+            "jsrg_unknown_4ab1f692c69bc19071aaebbb80691bce1d5ec2f3fdf434124974f8a2a8c5ed37",
+            "jsrg_unknown_4fb3584a0966e935144dbb25acbbf4456ecabcacee6fc6f8bf10803195202c46",
+            "jsrg_unknown_5a0a8f3cb784bcd9a613cbd61040f061bef656b29b4d191f7652848ed9579b7c",
+            "jsrg_unknown_68dd23da11c6079053bd657ae34fd5a94ef68df7031f22410e0299cf7aac4a3a",
+            "jsrg_unknown_6db68702052a4ef16fb30441e29e2b1829c1bd640d1fbbbdcd32b0db5d9ca215",
+            "jsrg_unknown_6fa0b12a754174c1b66f1e4e7975424cf0fac499ca0edd6a58b1783414d1038b",
+            "jsrg_unknown_71d2689e0219ca261dac9336d7ad8cbcc0c62fc1ad7532c6ff4566d7d87a923d",
+            "jsrg_unknown_7616415840a1896855e9ecba27fbdeacc9408dd8bd43fe55f2827f4b6fa96a8d",
+            "jsrg_unknown_7971dda04bb528ec9cf594515ea352bc985e6ce7c8b4362c1d750eeadd8f2a57",
+            "jsrg_unknown_8693b128c423ee4d57087c9a819728ed3e9f8ba6b41fb8472cea4cff1522f5df",
+            "jsrg_unknown_871c1d6e92a6ff93832a0a1ecc205ada2b054795e6ad13014847d00198038cbc",
+            "jsrg_unknown_896dc307b5062006d496b294a4aa06ddf62d68d47f1cb5909d33481797d30f49",
+            "jsrg_unknown_8f7972225ada3aff6c60b896a87b22ed1e623e5a60c04158b6e4c661de13ac47",
+            "jsrg_unknown_964e9dc49a54a81c47c4cfccebbc73379e7c9e799e0e193e8db2dfa2dd99001f",
+            "jsrg_unknown_a3af20b23f9a1c867e55e058104fb5b9f303c718426baa6f637423828cab3969",
+            "jsrg_unknown_a5658b93c996447b5738a83891208b0f2f9e8adeaefd794b7fe14a66d2203615",
+            "jsrg_unknown_a5943cda985e1c1864b9d50080b4d1281ad88b6c7c4a3a911dcb02d2008c5f70",
+            "jsrg_unknown_b2e5b4900dfb64f166be5c542b9788686749a220f66043e23278d07787c53620",
+            "jsrg_unknown_b3bdfb59582a24580028475a946f46b2c1b2d14e794352393695eef66baf1652",
+            "jsrg_unknown_bd02ad5c7fa7f28cca0897d29029a27b9ce43626648358a303f45fb94709e03b",
+            "jsrg_unknown_c127d919ef582349bd03c20eeafdda72544977a503680e141cd859c4383273be",
+            "jsrg_unknown_c25f051692fdf936efa4d495717f69bbf59b0239f056f0dd9c9ad8be03c70e3f",
+            "jsrg_unknown_c9bc91019034c2d71b6f14857101567149e299e7d6db123cc2c7c4453ba259c7",
+            "jsrg_unknown_cf9652020b62116c95211002f6a2c4905a008bbf73331e56716a05b3fe59212e",
+            "jsrg_unknown_d2e2c737c944d026934e53dd879efd2a59c3c84f5832115fbbf7b877b2e2735e",
+            "jsrg_unknown_d48fcb2684f3c5ce4e0ea3dd915c76bc562e2f6c5bdfa7fb8c762ac7f82cf6ff",
+            "jsrg_unknown_dac52517e36609dfb892f631f13e902e8169819431defc468910a48f28d59112",
+            "jsrg_unknown_dcbc91932fde60c7bf45f705a2059d4bd139439ec518ca4f1be9e4ebf8bed991",
+            "jsrg_unknown_e1aae586d1709d02ae1b85793653fca6d15b9bd82b7dd8ff1c56034c67ea180e",
+            "jsrg_unknown_e93b69146159dd50971fe278ad8bf92f34eaf09facee10aef0d108a3045ec9f5",
+            "jsrg_unknown_fe9f97c87055df08f9eebf0be24506633d7758d9c5d94a8b2f9fdf4e5a7e0918"
+          ]
+        },
+        {
+          "family": "child-process",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "closure",
+          "status": "partial",
+          "retained_relations": 71,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "configuration",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "data-flow",
+          "status": "partial",
+          "retained_relations": 470,
+          "omitted_relations": 0,
+          "unknown_ids": [
+            "jsrg_unknown_0011657e3478b372ad74f068194de6cb41066ec142bd7b8ea75e9fdedc9f78e9",
+            "jsrg_unknown_00acf73b36e01c02dcc604f2506e2dc7d0f645c6122c7848dbad382871d6b598",
+            "jsrg_unknown_029a5d3cda7825f812125cd766f45ecd4dabb67c68e58b04115346595647e7f6",
+            "jsrg_unknown_06913540248a504b1858ebfea39b30a2da21a9683bf978c4e3b0de3c6d07ef20",
+            "jsrg_unknown_099a0e81bfbe7faa7a291bcf4ccba735325a97846b8d87d5ab9a11709c69cd28",
+            "jsrg_unknown_0a7d81dab86df135670183cbab97faf91e74a4ad70f1a7986e03532c037a3756",
+            "jsrg_unknown_0ea8ea9e48477f7eeab677905afed0b0abb48f181ba107497e5825941e71b392",
+            "jsrg_unknown_0fdd47fdf889a3e7beec5e964627a2d5c4fb6c3bf19e76b187c9c67095e81329",
+            "jsrg_unknown_1380f9bccb3068619efae6d2b3059bb985acad9af605c1b3914690ebe7e0490e",
+            "jsrg_unknown_17c89fe6f1c870adb994ec367e06dc3b19c450fe67c6d07c17ff324d9b5fb8fe",
+            "jsrg_unknown_192181da525839b59a7f90a990545619ee24d632efd03dd8f74828a418b760db",
+            "jsrg_unknown_1c26b9264b0c35617561d26ea8cafe2899fd7de2bebc6f57c8832a455e8b1433",
+            "jsrg_unknown_1c99f85531973669c8adb91a81668127bac1f37fb9e6f4fcdeb5f3acf5a212fc",
+            "jsrg_unknown_1fce64290a808ec8e13127445475a99a6fbe756222dc1289423bc0cdf01207eb",
+            "jsrg_unknown_25269242111b89e79ea1c04397662627f98d1fecb3c9988b1e3651dac5fcdc4b",
+            "jsrg_unknown_25740dd221827acaf7e48461ebe9aafca75ec645a51cf92967b0485f3aa0985c",
+            "jsrg_unknown_25b3a134dc037a24f1ad0da1fb874489b6c0f3278c3a2d230b4b5fb35156feca",
+            "jsrg_unknown_26a7de249631e048a1e1834542ef25458ebc90b5895eda9f464741b00b835292",
+            "jsrg_unknown_27028cab239eab4df14c8ac1b94a7b6ba82b3926eab41f1ca8521088e2e4904f",
+            "jsrg_unknown_27d2ee02ac51a586508c9246cd360554e14c09b538c3ee0c7adf8e794188389b",
+            "jsrg_unknown_2d3f5ac513e3968a5a114d4f083b2777d911babe2ef1bbc703cac8c4df98d358",
+            "jsrg_unknown_2e2a0e52789998c85bfc845fa9a21f2f707cc02cd2401f69691f88b1fc1d307f",
+            "jsrg_unknown_315c979b198225977f5c5b12e440c2248419e30663b629a11ba175514cafbe29",
+            "jsrg_unknown_318395829154172fac0c8a8a9cf3e69b027e57be8678eadf4824c6f40b8c2494",
+            "jsrg_unknown_32ad5f049f9ec7016c139e4f04c65ba1ba2c21239583db351adee12c39940d84",
+            "jsrg_unknown_373f4840faa79afc7c5dbee72d898ebc9357b9b111f496afdb89b7bf3a58c5b7",
+            "jsrg_unknown_420b601d930056a876054db558a8a5fadb9f1dc5de88bc3992d48510f8a15fef",
+            "jsrg_unknown_44131dccb23cde3e2a20b620f7cd83e6500e08a3dc27d27caf33bcdccf8dfa90",
+            "jsrg_unknown_455af6e53e60ddad99f0c43651970f930ef64e17718ff92fa8a44d6890c53349",
+            "jsrg_unknown_4886fe24b17544238c2cdd8bad1d95c9815a5ccec587fd4206f6ac554dea8581",
+            "jsrg_unknown_4a32e150ec4d80250ca49590670023ddf244f69a693a1839b263bf4e7a179438",
+            "jsrg_unknown_4aa69e6954fa2e4ab2b392dc335d4557520df63c2d2b54b9349fed14a4be479a",
+            "jsrg_unknown_4c007afd0f95ddb4cedba642d929f20575f7b14e7a31bba605a75ab69d6da2df",
+            "jsrg_unknown_4c493142c81a18806fa07e334da6e55563e759be4eeb0e2e9ff1cb0c3651077b",
+            "jsrg_unknown_4d3f74888510125f3aff11fac791fe80c91eafa198c775d440158d686192863f",
+            "jsrg_unknown_4eee85f4c67192ed45fa3a947e1bf03545ee94de02e314977d9b2d0be42e3186",
+            "jsrg_unknown_4f258a37981d740e867b395c009c5acaff1c299020cf1de94d6d4c342f17a6c1",
+            "jsrg_unknown_535972e9ce5fc37f39eb7e418ca9190615fd6bb36acd506358bb60cf31650200",
+            "jsrg_unknown_5ae28fa2b9a674617f2f84bac88ca5f556595084d96664af1e3a569521675708",
+            "jsrg_unknown_6060907b728bd12b725f320cb807a8fc8782b07648acfddef10086f92f5f4bcd",
+            "jsrg_unknown_61352d482dba522d9f6ed590dff1028a8ce474810575d6522a577d992a482a9c",
+            "jsrg_unknown_61771589c2f2c710e9d029b9a10a9a25e801d05219a8a27ba5ec041c039f26cd",
+            "jsrg_unknown_64d00ea41789b8a6aed6f3ca0dffd776b7131ea7af82418a1521aa747080995d",
+            "jsrg_unknown_6ac88beab227137b6b11750af2c5cb6e0e1d60d68fbd0db0d96033eed953f262",
+            "jsrg_unknown_6b1341ce5c37f0b4928093ce95cf07bf6dab35ee6f9e109570402334f6cec263",
+            "jsrg_unknown_7050cb43e6d5c146091990c7536d16e879ad0011584c501c91cdc391870fbae0",
+            "jsrg_unknown_721678209d56a06de41bf120bd63384cc11775f47c23f4ab4320715f4422ca36",
+            "jsrg_unknown_7371486f5962e14d711ad4810183cc7b338d780ed4423dd488f88620c1446d82",
+            "jsrg_unknown_74525bb3284a247779cdf6b0df4b84529a27c32b491f53a3729207b38d559fd1",
+            "jsrg_unknown_7a1f8c5b499ba2ffce34cd3aef4ca1af99d4b070fe85f2e758862472c3a2e08c",
+            "jsrg_unknown_7b75c0a014872cf3fa299f060868cf5dbfc8503c1bf7130f79b51b325de95582",
+            "jsrg_unknown_7e69c0fd1155ec69dbe4ac1d59266df80c6ec5cba638cd73de3332558e76f879",
+            "jsrg_unknown_8259f21d2065c632e827199cc25a6d173b66feff5e88710246bf7657e004fbf8",
+            "jsrg_unknown_8956967a6901fbbb596134fce0933f101a149fadfcc657b41d57eef9d34f37e8",
+            "jsrg_unknown_8cf2ab15537e958a22dbe6ac79d25c68da2e1cbfe6c3ccc98c292336ca9e61c5",
+            "jsrg_unknown_8e58e2a8dc3b7526cb9598bd0fa1f421c8b9b0a3390b606906ce5413f6bc9d58",
+            "jsrg_unknown_930eb9b59d11bb692235d9cdbb970ef676fcc6d5b00888ab4794fcaa27b1b4e2",
+            "jsrg_unknown_936358b9e4c4fb12a73163fd6d9602857a77a872b17c6c69a9c01c324bc5853b",
+            "jsrg_unknown_9e1719be0986c7eef36e754c7f3e961d66bc7c2a12c9f573d4c3678c9f48ffaa",
+            "jsrg_unknown_a0461bb8028631d54c1a960dd8358b8f66a3e79d44b7838f12a5c9c1d9a675ff",
+            "jsrg_unknown_a26a4f96259e9d8e4d2f4cfbc7003771323bcb126ed9a92b218ed2c904e67b6c",
+            "jsrg_unknown_a441f760044495db53bb9b7d738fa7729a0deccc8a9487ce3b5e77efcba1b8af",
+            "jsrg_unknown_a515f0cd03894f8b0a2663617a6e65f8c6be14224cad86407f3622cba7fc253a",
+            "jsrg_unknown_a635331318600414c90f7ff46baf0ca6c3aaeb3fbc2378d925e8616527d7333d",
+            "jsrg_unknown_a9ff6cbe424aa892b6724cd909240091dd3a220acd14014ff5903d7b855bb4d2",
+            "jsrg_unknown_ae07333598cdb1a2ba3dd9e34a16a5d782b2e9a6dd7338eec875c137bd0da1bf",
+            "jsrg_unknown_ae9bfd0162952086c397a7a98ad9f751bb6e82728cf2400fb19be3a380adc25c",
+            "jsrg_unknown_af4c0f815f2369dd9a53d6ae540a1a3f7d4af79e30ea8a4906857858c9489d8b",
+            "jsrg_unknown_b2ad1037b6327eb3eda07c56364fac8fef8417a50905cd8d8f22e6e8ffef880f",
+            "jsrg_unknown_b34f651de19030e3751a786f6ec460138f83c24f9d8f659c4a720d09ddf3afe6",
+            "jsrg_unknown_b886986e24740a73e52d6415c68a94169839b7904f7fc276e09bab4f7c9c34ee",
+            "jsrg_unknown_b979059e501b8e9dce6792f6fbfa8bcbc34160f59fa539733186b6b614ae2878",
+            "jsrg_unknown_b9a629ccddd6fef77db54590b7bcad13cc5fec2413f72ee962bed8ccdf6715c8",
+            "jsrg_unknown_c46818fba1c2636e26340ac4953fb8ddff35b9dcb2b0499b9f9d2fbbca530445",
+            "jsrg_unknown_c6dd16f9b24efe2362841939476c95257996eb431e42facaf50a0f9e22ead490",
+            "jsrg_unknown_c9ea3c840fe9296c3e5092e9e1f1111824c55af68b817c7ade1fe944bb423c9f",
+            "jsrg_unknown_cb4b94bfb983eeb1361ba65280652fb15340c19abea52adaaab95f038db652e4",
+            "jsrg_unknown_cc1f694403e97c6b935287dcd3c7407b6d59892cdea346ff4df9b6e225fd456a",
+            "jsrg_unknown_ce091f8daa84901026867047fa35097f7d6268811db271a6c7e3b8b4544f6367",
+            "jsrg_unknown_cf04e4650975f869a6714c2250ce69b0b5cec621a99dfa34c3f30326a124e250",
+            "jsrg_unknown_d48c581a6159893c58d8466208ecdc3b197ccb0bfe0d508995fabe6f1ae8b850",
+            "jsrg_unknown_d616db3d951855d077eff26b0adea208da190295613fb2781d9e98f088346684",
+            "jsrg_unknown_e0372b26b6e5e8c33d699ef11cc47738fd1e1792c8218a1432c1f5cbcabcb5ec",
+            "jsrg_unknown_e12cb831fea51d9db3d995211b839300e0363d39c0cb4b975d35fd242d675fb9",
+            "jsrg_unknown_e15c90f51c48e8eef8416784df5009aaf276ff0d1f577836977523a3f1a26ca6",
+            "jsrg_unknown_e3b972b014c048ab098acb144ffda69c1a5f8a9742d7d6a5bb954a30af132a47",
+            "jsrg_unknown_e622db47d6a7210396073d6c3bf2abf5d7c0076ee349746211848010f3938fcf",
+            "jsrg_unknown_e6474ac2895195c9b9a86150b3e0a465bd276e60021e414f9dfd1bbe996f59ff",
+            "jsrg_unknown_f0e36d75bcbe6c23c284f4881dcd5706da2bd82c3123a7de9ae80c9ab6a60252",
+            "jsrg_unknown_f1bac42733d5e14106ec4b756330b520805a63bd60126fe2d5488b8635896526",
+            "jsrg_unknown_f73e77054814397ab9c909574b6cbf043151646f1bbb80e406ef1a21e8ee5c08",
+            "jsrg_unknown_fef1f7f931c77a458fc73acc25059237dfad91487e7b94e05941406af53769e4"
+          ]
+        },
+        {
+          "family": "event",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "object-flow",
+          "status": "partial",
+          "retained_relations": 36,
+          "omitted_relations": 0,
+          "unknown_ids": [
+            "jsrg_unknown_033cf6091ed4fee5dcf0df9b3cadb71b9feae7f71b322978b3a15621a809fb65",
+            "jsrg_unknown_03ea92ec8568a3adc20be152bac6eb55f107113c8bbd11fa87cdf76d6eede86c",
+            "jsrg_unknown_072f16f9846324910c0628569dc163005b1d48238fdb0cf83c80dbc92fd4835a",
+            "jsrg_unknown_0b8e0d013b0271ed2dd4b382961fac5b1d6215f1ce9aaf4679f83966eb86db33",
+            "jsrg_unknown_1b59b7a22eb3ebf637c7c33c85372ccf66f5305b76ef097db000be0f50b9c77e",
+            "jsrg_unknown_1edcff67d134088ef9ac04a0f954d820dd692a0106e56625e45600249ce94d5d",
+            "jsrg_unknown_2429f42999e91213c9c3de495a208e3d15850370222805301d1ec714c5cce293",
+            "jsrg_unknown_24951b47394b94c21d6c714d318ca9246b9123899456ffbc0fd036b604198554",
+            "jsrg_unknown_277e621e0d630f6ec6547dd93adbd7e33794acc41903bd33f9e8f0b1388917a8",
+            "jsrg_unknown_29834014145f31a8b7fe69ca7921746c7e8b822338fe2bf004e7804d18247afa",
+            "jsrg_unknown_2ab29b8dad1bcf0b8fe70df176877fba699f764583de127f4b8af243342fe35d",
+            "jsrg_unknown_2cdc0f448bbde0f2e586649cc6b236caa207b72c2410be51a05d4eb671475a0e",
+            "jsrg_unknown_2e16a6ce0272bd324634146db6451dca74746bec2f0ba9936134c7a33b3c4fe2",
+            "jsrg_unknown_33d09b8ffd291e1989f75dc19a70a11615440558404097eae3a68564a1f2a80b",
+            "jsrg_unknown_354ca75cb3ba8d68238d6ee8702a0e29fe44166966bcba3717944465d496c044",
+            "jsrg_unknown_3cff50ea6ef00160c06cb242dbcfef1ea503c60eb3fb4ca207bcbce71740bab0",
+            "jsrg_unknown_3f1d46d21caa74762a4dec966d0125268afe14d27ddbd0dd4c064106ca947266",
+            "jsrg_unknown_48379b1b46ad7108ef5721e400f6d673d187223ad3d197473d66d1ce2d1389b3",
+            "jsrg_unknown_48868a97c17f3a6c18e6b090e983362d66a0e8edab1efd8c1902fd1377c1c967",
+            "jsrg_unknown_50994206bf601d25045e984e5dca6252e66fd7e3daff93372ea3edc1a25cb5fe",
+            "jsrg_unknown_521b323c7d1dfb5369ebf863c0ce2def0437c72096f98e8e229cbb2ba74379f8",
+            "jsrg_unknown_57afad8b214bd4e106c10f6104f1953d7279e7dd1ac185ca36856c602d588780",
+            "jsrg_unknown_5d4e7901c56c89a973647b39261762eb0a4a5c9db55364811e1aff3b35342c9c",
+            "jsrg_unknown_5d6b9e60fb6c87410cbfc81ed3a9b0c90c95020bc1d0a34c2b636a71c674eb35",
+            "jsrg_unknown_5e493b1d4adda0bcc3562455c19f3a1b5d5874a59dd580ddf1261f0688ba0919",
+            "jsrg_unknown_6321dd1a92c397c1952bd539cdfc9dffb9fda66abd9c0d9dff94b01a9319d3c2",
+            "jsrg_unknown_66f80e9b9c1d02b072056ee9f4afb2bd9ffda2b176338df7e0e32aa732ceebd5",
+            "jsrg_unknown_68c438c90875fe4935ba672d0ebfe3d077e00c05db0229ee829d2925799dd8d3",
+            "jsrg_unknown_6b48f65d48336f9639e1717a0b288ea157899bd776c15460de51ef6e3417d166",
+            "jsrg_unknown_6ff6df9221d6991f6b3ae321eae72c07dbe03f600de5c96ea7091f1ff71e906e",
+            "jsrg_unknown_702d03a62e5e0ef14db445733d61c2f4642e34cf956857dede9379fab39ab81b",
+            "jsrg_unknown_71552b655a819ac76e33df9ba7abd100d0014b256f2c7692089180085e3ac3aa",
+            "jsrg_unknown_73059d028d2739a92f72bbb003ac76e06ed4f83e23f1623b16eafc9fe28c27c6",
+            "jsrg_unknown_73fe62ef93350ebd5efa606d2fdf41920d917738b237318d18014962ef28fdca",
+            "jsrg_unknown_77a78c30a987e124bccaab34865827eb8b26f4aa2d2c5decd73b0e933bce6d5c",
+            "jsrg_unknown_7948579c4fc194452306720e9b6be8d83fcad8702a90a4ccb2e06096a27b5ef4",
+            "jsrg_unknown_7bd61a9883033e260d6a2fee4f43783d1099a3bed0c7cf2c7ab4172e27deb7ed",
+            "jsrg_unknown_7c2bd45993ce0c97383fb00c2c45e9d90d39a67a925f93d2a6e082ff7d801a13",
+            "jsrg_unknown_88cd0513417c2b7a2172d592511a48ab87fa8c80c3662889b48648d8fdd0d59c",
+            "jsrg_unknown_8a8c8dc7cdde207e82e795afa67414fdcdc7e3df06934cb23ab29098e7d0ceb6",
+            "jsrg_unknown_8ce8c445be019c0dd81a6bf6f40437f3fea76299ad631488da76ddb12d4dd35c",
+            "jsrg_unknown_93676795363af4be15335d31db8baa3d9ebc5fbd2031c32f2ede343e66e8f088",
+            "jsrg_unknown_99ade7b6ae9fe689f1c5d28068721956e2e0db36366a6eb2bfb961698308c143",
+            "jsrg_unknown_a8efc27a4005e247ad735d76461d06b2b6872b6e9b5733f7515ef8530f4cfd28",
+            "jsrg_unknown_adc3691e4c8305e5d15f9a82ad3741a5cfe0cf36f44f48e8ebec70bd6ab5e249",
+            "jsrg_unknown_b03813e2e39e6502f3e43a9921a29a850d78d810320038f8fac11294cb77fe3c",
+            "jsrg_unknown_b3cb5a8536f4c6bff93e5053a79307f548442c573ba9aae239a07cad8145e783",
+            "jsrg_unknown_b404068d80be3250a8e2eee8c59ae733b41e8c7c1c928d4525e9754d896f99a0",
+            "jsrg_unknown_b9f7b79ab25b22fa5c82899832295aad44caeefb5228caa3873b6eaab1efb69a",
+            "jsrg_unknown_bb6128cb1beb297e0efaf80739c1719cc4566365d07425f1cf14fed8178e802d",
+            "jsrg_unknown_be3e56eae659dd1f5d85d9d42919963c1f6f767f6a5f6017d7f004b6d69a4f5d",
+            "jsrg_unknown_bf2a93ff9adb204a30f821341c540b350d7c2ebb220714c17afefdc2fb9898c0",
+            "jsrg_unknown_c19fb23643d17d4cc6a685ca5ed4f2f0dc1f1cfc8b482eb1f2ac4c1f2d2f3a10",
+            "jsrg_unknown_c7591d04aa99c66d70b3fcebccea66a2a47c4f70db9990da028beab627a84aa6",
+            "jsrg_unknown_ccaf1aa78a81de47d833390b90b9d2a5e71476ddb9a429706fff8d3cd7e3e394",
+            "jsrg_unknown_ccb76bf7c57371bf6c5b3e6b157fa2456dd5d5067879076fe4c3cd42a517ac3f",
+            "jsrg_unknown_d45b8f8c82a4f3035bf840aeddf8d885d5378f51a7860e277c9b465c294830c2",
+            "jsrg_unknown_d9eccbcab7bc5d36eae871a5a675b79844a5383050160ae34cc477e7bfd5332c",
+            "jsrg_unknown_dafe99c1916b5ad62c16068bbcd52064c43899d9d83ca772f25c626cd7ce5c50",
+            "jsrg_unknown_decbc05ae07f65389fd76add5a8df73ce9efa6df5706f53677e95c6e3311a927",
+            "jsrg_unknown_e55b550fc231bfb7d10ee83cc7788d1a73a1ac6396e9e0071f9450832f6479d9",
+            "jsrg_unknown_e615720ffb2d3835c1bbc9353b4d4b6efc91b5d04865e9259bceb03d66b949aa",
+            "jsrg_unknown_eca52f07eb4701224be37ba66e38c8e9d66f4fca1c854977023b3880e7cdc5cd",
+            "jsrg_unknown_ecaf67344ebd7e384cb744d701834c5b87fbb50315e0201b125d25a01a1346e3",
+            "jsrg_unknown_efbea66198faf979b6e1649970a9704825b96672c678f3e4052b18b9dfc77c26"
+          ]
+        },
+        {
+          "family": "promise-ownership",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "request",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "resource-lifecycle",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        },
+        {
+          "family": "timer",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_ids": []
+        }
+      ]
+    },
+    "limitations": [
+      "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+      "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+      "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+      "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+      "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+    ]
+  }
+}

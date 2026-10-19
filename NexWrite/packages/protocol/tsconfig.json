@@ -1,0 +1,9 @@
+{
+  "x-spdx": "SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary",
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "strict": true, "declaration": true, "outDir": "dist", "rootDir": "generated",
+    "noEmitOnError": true, "skipLibCheck": false
+  },
+  "include": ["generated/*.ts"]
+}

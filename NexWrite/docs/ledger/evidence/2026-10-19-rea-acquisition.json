@@ -1,0 +1,25 @@
+{
+  "name": "rea-agents",
+  "version": "6.4.0",
+  "resolved": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.4.0.tgz",
+  "integrity": "sha512-Vj1zWfSlna5bphGoaoI/TcVBuYvze9u+OyPC3Shz8YkBqaCTqB4COnnRoX7XDwMpwI24ZlFEel2yEj0k8LTWEQ==",
+  "license": "MIT",
+  "installCommand": [
+    "npm",
+    "install",
+    "--prefix",
+    "/workspace/.toolchains/nexwrite/rea",
+    "--cache",
+    "/workspace/.cache/nexwrite-rea-npm",
+    "--save-exact",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund",
+    "rea-agents@6.4.0"
+  ],
+  "nodeVersion": "v24.19.0",
+  "npmVersion": "11.9.0",
+  "tlsAndIntegrityVerification": "npm defaults retained; no verification disabled; lifecycle scripts disabled",
+  "lockSha256": "48369fe7d06f148806e913306ff591d87acfc1a4269ed9b94fe10f256ccb9018",
+  "recordedAt": "2026-10-19T10:42:30.177605+00:00"
+}

@@ -1,0 +1,61 @@
+/* Generated from tokens.json. SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary */
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --nw-background: #0B0D10;
+  --nw-surface: #14181D;
+  --nw-surface-raised: #1B2027;
+  --nw-text: #F2F5F7;
+  --nw-text-muted: #A9B2BC;
+  --nw-decoration: #6B7580;
+  --nw-action: #76B900;
+  --nw-action-text: #0B0D10;
+  --nw-focus: #A9D663;
+  --nw-correctness: #FF5C5C;
+  --nw-clarity: #4DA3FF;
+  --nw-engagement: #FFB020;
+  --nw-delivery: #A78BFA;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --nw-background: #F7F8F6;
+  --nw-surface: #FFFFFF;
+  --nw-surface-raised: #EAEEE7;
+  --nw-text: #0B0D10;
+  --nw-text-muted: #45505D;
+  --nw-decoration: #6B7580;
+  --nw-action: #4C7700;
+  --nw-action-text: #FFFFFF;
+  --nw-focus: #365800;
+  --nw-correctness: #B52431;
+  --nw-clarity: #075B9E;
+  --nw-engagement: #8C4C00;
+  --nw-delivery: #6743A8;
+}
+:root {
+  --nw-font-display: "Space Grotesk Variable", system-ui, sans-serif;
+  --nw-font-body: "Inter Variable", system-ui, sans-serif;
+  --nw-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --nw-space-0: 0px;
+  --nw-space-8: 8px;
+  --nw-space-16: 16px;
+  --nw-space-24: 24px;
+  --nw-space-32: 32px;
+  --nw-space-40: 40px;
+  --nw-space-48: 48px;
+  --nw-space-64: 64px;
+  --nw-radius-8: 8px;
+  --nw-radius-12: 12px;
+  --nw-radius-16: 16px;
+  --nw-radius-24: 24px;
+  --nw-motion-fast: 120ms;
+  --nw-motion-normal: 200ms;
+  --nw-motion-slow: 320ms;
+}
+[data-category="correctness"] { text-decoration-line: underline; text-decoration-style: wavy; text-decoration-color: var(--nw-correctness); }
+[data-category="clarity"] { text-decoration-line: underline; text-decoration-style: dotted; text-decoration-color: var(--nw-clarity); }
+[data-category="engagement"] { text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: var(--nw-engagement); }
+[data-category="delivery"] { text-decoration-line: underline; text-decoration-style: double; text-decoration-color: var(--nw-delivery); }
+.nw-glass { background: var(--nw-surface); border: 1px solid var(--nw-text-muted); }
+@supports (backdrop-filter: blur(1px)) { [data-glass="on"] .nw-glass { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); backdrop-filter: blur(24px) saturate(140%); box-shadow: 0 8px 32px rgba(0,0,0,0.45); } }
+@media (prefers-reduced-motion: reduce) { :root { --nw-motion-fast: 0ms; --nw-motion-normal: 0ms; --nw-motion-slow: 0ms; } }
+@media (forced-colors: active) { .nw-glass { background: Canvas; border-color: CanvasText; backdrop-filter: none; } :root { --nw-text: CanvasText; --nw-background: Canvas; --nw-focus: Highlight; } }
