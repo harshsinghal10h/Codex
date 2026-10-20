@@ -1,0 +1,95 @@
+name: Verify and package NewTube Clear downloads
+on:
+  push:
+    branches: [newtube-clearpdf]
+    paths:
+      - '.github/workflows/package-newtube-download.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: newtube-clear-download-package
+  cancel-in-progress: false
+env:
+  RELEASE_TAG: newtube-clear-preview-39459395836-1
+  RELEASE_BASE: https://github.com/harshsinghal10h/Codex/releases/download/newtube-clear-preview-39459395836-1
+  APK_NAME: NewTube_Clear_1.15.0-clear.1_arm64-v8a_preview.apk
+  APK_SHA256: ef9c022e5011d9ab141c8557adfda138b581511a14a12eaafc1cc2ff25c87852
+  ZIP_NAME: NewTube-Clear-Preview.zip
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download original APK without GitHub authentication
+        run: |
+          mkdir -p out
+          curl --fail --location --retry 2 --retry-delay 3 --max-time 180 \
+            --output "out/$APK_NAME" "$RELEASE_BASE/$APK_NAME"
+      - name: Verify original APK and package an identical copy as ZIP
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import os
+          import pathlib
+          import zipfile
+
+          apk = pathlib.Path("out") / os.environ["APK_NAME"]
+          data = apk.read_bytes()
+          expected = os.environ["APK_SHA256"]
+          actual = hashlib.sha256(data).hexdigest()
+          if actual != expected:
+              raise SystemExit(f"APK checksum mismatch: {actual}")
+          with zipfile.ZipFile(apk) as package:
+              bad = package.testzip()
+              if bad:
+                  raise SystemExit(f"Corrupt APK entry: {bad}")
+              if "AndroidManifest.xml" not in package.namelist():
+                  raise SystemExit("APK manifest is missing")
+          readme = (
+              "NewTube Clear preview (ARM64, Android 7.0 or newer)\n"
+              "\nExtract this ZIP using your phone's Files app.\n"
+              "Open NewTube-Clear.apk to install.\n"
+              "The APK is identical to the APK on this GitHub release.\n"
+              "This test-signed preview installs separately from NewTube Glass.\n"
+          )
+          archive = pathlib.Path("out") / os.environ["ZIP_NAME"]
+          entries = {
+              "NewTube-Clear.apk": data,
+              "README.txt": readme.encode("utf-8"),
+              "SHA256SUMS.txt": f"{expected}  NewTube-Clear.apk\n".encode("ascii"),
+          }
+          with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
+              for name, value in entries.items():
+                  entry = zipfile.ZipInfo(name, date_time=(2026, 10, 20, 0, 0, 0))
+                  entry.compress_type = zipfile.ZIP_DEFLATED
+                  entry.external_attr = 0o644 << 16
+                  bundle.writestr(entry, value, compresslevel=9)
+          print(f"Anonymous APK download verified: {len(data)} bytes; SHA-256 {actual}")
+          print(f"ZIP alternative: {archive.stat().st_size} bytes")
+          PY
+      - name: Publish ZIP alternative on the existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "$RELEASE_TAG" "out/$ZIP_NAME" \
+            --repo "$GITHUB_REPOSITORY" --clobber
+      - name: Verify public ZIP download without GitHub authentication
+        run: |
+          curl --fail --location --retry 2 --retry-delay 3 --max-time 180 \
+            --output downloaded.zip "$RELEASE_BASE/$ZIP_NAME"
+          python3 - <<'PY'
+          import hashlib
+          import os
+          import zipfile
+
+          with zipfile.ZipFile("downloaded.zip") as archive:
+              bad = archive.testzip()
+              if bad:
+                  raise SystemExit(f"Corrupt ZIP entry: {bad}")
+              apk = archive.read("NewTube-Clear.apk")
+          digest = hashlib.sha256(apk).hexdigest()
+          if digest != os.environ["APK_SHA256"]:
+              raise SystemExit(f"Downloaded ZIP contains a different APK: {digest}")
+          print(f"Anonymous ZIP download verified; embedded APK: {len(apk)} bytes; SHA-256 {digest}")
+          PY
