@@ -7,6 +7,10 @@ pub use generated::*;
 /// The canonical schema, embedded without generating another schema from Rust.
 pub const SCHEMA: &str = include_str!("../../../packages/protocol/schema/suggestion.schema.json");
 
+/// Canonical analysis contract. References resolve against [`SCHEMA`].
+pub const ANALYSIS_SCHEMA: &str =
+    include_str!("../../../packages/protocol/schema/analysis.schema.json");
+
 #[cfg(test)]
 mod tests {
     use super::*;

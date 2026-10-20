@@ -117,3 +117,129 @@ public struct Suggestion: Codable, Sendable {
         self.telemetry_class = telemetry_class
     }
 }
+
+public enum InputFormat: String, Codable, Sendable {
+    case plain = "plain"
+    case markdown = "markdown"
+}
+
+public enum ProtectionKind: String, Codable, Sendable {
+    case code = "code"
+    case html = "html"
+    case image = "image"
+    case link = "link"
+    case referenceDefinition = "reference_definition"
+    case ambiguousMarkup = "ambiguous_markup"
+    case escape = "escape"
+    case entity = "entity"
+    case hardBreak = "hard_break"
+    case indentation = "indentation"
+    case syntax = "syntax"
+}
+
+public struct ProtectedRegion: Codable, Sendable {
+    public let span: Span
+    public let kind: ProtectionKind
+    public init(span: Span, kind: ProtectionKind) {
+        self.span = span
+        self.kind = kind
+    }
+}
+
+public enum TokenKind: String, Codable, Sendable {
+    case word = "word"
+}
+
+public struct Token: Codable, Sendable {
+    public let span: Span
+    public let kind: TokenKind
+    public init(span: Span, kind: TokenKind) {
+        self.span = span
+        self.kind = kind
+    }
+}
+
+public struct TextMetrics: Codable, Sendable {
+    public let source_utf8_bytes: UInt64
+    public let source_utf16_units: UInt64
+    public let source_scalar_count: UInt64
+    public let source_grapheme_count: UInt64
+    public let analyzed_scalar_count: UInt64
+    public let word_count: UInt64
+    public let sentence_count: UInt64
+    public let paragraph_count: UInt64
+    public let letter_count: UInt64
+    public let digit_count: UInt64
+    public let unique_word_count: UInt64
+    public let syllable_covered_words: UInt64
+    public let estimated_syllables: UInt64
+    public let estimated_polysyllable_words: UInt64
+    public let reading_seconds: Double
+    public let speaking_seconds: Double
+    public let scores: [MetricScore]
+    public let warnings: [String]
+    public init(source_utf8_bytes: UInt64, source_utf16_units: UInt64, source_scalar_count: UInt64, source_grapheme_count: UInt64, analyzed_scalar_count: UInt64, word_count: UInt64, sentence_count: UInt64, paragraph_count: UInt64, letter_count: UInt64, digit_count: UInt64, unique_word_count: UInt64, syllable_covered_words: UInt64, estimated_syllables: UInt64, estimated_polysyllable_words: UInt64, reading_seconds: Double, speaking_seconds: Double, scores: [MetricScore], warnings: [String]) {
+        self.source_utf8_bytes = source_utf8_bytes
+        self.source_utf16_units = source_utf16_units
+        self.source_scalar_count = source_scalar_count
+        self.source_grapheme_count = source_grapheme_count
+        self.analyzed_scalar_count = analyzed_scalar_count
+        self.word_count = word_count
+        self.sentence_count = sentence_count
+        self.paragraph_count = paragraph_count
+        self.letter_count = letter_count
+        self.digit_count = digit_count
+        self.unique_word_count = unique_word_count
+        self.syllable_covered_words = syllable_covered_words
+        self.estimated_syllables = estimated_syllables
+        self.estimated_polysyllable_words = estimated_polysyllable_words
+        self.reading_seconds = reading_seconds
+        self.speaking_seconds = speaking_seconds
+        self.scores = scores
+        self.warnings = warnings
+    }
+}
+
+public struct MetricScore: Codable, Sendable {
+    public let kind: MetricKind
+    public let value: Double
+    public init(kind: MetricKind, value: Double) {
+        self.kind = kind
+        self.value = value
+    }
+}
+
+public enum MetricKind: String, Codable, Sendable {
+    case typeTokenRatio = "type_token_ratio"
+    case fleschReadingEase = "flesch_reading_ease"
+    case fleschKincaidGrade = "flesch_kincaid_grade"
+    case gunningFog = "gunning_fog"
+    case smogGrade = "smog_grade"
+    case colemanLiauIndex = "coleman_liau_index"
+    case automatedReadabilityIndex = "automated_readability_index"
+}
+
+public struct AnalysisResult: Codable, Sendable {
+    public let doc_version: UInt64
+    public let locale: String
+    public let input_format: InputFormat
+    public let prose_regions: [Span]
+    public let protected_regions: [ProtectedRegion]
+    public let tokens: [Token]
+    public let sentences: [Span]
+    public let paragraphs: [Span]
+    public let metrics: TextMetrics
+    public let suggestions: [Suggestion]
+    public init(doc_version: UInt64, locale: String, input_format: InputFormat, prose_regions: [Span], protected_regions: [ProtectedRegion], tokens: [Token], sentences: [Span], paragraphs: [Span], metrics: TextMetrics, suggestions: [Suggestion]) {
+        self.doc_version = doc_version
+        self.locale = locale
+        self.input_format = input_format
+        self.prose_regions = prose_regions
+        self.protected_regions = protected_regions
+        self.tokens = tokens
+        self.sentences = sentences
+        self.paragraphs = paragraphs
+        self.metrics = metrics
+        self.suggestions = suggestions
+    }
+}

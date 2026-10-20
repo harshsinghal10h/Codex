@@ -96,3 +96,94 @@ public data class Suggestion(
     public val provenance: String,
     public val telemetry_class: TelemetryClass,
 )
+
+@Serializable
+public enum class InputFormat {
+    @SerialName("plain") PLAIN,
+    @SerialName("markdown") MARKDOWN,
+}
+
+@Serializable
+public enum class ProtectionKind {
+    @SerialName("code") CODE,
+    @SerialName("html") HTML,
+    @SerialName("image") IMAGE,
+    @SerialName("link") LINK,
+    @SerialName("reference_definition") REFERENCEDEFINITION,
+    @SerialName("ambiguous_markup") AMBIGUOUSMARKUP,
+    @SerialName("escape") ESCAPE,
+    @SerialName("entity") ENTITY,
+    @SerialName("hard_break") HARDBREAK,
+    @SerialName("indentation") INDENTATION,
+    @SerialName("syntax") SYNTAX,
+}
+
+@Serializable
+public data class ProtectedRegion(
+    public val span: Span,
+    public val kind: ProtectionKind,
+)
+
+@Serializable
+public enum class TokenKind {
+    @SerialName("word") WORD,
+}
+
+@Serializable
+public data class Token(
+    public val span: Span,
+    public val kind: TokenKind,
+)
+
+@Serializable
+public data class TextMetrics(
+    public val source_utf8_bytes: Long,
+    public val source_utf16_units: Long,
+    public val source_scalar_count: Long,
+    public val source_grapheme_count: Long,
+    public val analyzed_scalar_count: Long,
+    public val word_count: Long,
+    public val sentence_count: Long,
+    public val paragraph_count: Long,
+    public val letter_count: Long,
+    public val digit_count: Long,
+    public val unique_word_count: Long,
+    public val syllable_covered_words: Long,
+    public val estimated_syllables: Long,
+    public val estimated_polysyllable_words: Long,
+    public val reading_seconds: Double,
+    public val speaking_seconds: Double,
+    public val scores: List<MetricScore>,
+    public val warnings: List<String>,
+)
+
+@Serializable
+public data class MetricScore(
+    public val kind: MetricKind,
+    public val value: Double,
+)
+
+@Serializable
+public enum class MetricKind {
+    @SerialName("type_token_ratio") TYPETOKENRATIO,
+    @SerialName("flesch_reading_ease") FLESCHREADINGEASE,
+    @SerialName("flesch_kincaid_grade") FLESCHKINCAIDGRADE,
+    @SerialName("gunning_fog") GUNNINGFOG,
+    @SerialName("smog_grade") SMOGGRADE,
+    @SerialName("coleman_liau_index") COLEMANLIAUINDEX,
+    @SerialName("automated_readability_index") AUTOMATEDREADABILITYINDEX,
+}
+
+@Serializable
+public data class AnalysisResult(
+    public val doc_version: Long,
+    public val locale: String,
+    public val input_format: InputFormat,
+    public val prose_regions: List<Span>,
+    public val protected_regions: List<ProtectedRegion>,
+    public val tokens: List<Token>,
+    public val sentences: List<Span>,
+    public val paragraphs: List<Span>,
+    public val metrics: TextMetrics,
+    public val suggestions: List<Suggestion>,
+)

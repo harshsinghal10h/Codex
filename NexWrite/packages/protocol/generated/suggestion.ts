@@ -56,3 +56,60 @@ export interface Suggestion {
   provenance: string;
   telemetry_class: TelemetryClass;
 }
+
+export type InputFormat = "plain" | "markdown";
+
+export type ProtectionKind = "code" | "html" | "image" | "link" | "reference_definition" | "ambiguous_markup" | "escape" | "entity" | "hard_break" | "indentation" | "syntax";
+
+export interface ProtectedRegion {
+  span: Span;
+  kind: ProtectionKind;
+}
+
+export type TokenKind = "word";
+
+export interface Token {
+  span: Span;
+  kind: TokenKind;
+}
+
+export interface TextMetrics {
+  source_utf8_bytes: number;
+  source_utf16_units: number;
+  source_scalar_count: number;
+  source_grapheme_count: number;
+  analyzed_scalar_count: number;
+  word_count: number;
+  sentence_count: number;
+  paragraph_count: number;
+  letter_count: number;
+  digit_count: number;
+  unique_word_count: number;
+  syllable_covered_words: number;
+  estimated_syllables: number;
+  estimated_polysyllable_words: number;
+  reading_seconds: number;
+  speaking_seconds: number;
+  scores: MetricScore[];
+  warnings: string[];
+}
+
+export interface MetricScore {
+  kind: MetricKind;
+  value: number;
+}
+
+export type MetricKind = "type_token_ratio" | "flesch_reading_ease" | "flesch_kincaid_grade" | "gunning_fog" | "smog_grade" | "coleman_liau_index" | "automated_readability_index";
+
+export interface AnalysisResult {
+  doc_version: number;
+  locale: string;
+  input_format: InputFormat;
+  prose_regions: Span[];
+  protected_regions: ProtectedRegion[];
+  tokens: Token[];
+  sentences: Span[];
+  paragraphs: Span[];
+  metrics: TextMetrics;
+  suggestions: Suggestion[];
+}

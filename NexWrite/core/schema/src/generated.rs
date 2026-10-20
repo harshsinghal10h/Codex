@@ -116,3 +116,103 @@ pub struct Suggestion {
     pub provenance: String,
     pub telemetry_class: TelemetryClass,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InputFormat {
+    Plain,
+    Markdown,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ProtectionKind {
+    Code,
+    Html,
+    Image,
+    Link,
+    ReferenceDefinition,
+    AmbiguousMarkup,
+    Escape,
+    Entity,
+    HardBreak,
+    Indentation,
+    Syntax,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProtectedRegion {
+    pub span: Span,
+    pub kind: ProtectionKind,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TokenKind {
+    Word,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Token {
+    pub span: Span,
+    pub kind: TokenKind,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TextMetrics {
+    pub source_utf8_bytes: u64,
+    pub source_utf16_units: u64,
+    pub source_scalar_count: u64,
+    pub source_grapheme_count: u64,
+    pub analyzed_scalar_count: u64,
+    pub word_count: u64,
+    pub sentence_count: u64,
+    pub paragraph_count: u64,
+    pub letter_count: u64,
+    pub digit_count: u64,
+    pub unique_word_count: u64,
+    pub syllable_covered_words: u64,
+    pub estimated_syllables: u64,
+    pub estimated_polysyllable_words: u64,
+    pub reading_seconds: f64,
+    pub speaking_seconds: f64,
+    pub scores: Vec<MetricScore>,
+    pub warnings: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MetricScore {
+    pub kind: MetricKind,
+    pub value: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MetricKind {
+    TypeTokenRatio,
+    FleschReadingEase,
+    FleschKincaidGrade,
+    GunningFog,
+    SmogGrade,
+    ColemanLiauIndex,
+    AutomatedReadabilityIndex,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AnalysisResult {
+    pub doc_version: u64,
+    pub locale: String,
+    pub input_format: InputFormat,
+    pub prose_regions: Vec<Span>,
+    pub protected_regions: Vec<ProtectedRegion>,
+    pub tokens: Vec<Token>,
+    pub sentences: Vec<Span>,
+    pub paragraphs: Vec<Span>,
+    pub metrics: TextMetrics,
+    pub suggestions: Vec<Suggestion>,
+}
