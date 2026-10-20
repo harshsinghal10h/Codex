@@ -57,3 +57,11 @@ For each spike: record question, bounded method, evidence IDs, decision and revi
 | UNK-RISK-06 | open | Antivirus false positives on overlay apps | No injection/process hooks; signed original builds, measured distribution evidence |
 | UNK-RISK-07 | open | App-store rejection | Minimal permissions, policy rechecks, disclosure and store-specific runbooks |
 | UNK-RISK-08 | open | Cost of LLM calls at scale | Explicit opt-in, per-user/org budgets, bounded retries/caches and measured usage |
+
+## Bounded M1 analysis unknowns (2026-10-20)
+
+| ID | State | Question / present limit | Exact next evidence or remedy |
+| --- | --- | --- | --- |
+| UNK-M1-01 | open | Conservative Markdown source fragments do not establish rendered parity or full HTML/LaTeX/comment/URL/email/handle/hashtag awareness | Implement original protection fixtures with unchanged original offsets; keep excluded/fragmented warnings and score gates; add separately scoped source-map/platform evidence before broadening COR-10 |
+| UNK-M1-02 | open | ASCII English syllable/readability heuristics are not calibrated pronunciation, language detection or a certified grade measure | Use independent formula fixtures and conservative short/non-ASCII/numeric gates now; acquire license-clean dialect/genre/fairness evaluation before changing claims |
+| UNK-M1-03 | open | Default UAX #29 sentence/word rules have no English abbreviation tailoring or dictionary segmentation for other scripts | Pin dependency behavior and Unicode fixtures; implement and evaluate an original licensed abbreviation/dictionary layer in a separate slice |

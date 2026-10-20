@@ -1,11 +1,11 @@
 <!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
 # NexWrite agent instructions
 
-This directory is the independent NexWrite Task 0 bootstrap inside the existing Codex checkout. Preserve sibling projects and existing changes. Cloud tasks already have an isolated checkout: use it; do not create a worktree unless the user asks.
+This directory is the independent NexWrite project inside the existing Codex checkout; Task 0 is complete. Preserve sibling projects and existing changes. Cloud tasks already have an isolated checkout: use it; do not create a worktree unless the user asks.
 
 ## Start and finish
 
-Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md and docs/handoff/<lane>.md before work. Current work is Task 0 only; later milestones need their own slice. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
+Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md and docs/handoff/<lane>.md before work. The user's 2026-10-20 continuation authorizes the next bounded M1 slices: source analysis/readability (L1), then a minimal local editor demo (L3), from prior analyst specifications and separate implementation review units. This is not blanket authorization for later milestones or the complete all-platform roadmap. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
 
 ## Commands (run from this directory)
 
