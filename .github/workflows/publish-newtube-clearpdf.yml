@@ -1,0 +1,28 @@
+name: Publish signed NewTube Clear APK
+on:
+  push:
+    branches: [newtube-clearpdf]
+    paths: ['newtube-clearpdf/dist/*.apk']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify signed build checksum
+        working-directory: newtube-clearpdf/dist
+        run: sha256sum --check SHA256SUMS.txt
+      - name: Publish APK download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create newtube-clear-1.15.0-clear.1-20261020 \
+            newtube-clearpdf/dist/*.apk \
+            newtube-clearpdf/dist/SHA256SUMS.txt \
+            newtube-clearpdf/VERIFICATION.md \
+            --target "$GITHUB_SHA" \
+            --title "NewTube Clear 1.15.0-clear.1" \
+            --notes-file newtube-clearpdf/RELEASE_NOTES.md \
+            --prerelease
