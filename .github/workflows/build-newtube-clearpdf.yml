@@ -1,0 +1,97 @@
+name: Build and publish NewTube Clear preview
+on:
+  push:
+    branches: [newtube-clearpdf]
+    paths:
+      - 'newtube-clearpdf/**'
+      - '.github/workflows/build-newtube-clearpdf.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout frontend
+        uses: actions/checkout@v4
+        with:
+          path: integration
+      - name: Checkout pinned NewTube and submodules
+        uses: actions/checkout@v4
+        with:
+          repository: aleixrodriala/newtube
+          ref: 756e7e56acba61ccdf5b4d5a802963f0eb62616c
+          submodules: recursive
+          path: newtube
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+          cache-dependency-path: 'newtube/**/*.gradle*'
+      - name: Install Android SDK and apply frontend
+        run: |
+          python3 integration/newtube-clearpdf/ci/prepare_sdk.py "$RUNNER_TEMP/newtube-sdk"
+          echo "ANDROID_HOME=$RUNNER_TEMP/newtube-sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$RUNNER_TEMP/newtube-sdk" >> "$GITHUB_ENV"
+          echo "sdk.dir=$RUNNER_TEMP/newtube-sdk" > newtube/local.properties
+          python3 integration/newtube-clearpdf/apply_frontend.py newtube
+          chmod +x newtube/gradlew
+      - name: Restore preview test certificate
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: newtube-clear-preview-test-certificate-v1
+      - name: Prepare preview test certificate
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -keystore "$HOME/.android/debug.keystore" \
+              -storepass android -keypass android -alias androiddebugkey \
+              -dname "CN=NewTube Clear Preview,O=Personal Development,C=IN" \
+              -keyalg RSA -keysize 3072 -validity 10000
+          fi
+      - name: Run targeted frontend and playback tests
+        working-directory: newtube
+        run: |
+          ./gradlew --no-daemon --max-workers=4 :smarttubetv:testStmobileDebugUnitTest \
+            --tests 'com.newtube.mobile.ui.glass.*' \
+            --tests com.newtube.mobile.ui.playback.PlayerTimeBarTest \
+            --tests com.newtube.mobile.ui.common.MobileThemeTest
+      - name: Build signed release-mode preview
+        working-directory: newtube
+        run: |
+          ./gradlew --no-daemon --max-workers=4 \
+            --init-script ../integration/newtube-clearpdf/ci/preview-signing.gradle \
+            :smarttubetv:assembleStmobileRelease
+      - name: Verify APK and collect download
+        run: |
+          mkdir out
+          cp newtube/smarttubetv/build/outputs/apk/stmobile/release/smarttubetv-stmobile-arm64-v8a-release.apk \
+            out/NewTube_Clear_1.15.0-clear.1_arm64-v8a_preview.apk
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs out/*.apk
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 4 out/*.apk
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging out/*.apk | head -n 5
+          cd out
+          sha256sum *.apk > SHA256SUMS.txt
+      - name: Preserve APK and test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: NewTube-Clear-Preview
+          path: |
+            out/*
+            newtube/smarttubetv/build/test-results/testStmobileDebugUnitTest/*.xml
+          if-no-files-found: error
+      - name: Publish direct APK download
+        working-directory: integration
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "newtube-clear-preview-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            ../out/*.apk ../out/SHA256SUMS.txt newtube-clearpdf/VERIFICATION.md \
+            --target "$GITHUB_SHA" \
+            --title "NewTube Clear 1.15.0-clear.1 preview" \
+            --notes-file newtube-clearpdf/RELEASE_NOTES.md --prerelease

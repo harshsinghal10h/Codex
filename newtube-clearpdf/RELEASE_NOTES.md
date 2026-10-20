@@ -1,9 +1,5 @@
-NewTube Clear 1.15.0-clear.1 adapts ClearPDF's interface across NewTube's Android screens and playback controls.
+NewTube Clear adapts ClearPDF's design across browsing, settings, the mini-player, playback controls, watch actions, sheets, and capsule sliders.
 
-- Neutral light/dark canvases, thin glass rims, blue accents, capsule title, and floating navigation.
-- Glass player controls, watch actions, mini-player, sheets, and capsule sliders.
-- ClearPDF/Vaso/LastWave/Classic profile selection with reversible styling.
-- Accessible timeline range and direct progress adjustment.
-- Existing NewTube Glass package and signing identity retained for upgrade installation.
+This ARM64 preview supports Android 7.0+ and installs separately as NewTube Clear. It uses a dedicated Android test certificate, rather than the owner's original NewTube Glass release key. The APK runs in release mode.
 
-The release assets contain the actual signed APK and its SHA-256 checksum. Review the verification report for checks performed and device-testing limits.
+The release was built from the pinned source by GitHub Actions. The release assets contain the actual APK, SHA-256 checksum, and verification notes. Physical-device playback, sign-in, casting, and performance measurements still need device testing.

@@ -1,0 +1,8 @@
+allprojects {
+    plugins.withId('com.android.application') {
+        androidComponents.finalizeDsl { dsl ->
+            dsl.productFlavors.getByName('stmobile').applicationId = 'io.github.harshsinghal10h.newtubeclear.preview'
+            dsl.buildTypes.getByName('release').signingConfig = dsl.signingConfigs.getByName('debug')
+        }
+    }
+}

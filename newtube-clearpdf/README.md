@@ -4,7 +4,7 @@ An Android NewTube frontend inspired by [ClearPDF](https://github.com/Chethan616
 
 ## Install
 
-Download the signed ARM64 APK from the release assets. Android 7.0 or newer is required. The application ID remains `io.github.harshsinghal10h.newtubeglass`; the owner's earlier signing identity is retained for upgrades from NewTube Glass. Upstream NewTube installs separately.
+Download the ARM64 preview APK from the GitHub release assets. Android 7.0 or newer is required. The published preview uses `io.github.harshsinghal10h.newtubeclear.preview` and a dedicated Android test certificate; it installs separately from NewTube Glass. The source overlay also supports private release signing with the original fork identity.
 
 Version: `1.15.0-clear.1` (`11504`). ClearPDF Glass is selected once after the update. Settings → Appearance & glass lets you choose ClearPDF, Vaso, LastWave, or Classic.
 
