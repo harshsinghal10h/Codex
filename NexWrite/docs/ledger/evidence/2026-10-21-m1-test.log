@@ -1,0 +1,243 @@
+Command: just test
+pnpm test
+$ node --test
+✔ dark: text on background meets normal-text AA (3.709471ms)
+✔ dark: textMuted on background meets normal-text AA (0.330548ms)
+✔ dark: correctness on background meets normal-text AA (0.234657ms)
+✔ dark: clarity on background meets normal-text AA (3.718482ms)
+✔ dark: engagement on background meets normal-text AA (0.249294ms)
+✔ dark: delivery on background meets normal-text AA (0.222701ms)
+✔ dark: focus on background meets non-text contrast (0.255126ms)
+✔ dark: text on surface meets normal-text AA (0.135291ms)
+✔ dark: textMuted on surface meets normal-text AA (0.281829ms)
+✔ dark: correctness on surface meets normal-text AA (1.655158ms)
+✔ dark: clarity on surface meets normal-text AA (0.301335ms)
+✔ dark: engagement on surface meets normal-text AA (0.138469ms)
+✔ dark: delivery on surface meets normal-text AA (0.067989ms)
+✔ dark: focus on surface meets non-text contrast (0.05255ms)
+✔ dark: text on surfaceRaised meets normal-text AA (0.048463ms)
+✔ dark: textMuted on surfaceRaised meets normal-text AA (0.047168ms)
+✔ dark: correctness on surfaceRaised meets normal-text AA (0.046692ms)
+✔ dark: clarity on surfaceRaised meets normal-text AA (0.044892ms)
+✔ dark: engagement on surfaceRaised meets normal-text AA (0.040887ms)
+✔ dark: delivery on surfaceRaised meets normal-text AA (0.044784ms)
+✔ dark: focus on surfaceRaised meets non-text contrast (0.045989ms)
+✔ dark: action label meets AA (0.150896ms)
+✔ light: text on background meets normal-text AA (0.058361ms)
+✔ light: textMuted on background meets normal-text AA (0.049529ms)
+✔ light: correctness on background meets normal-text AA (0.04763ms)
+✔ light: clarity on background meets normal-text AA (0.049758ms)
+✔ light: engagement on background meets normal-text AA (0.046105ms)
+✔ light: delivery on background meets normal-text AA (0.084566ms)
+✔ light: focus on background meets non-text contrast (0.069548ms)
+✔ light: text on surface meets normal-text AA (0.163234ms)
+✔ light: textMuted on surface meets normal-text AA (0.06263ms)
+✔ light: correctness on surface meets normal-text AA (0.059194ms)
+✔ light: clarity on surface meets normal-text AA (0.089949ms)
+✔ light: engagement on surface meets normal-text AA (0.060847ms)
+✔ light: delivery on surface meets normal-text AA (0.11329ms)
+✔ light: focus on surface meets non-text contrast (0.062736ms)
+✔ light: text on surfaceRaised meets normal-text AA (0.046343ms)
+✔ light: textMuted on surfaceRaised meets normal-text AA (0.047481ms)
+✔ light: correctness on surfaceRaised meets normal-text AA (0.042077ms)
+✔ light: clarity on surfaceRaised meets normal-text AA (0.293121ms)
+✔ light: engagement on surfaceRaised meets normal-text AA (0.073316ms)
+✔ light: delivery on surfaceRaised meets normal-text AA (0.055989ms)
+✔ light: focus on surfaceRaised meets non-text contrast (0.048903ms)
+✔ light: action label meets AA (0.053535ms)
+✔ categories carry distinct non-color identities (0.276371ms)
+✔ fonts are configured as pinned self-hosted licensed assets (0.679868ms)
+✔ analysis schema validates fixtures through canonical Suggestion and Span references (177.30125ms)
+✔ analysis schema rejects missing, extra, invalid, nullable and nonfinite wire values (36.784949ms)
+✔ real CLI analysis validates against the canonical registry and retains exact source coordinates (517.435671ms)
+✔ real CLI output satisfies canonical schema; malformed wire suggestions fail (268.871371ms)
+✔ schema generator detects drift and rejects unsupported or ambiguous contracts (1195.648321ms)
+✔ CSV handles quoted commas, escaped quotes, CRLF and multiline text (4.425048ms)
+✔ all 149 S7 rows remain accounted for (32.15822ms)
+✔ duplicate and invented IDs are rejected (16.424677ms)
+✔ non-planned status needs a real specification; unknowns must resolve (9.082076ms)
+✔ private URLs and escaping local evidence are rejected (42.885803ms)
+✔ invalid evidence classes and cases are rejected (7.732445ms)
+✔ verified requires CI provenance and every passing required case (19.442492ms)
+✔ local evidence cannot be relabeled verified (15.317202ms)
+✔ fail, unknown, skipped and truncated never aggregate to pass (35.821948ms)
+✔ verified cannot retain unresolved obligations or missing evidence (11.384159ms)
+✔ source requires an SPDX header and original identifiers (4.827294ms)
+✔ binaries and vendored files need reviewed per-file provenance (4.49061ms)
+✔ generated browser artifacts are excluded without hiding neighboring product source (3.704759ms)
+✔ SPDX expression policy allows a permitted alternative and rejects unreviewed obligations (0.925834ms)
+✔ Cargo historical dual-license spelling preserves its OR meaning without accepting unknown licenses (0.365371ms)
+✔ reviewed npm exceptions require exact names, versions and declared licenses (0.429791ms)
+✔ accessibility tool exception cannot escape into transitive production dependencies (1.028968ms)
+✔ CSS build tool exception is limited to reviewed native variants and exact development versions (0.437855ms)
+✔ local credential initializer generates independent values and preserves existing files (3.655261ms)
+ℹ tests 70
+ℹ suites 0
+ℹ pass 70
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2301.908583
+cargo test --workspace --locked
+   Compiling nw-structure v0.1.0 (/workspace/Codex/NexWrite/core/structure)
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.93s
+     Running unittests src/main.rs (target/debug/deps/nw-3af795cc0fafa8b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-8aacbcf0fe801109)
+
+running 3 tests
+test analyze_retains_native_paths_and_rejects_non_unicode_options ... ok
+test actual_cli_default_plain_explicit_markdown_and_analysis_schema ... ok
+test malformed_options_utf8_and_oversize_fail_without_partial_reports ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
+
+     Running tests/cli.rs (target/debug/deps/cli-ad54cfbe3e95a3db)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-77729eb25856136c)
+
+running 3 tests
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-65d18d668c3d8599)
+
+running 4 tests
+test independent_unicode_coordinates_and_original_suggestions ... ok
+test markdown_protection_is_additive_and_no_source_fragments_are_joined ... ok
+test independent_formulas_and_score_gates_are_preserved_end_to_end ... ok
+test input_limit_settings_and_legacy_limit_are_independent ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.13s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_metrics-66ef7f006e6c7288)
+
+running 12 tests
+test tests::ascii_heuristic_has_explicit_coverage_and_silent_e_rules ... ok
+test tests::code_only_projection_retains_whole_source_counts_and_zero_analyzed_counts ... ok
+test tests::empty_punctuation_and_emoji_have_no_fabricated_scores ... ok
+test tests::lowercase_uniqueness_uses_unicode_without_normalization_or_full_folding ... ok
+test tests::malformed_spans_and_projection_warnings_are_errors_without_panics ... ok
+test tests::independent_three_sentence_formula_oracle_preserves_negative_estimates ... ok
+test tests::numeric_and_non_latin_tokens_keep_counts_times_and_type_token_ratio ... ok
+test tests::markdown_warnings_are_deduplicated_ordered_and_any_protection_gates_grades ... ok
+test tests::each_readability_gate_omits_estimates_but_preserves_defined_metrics ... ok
+test tests::original_unicode_source_counts_and_retained_prose_are_distinct ... ok
+test tests::independent_thirty_sentence_smog_and_positive_polysyllable_oracles ... ok
+test tests::source_cap_is_checked_before_any_coordinate_allocation ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_rules-ae73578dd935d14b)
+
+running 3 tests
+test tests::examples_compile_and_run ... ok
+test tests::antipattern_excludes_overlapping_region ... ok
+test tests::rejects_malformed_and_unsupported_rules ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_schema-c109ac08a6a56a8f)
+
+running 2 tests
+test tests::severity_is_a_bounded_wire_number ... ok
+test tests::offsets_have_exactly_two_unsigned_values ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_structure-3e6f179f6c5eaa90)
+
+running 11 tests
+test tests::duplicate_multiline_reference_definitions_keep_whole_source_lines ... ok
+test tests::escapes_entities_indentation_and_hard_breaks_keep_source_coordinates ... ok
+test tests::html_blocks_and_inline_html_exclude_complete_source_lines ... ok
+test tests::code_links_images_and_reference_definition_are_wholly_protected ... ok
+test tests::malformed_html_openers_warn_even_inside_parser_html_blocks ... ok
+test tests::empty_containers_beside_definitions_remain_markup ... ok
+test tests::plain_is_lossless_and_markdown_plain_prose_keeps_soft_crlf ... ok
+test tests::malformed_openers_protect_to_eof_but_literal_pairs_remain ... ok
+test tests::syntax_fragments_are_never_joined_and_priority_union_is_stable ... ok
+test tests::reference_titles_with_brackets_never_split_duplicate_definitions ... ok
+test tests::repeated_html_openers_with_a_final_closer_do_not_become_ambiguous ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_text-14d637dac7fc6e73)
+
+running 7 tests
+test segment::tests::malformed_and_inconsistent_regions_return_errors ... ok
+test segment::tests::protected_gaps_never_create_words_or_sentences ... ok
+test segment::tests::crlf_atomic_blank_lines_unicode_trim_and_sentence_fragments ... ok
+test segment::tests::independent_original_coordinates_and_unicode_words ... ok
+test tests::graphemes_preserve_zwj_combining_and_crlf ... ok
+test tests::malformed_utf8_and_surrogate_boundaries_rejected ... ok
+test tests::every_range_and_round_trip_in_all_units ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_wasm-e1a41277cabcf94c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_metrics
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_schema
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_structure
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

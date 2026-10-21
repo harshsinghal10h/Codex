@@ -1,0 +1,450 @@
+{
+  "id": "EV-20261021-010",
+  "kind": "local",
+  "classification": "observation and derived static inventory",
+  "date_utc": "2026-10-21",
+  "tool": "rea-agents 6.4.0",
+  "scope": "Only the own compiled Node bridge and production web distribution; no reference-product artifact analyzed",
+  "records": [
+    {
+      "artifact": "node",
+      "report_file": "nexwrite-m1-node-rea.json",
+      "report_sha256": "81717dd624c0ea817dddae5e9b8504f90a2b5493fae94e4f42db97e3f28bd660",
+      "tool_exit_code": 0,
+      "envelope_ok": true,
+      "evidence_id": "ev_ae2604303d9c33c4fe837c5ec332ffeaa408fb122368775e5e98fc9e0a5edad8",
+      "root_artifact_sha256": "2f00876e8042dd4266d221371f0b7cb390bb1b63475b148fc94277182430d52b",
+      "command": "rea analyze-javascript-application /workspace/Codex/NexWrite/target/wasm-node --artifact-format directory --analysis-timeout-ms 60000 --max-heap-mb 1024 --format json --full-output",
+      "statistics": {
+        "relevant_files": 4,
+        "nested_asar_containers": 0,
+        "text_bytes_read": 8652,
+        "invalid_utf8_files": 0,
+        "parsed_javascript_files": 3,
+        "visited_ast_nodes": 1217,
+        "findings": 10,
+        "modules": 0,
+        "parse_failures": 0
+      },
+      "application_coverage": {
+        "status": "complete",
+        "truncated": false,
+        "omitted_count": 0,
+        "limits": []
+      },
+      "semantic_coverage": {
+        "status": "unknown",
+        "truncated": false,
+        "omitted_nodes": 0,
+        "omitted_relations": 0,
+        "limits": []
+      },
+      "semantic_families": [
+        {
+          "family": "boundary",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "call-flow",
+          "status": "partial",
+          "retained_relations": 123,
+          "omitted_relations": 0,
+          "unknown_count": 50
+        },
+        {
+          "family": "child-process",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "closure",
+          "status": "partial",
+          "retained_relations": 85,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "configuration",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "data-flow",
+          "status": "partial",
+          "retained_relations": 557,
+          "omitted_relations": 0,
+          "unknown_count": 107
+        },
+        {
+          "family": "event",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "object-flow",
+          "status": "partial",
+          "retained_relations": 40,
+          "omitted_relations": 0,
+          "unknown_count": 74
+        },
+        {
+          "family": "promise-ownership",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "request",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "resource-lifecycle",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        },
+        {
+          "family": "timer",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": 0,
+          "unknown_count": 0
+        }
+      ],
+      "semantic_unknowns": 231,
+      "limitations": [
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+      ]
+    },
+    {
+      "artifact": "web",
+      "report_file": "nexwrite-m1-web-rea.json",
+      "report_sha256": "14c58131dac120249390b6dd53b933ad4f73c9226e4581349e09d765aaa0f34a",
+      "tool_exit_code": 0,
+      "envelope_ok": true,
+      "evidence_id": "ev_e3ed7e8b05de365c074413472808a4848a3e6c15a6c3485e94b89a985c970fab",
+      "root_artifact_sha256": "c3a1543b078c8dba2490f76d122e6ff9a5c62f3093d12538cc1d97ba402cf555",
+      "command": "rea analyze-javascript-application /workspace/Codex/NexWrite/apps/web/dist --artifact-format directory --analysis-timeout-ms 60000 --max-heap-mb 4096 --format json --full-output",
+      "statistics": {
+        "relevant_files": 6,
+        "nested_asar_containers": 0,
+        "text_bytes_read": 255084,
+        "invalid_utf8_files": 0,
+        "parsed_javascript_files": 5,
+        "visited_ast_nodes": 82681,
+        "findings": 24,
+        "modules": 0,
+        "parse_failures": 0
+      },
+      "application_coverage": {
+        "status": "partial",
+        "truncated": false,
+        "omitted_count": null,
+        "limits": [
+          {
+            "name": "javascript_analysis_worker_heap_limit_bytes",
+            "value": 4320133120,
+            "unit": "bytes"
+          },
+          {
+            "name": "javascript_analysis_worker_timeout_ms",
+            "value": 60000,
+            "unit": "milliseconds"
+          }
+        ]
+      },
+      "semantic_coverage": {
+        "status": "partial",
+        "truncated": true,
+        "omitted_nodes": null,
+        "omitted_relations": null,
+        "limits": [
+          {
+            "name": "javascript_analysis_worker_heap_limit_bytes",
+            "value": 4320133120,
+            "unit": "bytes"
+          },
+          {
+            "name": "javascript_analysis_worker_timeout_ms",
+            "value": 60000,
+            "unit": "milliseconds"
+          }
+        ]
+      },
+      "semantic_families": [
+        {
+          "family": "boundary",
+          "status": "partial",
+          "retained_relations": 1,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "call-flow",
+          "status": "partial",
+          "retained_relations": 149,
+          "omitted_relations": null,
+          "unknown_count": 81
+        },
+        {
+          "family": "child-process",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "closure",
+          "status": "partial",
+          "retained_relations": 112,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "configuration",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "data-flow",
+          "status": "partial",
+          "retained_relations": 805,
+          "omitted_relations": null,
+          "unknown_count": 141
+        },
+        {
+          "family": "event",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "object-flow",
+          "status": "partial",
+          "retained_relations": 71,
+          "omitted_relations": null,
+          "unknown_count": 125
+        },
+        {
+          "family": "promise-ownership",
+          "status": "partial",
+          "retained_relations": 8,
+          "omitted_relations": null,
+          "unknown_count": 9
+        },
+        {
+          "family": "request",
+          "status": "partial",
+          "retained_relations": 1,
+          "omitted_relations": null,
+          "unknown_count": 2
+        },
+        {
+          "family": "resource-lifecycle",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "timer",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        }
+      ],
+      "semantic_unknowns": 365,
+      "limitations": [
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+        "assets/index-CRblWHq5.js: Resource constraint during analyze_javascript_application: Owned JavaScript worker exhausted its heap while analyzing assets/index-CRblWHq5.js during semantic"
+      ]
+    },
+    {
+      "artifact": "web-initial",
+      "report_file": "nexwrite-m1-web-rea-initial.json",
+      "report_sha256": "9d50a5ea5caa7b23c284a5fe90f61276503354a1a957bbacc3ad0e01d74b6a61",
+      "tool_exit_code": 0,
+      "envelope_ok": true,
+      "evidence_id": "ev_0b481ce292796ebe9246b1ae4beeaa79c05028317fe2d9414bf09163bd6ed3b6",
+      "root_artifact_sha256": "c3a1543b078c8dba2490f76d122e6ff9a5c62f3093d12538cc1d97ba402cf555",
+      "command": "rea analyze-javascript-application /workspace/Codex/NexWrite/apps/web/dist --artifact-format directory --analysis-timeout-ms 60000 --max-heap-mb 1024 --format json --full-output",
+      "statistics": {
+        "relevant_files": 6,
+        "nested_asar_containers": 0,
+        "text_bytes_read": 255084,
+        "invalid_utf8_files": 0,
+        "parsed_javascript_files": 5,
+        "visited_ast_nodes": 82681,
+        "findings": 24,
+        "modules": 0,
+        "parse_failures": 0
+      },
+      "application_coverage": {
+        "status": "partial",
+        "truncated": false,
+        "omitted_count": null,
+        "limits": [
+          {
+            "name": "javascript_analysis_worker_heap_limit_bytes",
+            "value": 1098907648,
+            "unit": "bytes"
+          },
+          {
+            "name": "javascript_analysis_worker_timeout_ms",
+            "value": 60000,
+            "unit": "milliseconds"
+          }
+        ]
+      },
+      "semantic_coverage": {
+        "status": "partial",
+        "truncated": true,
+        "omitted_nodes": null,
+        "omitted_relations": null,
+        "limits": [
+          {
+            "name": "javascript_analysis_worker_heap_limit_bytes",
+            "value": 1098907648,
+            "unit": "bytes"
+          },
+          {
+            "name": "javascript_analysis_worker_timeout_ms",
+            "value": 60000,
+            "unit": "milliseconds"
+          }
+        ]
+      },
+      "semantic_families": [
+        {
+          "family": "boundary",
+          "status": "partial",
+          "retained_relations": 1,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "call-flow",
+          "status": "partial",
+          "retained_relations": 149,
+          "omitted_relations": null,
+          "unknown_count": 81
+        },
+        {
+          "family": "child-process",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "closure",
+          "status": "partial",
+          "retained_relations": 112,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "configuration",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "data-flow",
+          "status": "partial",
+          "retained_relations": 805,
+          "omitted_relations": null,
+          "unknown_count": 141
+        },
+        {
+          "family": "event",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "object-flow",
+          "status": "partial",
+          "retained_relations": 71,
+          "omitted_relations": null,
+          "unknown_count": 125
+        },
+        {
+          "family": "promise-ownership",
+          "status": "partial",
+          "retained_relations": 8,
+          "omitted_relations": null,
+          "unknown_count": 9
+        },
+        {
+          "family": "request",
+          "status": "partial",
+          "retained_relations": 1,
+          "omitted_relations": null,
+          "unknown_count": 2
+        },
+        {
+          "family": "resource-lifecycle",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        },
+        {
+          "family": "timer",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 1
+        }
+      ],
+      "semantic_unknowns": 365,
+      "limitations": [
+        "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+        "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+        "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+        "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+        "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+        "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+        "assets/index-CRblWHq5.js: Resource constraint during analyze_javascript_application: Owned JavaScript worker exhausted its heap while analyzing assets/index-CRblWHq5.js during semantic"
+      ]
+    }
+  ],
+  "manual_review": [
+    "Artifact manifest records SHA-256 for every Node/web output and exact WASM digests. No source maps are emitted by the web build.",
+    "The worker loads the local engine at a fixed same-origin URL; export creates a local Blob URL. Production CSP permits local WASM compilation and restricts connections to self.",
+    "Actual browser checks observed only same-origin GET requests with no request body for the synthetic analysis fixture; this is scoped runtime evidence, not proof for every future code path.",
+    "License texts for the locked Rust registry dependency superset and fonts/React runtime are distributed and linked locally. No test-only Axe/Playwright package is imported by production source.",
+    "The tool reports static candidates and semantic unknowns, not vulnerabilities or runtime guarantees. Node bridge coverage retains231semanticunknowns. Web semantic coverage remains partial with365unknowns because the bundled UI exhausted both configured heap limits. UNK-M1-06 remains open."
+  ],
+  "result": "bounded static evidence retained; comprehensive web semantic coverage incomplete"
+}

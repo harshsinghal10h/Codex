@@ -1,0 +1,21 @@
+{
+  "kind": "local",
+  "date_utc": "2026-10-21",
+  "artifact": "/workspace/artifacts/nexwrite-m1-web.zip",
+  "sha256": "1ebebe8db616595dbd2d83abd9fbd24f48718f362b55faadae70e4a0f416f3fb",
+  "checks": [
+    {
+      "command": "Python zipfile.ZipFile.testzip and extractall into /tmp/nexwrite-m1-web-package-check",
+      "result": "pass"
+    },
+    {
+      "command": "python3 -m http.server PORT --bind 127.0.0.1 --directory /tmp/nexwrite-m1-web-package-check/dist, followed by Playwright1.64.1 in systemChromium with the actual packaged Worker/WASM",
+      "fixture": "Packaged  source.",
+      "action": "Accept suggestion",
+      "expected_source": "Packaged source.",
+      "result": "pass",
+      "exit_code": 0
+    }
+  ],
+  "limitations": "One original synthetic packaged-artifact smoke case, additional to18built-appcases; not CI or device coverage. Test server and browser were stopped."
+}

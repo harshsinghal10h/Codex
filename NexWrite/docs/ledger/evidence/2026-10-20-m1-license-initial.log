@@ -1,0 +1,10 @@
+pnpm check
+$ node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs
+Generated bindings match canonical schema.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: passed
+license-check: lightningcss-linux-x64-gnu@1.33.0: npm license "MPL-2.0" requires review
+license-check: lightningcss@1.33.0: npm license "MPL-2.0" requires review
+[ELIFECYCLE] Command failed with exit code 1.
+error: recipe `check` failed on line 13 with exit code 1

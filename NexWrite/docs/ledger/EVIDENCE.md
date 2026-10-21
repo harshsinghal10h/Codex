@@ -74,3 +74,37 @@ The initial cargo-deny gate rejected unsafe-libyaml through serde_yaml_ng and in
 | EV-20261019-009 | local runtime / observation | evidence/2026-10-19-supply-chain-final.txt records post-remediation cargo-deny: advisories ok, bans ok, licenses ok, sources ok. Unused license-allowance warnings remain visible. No advisory ignore or verification bypass was used |
 
 Runtime containers, Xcode/mobile/native host integrations, physical devices, CI runs, legal clearance and full release SBOM/signing remain separate unclosed obligations. A final local green summary does not close them.
+
+## Bounded M1 continuation — final local evidence, 2026-10-21
+
+These records concern original synthetic fixtures and own source/builds on the
+current Linux x86_64 host. They do not complete M1 or establish CI, other-OS,
+physical-device, legal or accessibility certification. The separate analyst and
+contract commits precede the L1 implementation; see the lane handoffs and
+BUILD_STATUS.md for scope and review-unit branches.
+
+| ID | Kind / classification | Actual record and bounded result |
+| --- | --- | --- |
+| EV-20261021-001 | local runtime / observation | evidence/2026-10-21-m1-validation-summary.json indexes 12 final command groups, exact invocations/exit codes and retained-tool preparation. Final check/test/native/WASM/web/protocol/browser/compose/secrets/supply-chain/benchmark commands exited 0 after the recorded web-build remediation. Its followup check records standalone `just build web` passing with generated protocol declarations initially absent. Per-command logs use the same date/prefix. `just test` ran 70 Node and 48 native tests; WASM smoke checked 23 new native-analysis parity cases plus 7 unchanged legacy cases and rejected 30 new malformed inputs plus legacy boundaries. No CI run is asserted |
+| EV-20261021-002 | local browser runtime / observation | evidence/2026-10-21-m1-browser.json and -browser.log: 18 actual production-build Chromium cases passed using the compiled Worker/WASM. Coverage includes native/independent metrics, stale responses, Unicode Accept/Undo/export, restored CRLF/CR adoption to LF, IME/termination, consent/storage failures, Markdown/input limits, dense cards, Worker retry and keyboard/320 px/themes/reduced-motion/forced-colors cases. Three tested Axe states have no violations. Screenshot/report outputs are generated under ignored apps/web/test-results and copied to coordinator delivery artifacts; no manual screen-reader, zoom, physical-device or cross-browser certification follows |
+| EV-20261021-003 | local runtime / observation | evidence/2026-10-21-m1-core-review.py and -core-review.json: the retained independent runner passes 400 seeded original Markdown/Unicode coordinate and containment cases, three duplicate-definition regressions, malformed HTML warning and 11 bounded release-CLI stress cases. The dense 1 MiB fixture measured 2.525 s and 587,492 KiB peak RSS including process startup, file I/O and JSON serialization. These single current-host measurements do not close UNK-M1-04 or establish browser/mobile budgets |
+| EV-20261021-004 | local artifact inventory and measurement / observation, derivation | evidence/2026-10-21-m1-artifacts.json inventories current ignored Node/web files and hashes. Both WASM copies have SHA-256 f5142a63ece63ac0605f57122d5afbd6cc634aed1d466a77604f2217d2b5eb15; Node default gzip is 668,154 bytes and deterministic Python level 9 is 647,655 bytes. evidence/2026-10-21-m1-analysis-benchmark.log records 50-iteration p95 plain 1k/5k-word results 0.918/5.249 ms and Markdown results 2.018/5.078 ms on the declared Xeon host. This bounded one-rule pipeline excludes compilation, file I/O and initialization; no incremental/full-engine/mobile claim |
+| EV-20261021-005 | local review and failure / retained, superseded where retested | evidence/2026-10-21-m1-validation-initial-summary.json and -web-build-initial.log retain the Turbo child-toolchain failure; final build/check/browser logs supersede it. evidence/2026-10-21-m1-ui-review-initial.md and -core-review-initial.json preserve pre-fix findings, including truthful status, accessible name, Markdown/projection and schema-generator cases; final tests/review records above establish only the retested outcomes. The 2026-10-20-m1-license-initial.log, -generated-boundary-initial.log and -browser-initial.json remain actual failures. The other 2026-10-20-m1 core/benchmark/artifact records are intermediate builder observations superseded by the October 21 integrated artifact records, never CI evidence |
+| EV-20261021-010 | local own-artifact static / observation, derivation and unknown | evidence/2026-10-21-m1-rea-summary.json retains REA 6.4.0 invocations, limits, raw report hashes and manual artifact observations. Node application inventory coverage is complete with 231 semantic unknowns. The web bundle parsed without syntax failures but semantic coverage is partial/truncated with 365 unknowns after both 1 GiB and 4 GiB analyzer heaps were exhausted. Tool exit 0 and zero parse failures do not mean comprehensive coverage. Raw reports remain in the coordinator's /workspace/artifacts delivery archive. evidence/2026-10-21-m1-rea-secrets.log records the actual raw-report secret scan; UNK-M1-06 remains open |
+| EV-20261021-011 | local package runtime / observation | evidence/2026-10-21-m1-package.json records the CRC-checked web ZIP, extracted distribution served through a plain local Python HTTP server, and a real packaged Worker/WASM Accept action preserving the exact expected source. One synthetic package smoke supplements the 18 built-app cases; no additional platform or production-deployment claim |
+| EV-20261021-012 | static environment configuration / observation | evidence/2026-10-21-m1-environment.json records confirmed draft revision 4 and runtime revision 1. Setup/startup changes preserve VLC and include tested NexWrite commands; saved network additions remain unapplied. Review/save and publish are still required; local-only commit restoration remains unverified |
+
+The final supply-chain log retains unused license-allowance warnings while
+reporting advisory/bans/licenses/sources success; npm audit reports no known
+vulnerabilities at that execution. License exceptions remain exact, reviewed
+development-package/version scopes. Secret scans and configuration validation
+are scoped to their actual inputs. Seven optional service configurations were
+validated, but no backend service, devcontainer image or native platform client
+was executed by this continuation.
+
+The browser runtime observed only same-origin GET requests without request bodies
+for its synthetic fixture. Static REA endpoint/import candidates cannot replace
+that runtime evidence, and neither observation proves all future privacy paths.
+Incomplete static semantic analysis remains explicitly unknown. Before any
+ledger promotion, run and inspect real CI plus each feature's remaining required
+cases and unknown remedies; all 149 rows still have zero CI-verified entries.

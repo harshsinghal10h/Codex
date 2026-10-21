@@ -1,0 +1,26 @@
+Command: pnpm build
+$ turbo run build
+
+   • turbo 2.11.9
+   • Packages in scope: @nexwrite/design-tokens, @nexwrite/protocol, @nexwrite/web
+   • Running build in 3 packages
+   • Remote caching disabled
+
+@nexwrite/protocol:build: cache miss, executing 1018c898b971e684
+@nexwrite/design-tokens:build: cache miss, executing 5c6057415cd76338
+@nexwrite/design-tokens:build: $ node generate.mjs
+@nexwrite/protocol:build: $ tsc -p tsconfig.json
+@nexwrite/design-tokens:build: Design token outputs generated.
+@nexwrite/web:build: cache bypass, force executing 35c8488975c2abae
+@nexwrite/web:build: $ node tools/build-engine.mjs && tsc --noEmit && vite build
+@nexwrite/web:build: error: could not create home directory: '/home/agent/.rustup': Read-only file system (os error 30)
+@nexwrite/web:build: [ELIFECYCLE] Command failed with exit code 1.
+@nexwrite/web#build:  ERROR  command (/workspace/Codex/NexWrite/apps/web) /workspace/.toolchains/nexwrite/pnpm-tool/node_modules/.bin/pnpm run build exited (1)
+
+ Tasks:    2 successful, 3 total
+Cached:    0 cached, 3 total
+  Time:    616ms 
+Failed:    @nexwrite/web#build
+
+ ERROR  run failed: command  exited (1)
+[ELIFECYCLE] Command failed with exit code 1.

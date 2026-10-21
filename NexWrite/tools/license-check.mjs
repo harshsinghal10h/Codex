@@ -2,10 +2,29 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { isMain, read, report, root } from './lint-common.mjs';
+import { files, isMain, read, report, root } from './lint-common.mjs';
 
 export const permitted = new Set(['MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', '0BSD', 'CC0-1.0', 'Unlicense', 'Unicode-3.0', 'Zlib']);
 const fontPackages = new Set(['@fontsource-variable/inter', '@fontsource-variable/jetbrains-mono', '@fontsource-variable/space-grotesk']);
+const accessibilityTools = new Set(['@axe-core/playwright', 'axe-core']);
+const cssBuildTools = new Set(['lightningcss', 'lightningcss-darwin-x64', 'lightningcss-darwin-arm64', 'lightningcss-win32-x64-msvc', 'lightningcss-win32-arm64-msvc', 'lightningcss-linux-x64-gnu', 'lightningcss-linux-x64-musl', 'lightningcss-linux-arm64-gnu', 'lightningcss-linux-arm64-musl', 'lightningcss-linux-arm-gnueabihf', 'lightningcss-freebsd-x64', 'lightningcss-android-arm64']);
+export function reviewedNpmLicense(pkg, { devOnly = false } = {}) {
+  return (fontPackages.has(pkg?.name) && pkg.version === '5.3.0' && pkg.license === 'OFL-1.1')
+    || (devOnly === true && pkg?.license === 'MPL-2.0'
+      && ((accessibilityTools.has(pkg.name) && pkg.version === '4.14.0') || (cssBuildTools.has(pkg.name) && pkg.version === '1.33.0')));
+}
+export function productionNpmNames(workspaces, installed) {
+  const dependencies = pkg => Object.keys({ ...pkg.dependencies, ...pkg.optionalDependencies, ...pkg.peerDependencies });
+  const graph = new Map();
+  // Merge versions conservatively: a production path to any installed version needs review.
+  for (const pkg of [...workspaces, ...installed]) graph.set(pkg.name, [...(graph.get(pkg.name) ?? []), ...dependencies(pkg)]);
+  const pending = workspaces.flatMap(dependencies); const production = new Set();
+  while (pending.length) {
+    const name = pending.pop(); if (production.has(name)) continue;
+    production.add(name); pending.push(...(graph.get(name) ?? []));
+  }
+  return production;
+}
 // Cargo's legacy MIT/Apache-2.0 spelling denotes the same dual-license OR choice.
 export function rustLicense(expression) {
   return expression === 'MIT/Apache-2.0' || expression === 'Apache-2.0/MIT' ? 'MIT OR Apache-2.0' : expression;
@@ -41,6 +60,7 @@ export function lintLicenses(base) {
     } else if (!acceptable(rustLicense(pkg.license))) errors.push(`${pkg.name}@${pkg.version}: license ${pkg.license ?? 'MISSING'} requires review`);
   }
   const modules = path.join(base, 'node_modules/.pnpm');
+  const installed = [];
   if (!fs.existsSync(modules)) errors.push('pnpm installation missing; license inventory cannot be complete');
   else for (const store of fs.readdirSync(modules, { withFileTypes: true })) {
     if (!store.isDirectory() || store.name === 'node_modules') continue;
@@ -51,10 +71,13 @@ export function lintLicenses(base) {
       : [path.join(manifests, entry.name)]);
     for (const folder of folders) {
       if (fs.lstatSync(folder).isSymbolicLink() || !fs.existsSync(path.join(folder, 'package.json'))) continue;
-      const pkg = JSON.parse(fs.readFileSync(path.join(folder, 'package.json'), 'utf8'));
-      const reviewedFont = fontPackages.has(pkg.name) && pkg.version === '5.3.0' && pkg.license === 'OFL-1.1';
-      if (!reviewedFont && !acceptable(pkg.license)) errors.push(`${pkg.name}@${pkg.version}: npm license ${JSON.stringify(pkg.license) ?? 'MISSING'} requires review`);
+      installed.push(JSON.parse(fs.readFileSync(path.join(folder, 'package.json'), 'utf8')));
     }
+  }
+  const workspaces = files(base).filter(file => /^(?:package\.json|(?:packages|apps|services)\/[^/]+\/package\.json)$/.test(file)).map(file => JSON.parse(read(base, file)));
+  const production = productionNpmNames(workspaces, installed);
+  for (const pkg of installed) {
+    if (!reviewedNpmLicense(pkg, { devOnly: !production.has(pkg.name) }) && !acceptable(pkg.license)) errors.push(`${pkg.name}@${pkg.version}: npm license ${JSON.stringify(pkg.license) ?? 'MISSING'} requires review`);
   }
   return errors;
 }

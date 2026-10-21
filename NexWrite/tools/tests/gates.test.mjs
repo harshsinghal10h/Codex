@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { columns, csv, expectedIds, lintLedger } from '../ledger-lint.mjs';
 import { lintProvenance } from '../provenance-lint.mjs';
-import { acceptable, rustLicense } from '../license-check.mjs';
+import { acceptable, productionNpmNames, reviewedNpmLicense, rustLicense } from '../license-check.mjs';
 import { read, root } from '../lint-common.mjs';
 import { initialize } from '../../infra/compose/init-env.mjs';
 
@@ -95,6 +95,19 @@ test('binaries and vendored files need reviewed per-file provenance', () => {
   f.write('docs/legal/ASSETS.md', '| apps/web/logo.png | unknown | MIT | TODO |\n');
   errors = lintProvenance(f.base).join('\n'); assert.match(errors, /asset lacks/);
 });
+test('generated browser artifacts are excluded without hiding neighboring product source', () => {
+  const f = fixture();
+  f.write('apps/web/public/engine/nw_wasm.js', 'Generated bindings retain upstream licensing.');
+  f.write('apps/web/public/engine/nw_wasm_bg.wasm', Buffer.from([0, 1, 2]));
+  f.write('apps/web/public/notices/dependency.js', 'Generated notice directory.');
+  f.write('apps/web/test-results/desktop.png', Buffer.from([0, 1, 2]));
+  assert.deepEqual(lintProvenance(f.base), []);
+  const neighbors = ['apps/web/src/main.ts', 'apps/web/public/custom.js', 'apps/web/public/engine-source/custom.js'];
+  for (const file of neighbors) f.write(file, 'const originalSource = true;');
+  const errors = lintProvenance(f.base);
+  assert.equal(errors.length, neighbors.length);
+  for (const file of neighbors) assert.ok(errors.some(error => error.startsWith(`${file}: missing required SPDX`)));
+});
 test('SPDX expression policy allows a permitted alternative and rejects unreviewed obligations', () => {
   for (const expression of ['MIT', 'MIT OR Apache-2.0', '(MIT OR Apache-2.0) AND Unicode-3.0', 'GPL-3.0-only OR MIT']) assert.equal(acceptable(expression), true, expression);
   for (const expression of [null, '', 'GPL-3.0-only', 'MIT AND LGPL-3.0-only', 'Apache-2.0 WITH LLVM-exception', 'MIT; shell', '(MIT OR', 'MIT OR']) assert.equal(acceptable(expression), false, String(expression));
@@ -103,6 +116,54 @@ test('Cargo historical dual-license spelling preserves its OR meaning without ac
   assert.equal(acceptable(rustLicense('MIT/Apache-2.0')), true);
   assert.equal(acceptable(rustLicense('Apache-2.0/MIT')), true);
   assert.equal(acceptable(rustLicense('MIT/GPL-3.0-only')), false);
+});
+test('reviewed npm exceptions require exact names, versions and declared licenses', () => {
+  assert.equal(acceptable('MPL-2.0'), false);
+  assert.equal(acceptable('OFL-1.1'), false);
+  for (const name of ['@axe-core/playwright', 'axe-core']) {
+    const pkg = { name, version: '4.14.0', license: 'MPL-2.0' };
+    assert.equal(reviewedNpmLicense(pkg, { devOnly: true }), true);
+    for (const changed of [{ name: '@unreviewed/a11y' }, { version: '4.14.1' }, { license: 'MPL-2.0 OR GPL-3.0-only' }])
+      assert.equal(reviewedNpmLicense({ ...pkg, ...changed }, { devOnly: true }), false);
+    assert.equal(reviewedNpmLicense(pkg), false);
+    assert.equal(reviewedNpmLicense(pkg, { devOnly: false }), false);
+  }
+  for (const name of ['@fontsource-variable/inter', '@fontsource-variable/jetbrains-mono', '@fontsource-variable/space-grotesk']) {
+    const pkg = { name, version: '5.3.0', license: 'OFL-1.1' };
+    assert.equal(reviewedNpmLicense(pkg), true);
+    for (const changed of [{ name: '@fontsource-variable/unreviewed' }, { version: '5.3.1' }, { license: 'MPL-2.0' }])
+      assert.equal(reviewedNpmLicense({ ...pkg, ...changed }), false);
+  }
+  assert.equal(reviewedNpmLicense(null, { devOnly: true }), false);
+});
+test('accessibility tool exception cannot escape into transitive production dependencies', () => {
+  const tool = { name: '@axe-core/playwright', version: '4.14.0', license: 'MPL-2.0', dependencies: { 'axe-core': '~4.14.0' } };
+  const engine = { name: 'axe-core', version: '4.14.0', license: 'MPL-2.0' };
+  const app = { name: '@nexwrite/web', dependencies: { react: '19.3.1' }, devDependencies: { '@axe-core/playwright': '4.14.0' } };
+  let production = productionNpmNames([app], [tool, engine]);
+  for (const pkg of [tool, engine]) assert.equal(reviewedNpmLicense(pkg, { devOnly: !production.has(pkg.name) }), true);
+  const runtime = { name: 'runtime', dependencies: { '@axe-core/playwright': '4.14.0' } };
+  production = productionNpmNames([{ ...app, dependencies: { runtime: '1' } }], [runtime, tool, engine]);
+  for (const pkg of [tool, engine]) assert.equal(reviewedNpmLicense(pkg, { devOnly: !production.has(pkg.name) }), false);
+  production = productionNpmNames([{ ...app, optionalDependencies: { 'axe-core': '4.14.0' } }], [tool, engine]);
+  assert.equal(production.has('axe-core'), true);
+  production = productionNpmNames([{ ...app, peerDependencies: { 'axe-core': '4.14.0' } }], [tool, engine]);
+  assert.equal(production.has('axe-core'), true);
+});
+test('CSS build tool exception is limited to reviewed native variants and exact development versions', () => {
+  const names = ['lightningcss', 'lightningcss-darwin-x64', 'lightningcss-darwin-arm64', 'lightningcss-win32-x64-msvc', 'lightningcss-win32-arm64-msvc', 'lightningcss-linux-x64-gnu', 'lightningcss-linux-x64-musl', 'lightningcss-linux-arm64-gnu', 'lightningcss-linux-arm64-musl', 'lightningcss-linux-arm-gnueabihf', 'lightningcss-freebsd-x64', 'lightningcss-android-arm64'];
+  for (const name of names) {
+    const pkg = { name, version: '1.33.0', license: 'MPL-2.0' };
+    assert.equal(reviewedNpmLicense(pkg, { devOnly: true }), true);
+    assert.equal(reviewedNpmLicense(pkg), false);
+    for (const changed of [{ version: '1.33.1' }, { name: 'lightningcss-unreviewed' }, { license: 'GPL-3.0-only' }])
+      assert.equal(reviewedNpmLicense({ ...pkg, ...changed }, { devOnly: true }), false);
+  }
+  const tool = { name: 'lightningcss', version: '1.33.0', license: 'MPL-2.0', optionalDependencies: { 'lightningcss-linux-x64-gnu': '1.33.0' } };
+  const production = productionNpmNames([{ name: 'app', dependencies: { vite: '8.3.4' } }], [{ name: 'vite', dependencies: { lightningcss: '^1.33.0' } }, tool]);
+  assert.equal(production.has('lightningcss-linux-x64-gnu'), true);
+  assert.equal(reviewedNpmLicense(tool, { devOnly: !production.has(tool.name) }), false);
+  assert.equal(acceptable('MPL-2.0'), false);
 });
 test('local credential initializer generates independent values and preserves existing files', () => {
   const f = fixture(); const destination = path.join(f.base, '.env');

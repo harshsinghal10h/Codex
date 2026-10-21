@@ -104,3 +104,91 @@ Observed package metadata after frozen-lockfile installation. OS-specific option
 | require-from-string | 2.0.2 | MIT |
 | turbo | 2.11.9 | MIT |
 | typescript | 7.0.2 | Apache-2.0 |
+
+## M1 dependency intake (2026-10-20)
+
+Scope: structured-source/readability core and the local browser editor demo. The following observations come from installed, locked package manifests and their actual LICENSE/NOTICE files; package licenses were not inferred from a repository's top-level license. The current Linux snapshot contains 43 Rust registry packages and 40 installed npm packages. Existing Task 0 tables above remain historical snapshots. This is an engineering provenance review, not counsel approval or a complete release SBOM.
+
+New Rust packages are compiled into the analysis engine, including its WASM build. No third-party source is vendored. Their installed Cargo manifests and license texts declare:
+
+| Package | Locked version | Declared license | Source / notice files |
+| --- | --- | --- | --- |
+| pulldown-cmark | 0.13.4 | MIT | https://github.com/raphlinus/pulldown-cmark ; LICENSE, copyright 2015 Google Inc. |
+| bitflags | 2.13.2 | MIT OR Apache-2.0 | https://github.com/bitflags/bitflags ; LICENSE-MIT and LICENSE-APACHE |
+| unicase | 2.10.0 | MIT OR Apache-2.0 | https://github.com/seanmonstar/unicase ; LICENSE-MIT and LICENSE-APACHE |
+
+pulldown-cmark is pinned with default features disabled. Its locked crate SHA-256 is `e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e`. The inspected LICENSE text has SHA-256 `c4f10f55904bdb9f27d3fbf94c354926d6cfe8b982276e556238c258941b243b`. unicase's actual declaration is dual-licensed, even though choosing its MIT option is permitted; it is not recorded as MIT-only.
+
+| Browser component | Exact version | Declared license | Use / upstream source / installed notices |
+| --- | --- | --- | --- |
+| react, react-dom | 19.3.1 each | MIT | Runtime UI; https://github.com/react/react ; each package LICENSE, copyright Meta Platforms, Inc. and affiliates |
+| scheduler | 0.28.0 | MIT | React DOM runtime dependency; https://github.com/react/react ; LICENSE |
+| vite | 8.3.4 | MIT | Development/build tool; https://github.com/vitejs/vite ; LICENSE.md also includes bundled-component notices |
+| @vitejs/plugin-react | 6.1.2 | MIT | Development/build tool; https://github.com/vitejs/vite-plugin-react ; LICENSE |
+| playwright, playwright-core | 1.64.1 each | Apache-2.0 | Development/CI browser testing; https://github.com/microsoft/playwright ; each package LICENSE and NOTICE |
+| @axe-core/playwright | 4.14.0 | MPL-2.0 | Development/CI accessibility testing only; https://github.com/dequelabs/axe-core-npm ; LICENSE |
+| axe-core | 4.14.0 | MPL-2.0 | Accessibility scanner used by the test wrapper; https://github.com/dequelabs/axe-core ; LICENSE and LICENSE-3RD-PARTY.txt |
+| lightningcss | 1.33.0 | MPL-2.0 | Vite CSS build tool; https://github.com/parcel-bundler/lightningcss ; LICENSE |
+| lightningcss-linux-x64-gnu | 1.33.0 | MPL-2.0 | Installed Linux build-tool binding; same upstream; LICENSE |
+| @fontsource-variable/inter, @fontsource-variable/space-grotesk, @fontsource-variable/jetbrains-mono | 5.3.0 each | OFL-1.1 | Reused pinned self-hosted font packages; https://github.com/fontsource/font-files ; full package LICENSE/copyright texts retained as described in ASSETS.md |
+
+### Exact development-only MPL review
+
+The allowance covers unmodified `@axe-core/playwright` and `axe-core` at exactly 4.14.0 for automated accessibility testing, and unmodified Lightning CSS at exactly 1.33.0 for CSS transformation during development/build. The scanners run in the test browser; Lightning CSS runs in the build process. They are not product UI implementations. Production source imports and the workspace production dependency graph were inspected: these packages are not runtime imports/dependencies. This review does not authorize shipping MPL UI code or adding these tools to production dependencies.
+
+Lightning CSS 1.33.0 declares eleven exact optional platform packages. Their npm registry manifests were individually checked on 2026-10-20 and each declares MPL-2.0: `lightningcss-darwin-x64`, `lightningcss-darwin-arm64`, `lightningcss-win32-x64-msvc`, `lightningcss-win32-arm64-msvc`, `lightningcss-linux-x64-gnu`, `lightningcss-linux-x64-musl`, `lightningcss-linux-arm64-gnu`, `lightningcss-linux-arm64-musl`, `lightningcss-linux-arm-gnueabihf`, `lightningcss-freebsd-x64`, and `lightningcss-android-arm64`. Each manifest can be retrieved at `https://registry.npmjs.org/<exact-package-name>/1.33.0`. Only the Linux x64 GNU binding was installed/inspected locally; metadata for another platform is not a runtime or binary-content audit of that platform.
+
+`tools/license-check.mjs` retains a false result for generic MPL-2.0 acceptance. Its reviewed exception requires the exact package name, version, declared MPL-2.0 license and development-only context. A conservative dependency traversal rejects the exception if a package is reachable through workspace production, optional or peer dependencies. Neighboring versions, arbitrary native-package names and unrelated MPL packages still fail. This dependency check does not replace inspection of application imports and built artifacts. Generated CSS is compiled from our original styles and licensed font declarations; distributing the build tool itself, modifying covered files, or copying any tool code into the product requires a separate distribution review, including upstream source and notice obligations. Preserve the tools' LICENSE/NOTICE/third-party notices if redistributing them.
+
+### Browser notice packaging observed
+
+`apps/web/tools/build-engine.mjs` copies the three font OFL texts and React/React DOM/Scheduler MIT texts unchanged into generated `apps/web/public/notices/`. The browser footer links to the local `/notices/` files; Vite copies public files into `apps/web/dist/notices/` when building. The generated public files were inspected and match the installed license text hashes recorded in ASSETS.md.
+
+The helper also writes `/notices/engine-third-party.txt` from actual LICENSE/COPYING/NOTICE texts of every locked Rust registry dependency. The observed generated file contains all 43 locked registry package/version headings and is 443,919 bytes, SHA-256 `294cc5b61f30442d9145d917956c4666e71388631b8063400ad5538ac8f1e52d`. It intentionally includes a conservative workspace/build-time superset. It is not a reachability proof or complete release SBOM; toolchain/runtime and release-artifact reconciliation remain part of UNK-BOOT-06. Generated notice files are packaging outputs, not vendored third-party source.
+
+### Installed npm inventory (2026-10-20, Linux)
+
+Observed from actual installed package.json files after the M1 workspace installation. The 40 entries below include runtime and development packages; OS-specific optional bindings absent on Linux are not claimed to have been executed or inspected as binaries.
+
+| Package | Installed version | Declared license |
+| --- | --- | --- |
+| @axe-core/playwright | 4.14.0 | MPL-2.0 |
+| @fontsource-variable/inter | 5.3.0 | OFL-1.1 |
+| @fontsource-variable/jetbrains-mono | 5.3.0 | OFL-1.1 |
+| @fontsource-variable/space-grotesk | 5.3.0 | OFL-1.1 |
+| @oxc-project/types | 0.154.0 | MIT |
+| @rolldown/binding-linux-x64-gnu | 1.2.14 | MIT |
+| @rolldown/pluginutils | 1.0.1 | MIT |
+| @turbo/linux-64 | 2.11.9 | MIT |
+| @types/node | 24.19.2 | MIT |
+| @types/react | 19.3.0 | MIT |
+| @types/react-dom | 19.3.0 | MIT |
+| @typescript/typescript-linux-x64 | 7.0.2 | Apache-2.0 |
+| @vitejs/plugin-react | 6.1.2 | MIT |
+| ajv | 8.20.0 | MIT |
+| axe-core | 4.14.0 | MPL-2.0 |
+| csstype | 3.2.3 | MIT |
+| detect-libc | 2.1.2 | Apache-2.0 |
+| fast-deep-equal | 3.1.3 | MIT |
+| fast-uri | 3.1.8 | BSD-3-Clause |
+| fdir | 6.5.0 | MIT |
+| json-schema-traverse | 1.0.0 | MIT |
+| lightningcss | 1.33.0 | MPL-2.0 |
+| lightningcss-linux-x64-gnu | 1.33.0 | MPL-2.0 |
+| nanoid | 3.3.20 | MIT |
+| picocolors | 1.1.1 | ISC |
+| picomatch | 4.0.7 | MIT |
+| playwright | 1.64.1 | Apache-2.0 |
+| playwright-core | 1.64.1 | Apache-2.0 |
+| postcss | 8.5.31 | MIT |
+| react | 19.3.1 | MIT |
+| react-dom | 19.3.1 | MIT |
+| require-from-string | 2.0.2 | MIT |
+| rolldown | 1.2.14 | MIT |
+| scheduler | 0.28.0 | MIT |
+| source-map-js | 1.2.2 | BSD-3-Clause |
+| tinyglobby | 0.2.17 | MIT |
+| turbo | 2.11.9 | MIT |
+| typescript | 7.0.2 | Apache-2.0 |
+| undici-types | 7.24.6 | MIT |
+| vite | 8.3.4 | MIT |

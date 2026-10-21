@@ -5,24 +5,27 @@ This directory is the independent NexWrite project inside the existing Codex che
 
 ## Start and finish
 
-Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md and docs/handoff/<lane>.md before work. The user's 2026-10-20 continuation authorizes the next bounded M1 slices: source analysis/readability (L1), then a minimal local editor demo (L3), from prior analyst specifications and separate implementation review units. This is not blanket authorization for later milestones or the complete all-platform roadmap. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
+Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md, BUILD_STATUS.md and docs/handoff/<lane>.md before work. The user's 2026-10-20/21 continuations cover the bounded M1 source-analysis/readability (L1) and minimal local editor (L3) slices, from prior analyst specifications and separate implementation review units. Both now have local implementation evidence; full M1 and later milestones remain incomplete. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
 
 ## Commands (run from this directory)
 
 - `source /workspace/.toolchains/nexwrite/activate.sh` loads the local cloud toolchain when that file exists; other machines install the pinned tools normally.
 - `pnpm install --frozen-lockfile` installs the locked JS workspace.
 - `just check` runs project checks and Rust lint; `just test` runs meaningful tooling/Rust tests.
-- `just build core` builds the native bootstrap; `just build wasm` builds the compiled WASM and smoke test.
+- `just build core` builds the native engine; `just build wasm` builds compiled WASM and parity/malformed-input smoke tests.
+- `just build web` builds protocol prerequisites and the actual web-target WASM/app; `just web` starts its local development process. Turbo web build caching is disabled so Rust changes cannot leave stale WASM.
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium just browser-test` runs actual built-app Chromium checks in this cloud environment; install Playwright Chromium or select its executable elsewhere. Build first. No CI or certification claim follows from a local pass.
 - `pnpm check` checks ledger, provenance, license metadata, code generation and design-token outputs.
 - `just supply-chain` runs metadata/license, cargo-deny and pnpm advisory gates; `just secrets` runs the actual gitleaks gate. Do not suppress an advisory to make setup pass.
 - `node --test tools/tests/*.test.mjs` runs the tooling's regression tests.
 - `cargo test --workspace --locked` runs Rust tests; `cargo fmt --all -- --check` and `cargo clippy --workspace --all-targets --locked -- -D warnings` lint Rust.
 - `cargo run -p nw-cli -- check FILE --format json` checks a UTF-8 plain-text file; `cargo run -p nw-cli -- rules test` checks rule examples.
-- `cargo run -p nw-cli -- schema` exports the Suggestion contract; `node tools/codegen/generate.mjs --check` checks generated protocol files.
-- `cargo run -p nw-cli -- bench` reports local benchmark measurements.
+- `cargo run -p nw-cli -- analyze FILE --format json --input-format plain` runs additive source analysis; use `markdown` for the conservative source protector. Inputs are limited to 1,048,576 UTF-8 bytes and en-US.
+- `cargo run -p nw-cli -- schema` exports Suggestion; `cargo run -p nw-cli -- schema analysis` exports AnalysisResult. `node tools/codegen/generate.mjs --check` checks both schemas' generated bindings.
+- `cargo run -p nw-cli -- bench` reports legacy single-rule measurements; `just bench-analysis` measures the bounded analysis pipeline.
 - `just compose-check` validates all seven optional service configurations with temporary generated values; containers are not started. `just dev-env` creates ignored local credentials before `just services` starts the backend profile. Record runtime results separately.
 
-`just build <surface>` is parameterized because recipe names cannot contain colons. Only core and wasm are implemented build targets; other surfaces remain ledger work.
+`just build <surface>` is parameterized because recipe names cannot contain colons. The implemented targets are core, wasm and the local web demo; other surfaces remain ledger work. Keep draft storage opt-in and source text out of logs. Browser text adopts native textarea LF line endings; core spans continue to reference exact input source.
 
 ## Repository map and lane ownership
 

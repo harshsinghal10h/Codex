@@ -1,0 +1,52 @@
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running unittests src/main.rs (target/debug/deps/nw-60b253d281b85249)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-5f80a4459ab047e7)
+
+running 3 tests
+test analyze_retains_native_paths_and_rejects_non_unicode_options ... ok
+test actual_cli_default_plain_explicit_markdown_and_analysis_schema ... ok
+test malformed_options_utf8_and_oversize_fail_without_partial_reports ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+
+     Running tests/cli.rs (target/debug/deps/cli-15650f89185bd89b)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-94f641b2369f2e8a)
+
+running 3 tests
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-586db95eb3a2670e)
+
+running 4 tests
+test markdown_protection_is_additive_and_no_source_fragments_are_joined ... ok
+test independent_unicode_coordinates_and_original_suggestions ... ok
+test independent_formulas_and_score_gates_are_preserved_end_to_end ... ok
+test input_limit_settings_and_legacy_limit_are_independent ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

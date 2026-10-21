@@ -18,9 +18,18 @@ test:
     pnpm test
     cargo test --workspace --locked
 
-# Bootstrap implements core and WASM only; other surfaces are tracked in the ledger.
+# The local editor consumes the same compiled engine; other surfaces remain roadmap work.
 build surface="core":
-    @case "{{surface}}" in core) cargo build --workspace --release --locked ;; wasm) cargo build -p nw-cli --locked; cargo build -p nw-wasm --release --target wasm32-unknown-unknown --locked; wasm-bindgen target/wasm32-unknown-unknown/release/nw_wasm.wasm --target nodejs --out-dir target/wasm-node; node tools/wasm-smoke.mjs ;; *) echo 'Supported bootstrap targets: core, wasm' >&2; exit 2 ;; esac
+    @case "{{surface}}" in core) cargo build --workspace --release --locked ;; wasm) cargo build -p nw-cli --locked; cargo build -p nw-wasm --release --target wasm32-unknown-unknown --locked; wasm-bindgen target/wasm32-unknown-unknown/release/nw_wasm.wasm --target nodejs --out-dir target/wasm-node; node tools/wasm-smoke.mjs ;; web) pnpm exec turbo run build --filter=@nexwrite/web ;; *) echo 'Supported targets: core, wasm, web' >&2; exit 2 ;; esac
+
+web:
+    pnpm --filter @nexwrite/web dev
+
+browser-test:
+    pnpm --filter @nexwrite/web test:e2e
+
+bench-analysis:
+    node tools/analysis-benchmark.mjs
 
 generate:
     node tools/codegen/generate.mjs

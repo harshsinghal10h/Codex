@@ -1,0 +1,3 @@
+Command: just compose-check
+node tools/compose-check.mjs
+compose-check: seven optional service configurations parse and bind published ports to loopback; containers were not started.

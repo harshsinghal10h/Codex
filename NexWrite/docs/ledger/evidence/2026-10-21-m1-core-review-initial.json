@@ -1,0 +1,41 @@
+{
+  "scope": "Actual independent local observations before final Markdown fixes; not CI evidence",
+  "date_utc": "2026-10-20",
+  "commands": [
+    "source /workspace/.toolchains/nexwrite/activate.sh; cargo test --locked --workspace > /tmp/m1-review-cargo-test.log 2>&1",
+    "source /workspace/.toolchains/nexwrite/activate.sh; cargo build --locked -p nw-cli --release",
+    "Python generated400cases + target/debug/nw analyze TEMP --format json --input-format markdown; seed20261020",
+    "Python resource.RUSAGE_CHILDREN wrapper + target/release/nw analyze TEMP --format json --input-format markdown; stdout=/dev/null; timeout25s"
+  ],
+  "rust_test_result": "PASS, 53 tests at time of run; raw log /tmp/m1-review-cargo-test.log",
+  "generated_case_result": "PASS, 400 original synthetic Markdown+Unicode cases; source UTF8/UTF16/scalar coordinates, ordered/disjoint source projections and containment",
+  "single_run_cli_performance_including_startup_io_and_json_serialization": [
+    {"case": "unclosed_brackets", "bytes": 1048576, "wall_s": 0.199, "max_rss_kib": 102588},
+    {"case": "balanced_brackets", "bytes": 1048576, "wall_s": 0.216, "max_rss_kib": 86208},
+    {"case": "many_links", "bytes": 1048576, "wall_s": 0.484, "max_rss_kib": 68668},
+    {"case": "many_inline_code", "bytes": 1048576, "wall_s": 0.746, "max_rss_kib": 90788},
+    {"case": "many_entities", "bytes": 1048576, "wall_s": 0.593, "max_rss_kib": 70464},
+    {"case": "many_headings", "bytes": 1048576, "wall_s": 1.114, "max_rss_kib": 202916},
+    {"case": "plain_words", "bytes": 1048576, "wall_s": 0.541, "max_rss_kib": 94564},
+    {"case": "dense_suggestions", "bytes": 262144, "wall_s": 0.406, "max_rss_kib": 148772},
+    {"case": "dense_suggestions", "bytes": 1048576, "wall_s": 1.901, "max_rss_kib": 587528}
+  ],
+  "html_probe": {
+    "source_expression": "('<a '*((n//3)+1))[:n-1]+'>'",
+    "bytes": 524288,
+    "wall_s": 3.284,
+    "finding": "Repeated suffix contains('>') scans are quadratic on malformed HTML-like lines. Request precompute last > position per line. Other byte lengths varied because final valid tag can make old fallback skip the whole line."
+  },
+  "review_findings_at_capture": [
+    "Basic duplicate multiline reference definition whole-line protection fixed and independently retested PASS.",
+    "Duplicate definition title with [bracket] exposed new slice-selection boundary gap; structure agent fixing.",
+    "Malformed parser-protected HTML must still emit ambiguous warning; structure agent fixing.",
+    "Quadratic HTML fallback suffix scan reported to structure agent for linear remedy.",
+    "Codegen definitions={} silently ignores __proto__ unknown schema definition; confirmed in isolated /tmp copy, protocol agent fixing."
+  ],
+  "limitations": [
+    "Single native current-host measurements only, not browser/mobile/CI budgets.",
+    "Dense1MiB result expansion consumes approximately574MiB native peak RSS; editor caps visible suggestions20 but worker result remains large.",
+    "All first-party fixtures are original synthetic inputs; no reference outputs were used."
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "kind": "local",
+  "scope": "Integrated M1 validation on the current Linux cloud host; not CI or device certification",
+  "started": "2026-10-21T04:44:08.682445+00:00",
+  "commands": [
+    {
+      "name": "prepare",
+      "command": "bash /workspace/.cloud-setup/nexwrite-tools-prepare.sh",
+      "exit_code": 0,
+      "duration_seconds": 5.812,
+      "log": "docs/ledger/evidence/2026-10-21-m1-prepare.log"
+    },
+    {
+      "name": "check",
+      "command": "just check",
+      "exit_code": 0,
+      "duration_seconds": 1.157,
+      "log": "docs/ledger/evidence/2026-10-21-m1-check.log"
+    },
+    {
+      "name": "test",
+      "command": "just test",
+      "exit_code": 0,
+      "duration_seconds": 7.501,
+      "log": "docs/ledger/evidence/2026-10-21-m1-test.log"
+    },
+    {
+      "name": "native-build",
+      "command": "just build core",
+      "exit_code": 0,
+      "duration_seconds": 34.563,
+      "log": "docs/ledger/evidence/2026-10-21-m1-native-build.log"
+    },
+    {
+      "name": "wasm-build",
+      "command": "just build wasm",
+      "exit_code": 0,
+      "duration_seconds": 2.205,
+      "log": "docs/ledger/evidence/2026-10-21-m1-wasm-build.log"
+    },
+    {
+      "name": "web-build",
+      "command": "pnpm build",
+      "exit_code": 1,
+      "duration_seconds": 0.715,
+      "log": "docs/ledger/evidence/2026-10-21-m1-web-build.log"
+    },
+    {
+      "name": "protocol-check",
+      "command": "pnpm --filter @nexwrite/protocol check",
+      "exit_code": 0,
+      "duration_seconds": 0.494,
+      "log": "docs/ledger/evidence/2026-10-21-m1-protocol-check.log"
+    },
+    {
+      "name": "browser",
+      "command": "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium just browser-test",
+      "exit_code": 0,
+      "duration_seconds": 46.12,
+      "log": "docs/ledger/evidence/2026-10-21-m1-browser.log"
+    },
+    {
+      "name": "compose",
+      "command": "just compose-check",
+      "exit_code": 0,
+      "duration_seconds": 0.316,
+      "log": "docs/ledger/evidence/2026-10-21-m1-compose.log"
+    },
+    {
+      "name": "secrets",
+      "command": "just secrets",
+      "exit_code": 0,
+      "duration_seconds": 0.87,
+      "log": "docs/ledger/evidence/2026-10-21-m1-secrets.log"
+    },
+    {
+      "name": "supply-chain",
+      "command": "just supply-chain",
+      "exit_code": 0,
+      "duration_seconds": 1.693,
+      "log": "docs/ledger/evidence/2026-10-21-m1-supply-chain.log"
+    },
+    {
+      "name": "analysis-benchmark",
+      "command": "just bench-analysis",
+      "exit_code": 0,
+      "duration_seconds": 22.461,
+      "log": "docs/ledger/evidence/2026-10-21-m1-analysis-benchmark.log"
+    }
+  ],
+  "completed": "2026-10-21T04:46:12.603055+00:00",
+  "status": "failed"
+}

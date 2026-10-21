@@ -1,4 +1,4 @@
-name: NexWrite bootstrap
+name: NexWrite checks
 
 on:
   pull_request:
@@ -52,9 +52,47 @@ jobs:
       - run: pnpm test
       - run: cargo test --workspace --locked
       - run: cargo build --workspace --release --locked
-      - run: pnpm build
+      - run: pnpm --filter @nexwrite/protocol --filter @nexwrite/design-tokens build
       - name: Ensure generation and checks do not modify tracked inputs
         run: git diff --exit-code -- .
+
+  browser:
+    name: Web editor with real WASM (Linux Chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: 12.14.0
+          package_json_file: NexWrite/package.json
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.19.0
+          cache: pnpm
+          cache-dependency-path: NexWrite/pnpm-lock.yaml
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master snapshot
+        with:
+          toolchain: 1.99.1
+          targets: wasm32-unknown-unknown
+      - run: pnpm install --frozen-lockfile
+      - run: cargo install wasm-bindgen-cli --locked --version 0.2.129
+      - run: pnpm build
+      - run: pnpm --filter @nexwrite/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @nexwrite/web test:e2e
+      - name: Audit only NexWrite production web artifacts
+        run: |
+          npm install --prefix target/rea-cli --ignore-scripts --no-audit --no-fund rea-agents@6.4.0
+          target/rea-cli/node_modules/.bin/rea analyze-javascript-application "${PWD}/apps/web/dist" --artifact-format directory --format json --full-output > apps/web/test-results/web-rea.json
+      - name: Ensure the browser build does not change tracked inputs
+        run: git diff --exit-code -- .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: nexwrite-browser-results
+          path: NexWrite/apps/web/test-results/
+          if-no-files-found: warn
 
   wasm:
     name: WASM and own-artifact audit (Linux)

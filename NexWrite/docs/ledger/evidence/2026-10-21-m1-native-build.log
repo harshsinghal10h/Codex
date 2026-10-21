@@ -1,0 +1,18 @@
+Command: just build core
+   Compiling memchr v2.8.3
+   Compiling bitflags v2.13.2
+   Compiling unicase v2.10.0
+   Compiling serde_json v1.0.154
+   Compiling aho-corasick v1.1.5
+   Compiling pulldown-cmark v0.13.4
+   Compiling nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+   Compiling nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+   Compiling regex-automata v0.4.18
+   Compiling nw-metrics v0.1.0 (/workspace/Codex/NexWrite/core/score)
+   Compiling nw-structure v0.1.0 (/workspace/Codex/NexWrite/core/structure)
+   Compiling regex v1.13.1
+   Compiling nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+   Compiling nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+    Finished `release` profile [optimized] target(s) in 34.46s

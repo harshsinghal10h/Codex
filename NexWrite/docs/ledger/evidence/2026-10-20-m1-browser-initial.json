@@ -1,0 +1,20 @@
+{
+  "scope": "Local Chromium production-build checks; automated accessibility and synthetic composition only, not device or screen-reader certification.",
+  "started": "2026-10-20T05:23:03.811Z",
+  "versions": {
+    "node": "v24.19.0",
+    "chromium": "154.0.8037.57",
+    "playwright": "1.64.1"
+  },
+  "cases": [
+    {
+      "name": "runner",
+      "status": "failed",
+      "detail": "Package subpath './package.json' is not defined by \"exports\" in /workspace/Codex/NexWrite/apps/web/node_modules/@axe-core/playwright/package.json imported from /workspace/Codex/NexWrite/apps/web/tests/e2e.mjs"
+    }
+  ],
+  "timings": {},
+  "accessibility": [],
+  "completed": "2026-10-20T05:23:04.720Z",
+  "status": "failed"
+}
