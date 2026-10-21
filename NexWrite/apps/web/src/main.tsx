@@ -9,3 +9,8 @@ import './style.css';
 import { App } from './App';
 
 createRoot(document.getElementById('root')!).render(<App />);
+
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  // Failure leaves the network app functional; no document data is sent here.
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}

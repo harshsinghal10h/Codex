@@ -30,6 +30,7 @@ let browser;
 const keys = { draft: 'nexwrite.m1.draft', consent: 'nexwrite.m1.draft-consent', theme: 'nexwrite.m1.theme' };
 const sentence = 'The cat sat by the log and saw the dog.';
 const fixture = Array(3).fill(sentence).join(' ');
+const navigate = (page, name) => page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name, exact: true }).click();
 const source = (page) => page.getByRole('textbox', { name: 'Source editor' });
 const metric = async (page, key) => Number(await page.locator(`[data-metric="${key}"]`).getAttribute('data-value'));
 const score = async (page, kind) => Number(await page.locator(`[data-score="${kind}"]`).getAttribute('data-value'));
@@ -75,7 +76,7 @@ function observeWorkers() {
 }
 
 async function test(name, run, options = {}) {
-  const context = await browser.newContext({ viewport: options.viewport ?? { width: 1440, height: 1100 }, acceptDownloads: true });
+  const context = await browser.newContext({ viewport: options.viewport ?? { width: 1440, height: 1100 }, acceptDownloads: true, serviceWorkers: options.serviceWorkers ?? 'block' });
   if (options.observe) await context.addInitScript(observeWorkers);
   const page = await context.newPage();
   const pageErrors = [];
@@ -117,7 +118,9 @@ try {
     assert.ok(!policy.includes("'unsafe-eval'"));
     await checked(page, 0);
     assert.equal(await source(page).inputValue(), '');
+    await navigate(page, 'Settings');
     assert.equal(await page.getByRole('checkbox', { name: 'Save draft in this browser' }).isChecked(), false);
+    await navigate(page, 'Write');
     assert.equal(await page.evaluate((owned) => localStorage.getItem(owned.draft), keys), null);
     const started = performance.now();
     await source(page).fill(fixture);
@@ -227,22 +230,34 @@ try {
     await source(page).fill('Local-only draft 😀.');
     await page.waitForTimeout(450);
     assert.equal(await page.evaluate((owned) => localStorage.getItem(owned.draft), keys), null);
+    await navigate(page, 'Settings');
     await page.getByRole('checkbox', { name: 'Save draft in this browser' }).check();
+    await navigate(page, 'Write');
     await page.waitForFunction((owned) => localStorage.getItem(owned.consent) === '1' && JSON.parse(localStorage.getItem(owned.draft)).source.includes('😀'), keys);
     await page.reload();
     await checked(page);
     assert.equal(await source(page).inputValue(), 'Local-only draft 😀.');
+    await navigate(page, 'Settings');
     await page.getByRole('checkbox', { name: 'Save draft in this browser' }).uncheck();
+    await navigate(page, 'Write');
     assert.equal(await source(page).inputValue(), 'Local-only draft 😀.');
     assert.equal(await page.evaluate((owned) => localStorage.getItem(owned.draft), keys), null);
     await page.reload();
     await checked(page, 0);
     assert.equal(await source(page).inputValue(), '');
     await source(page).fill('Keep this current source.');
+    await navigate(page, 'Settings');
     await page.getByRole('checkbox', { name: 'Save draft in this browser' }).check();
+    await navigate(page, 'Write');
+    await navigate(page, 'Settings');
     await page.getByRole('combobox', { name: 'Appearance' }).selectOption('light');
+    await navigate(page, 'Write');
     await page.waitForTimeout(400);
+    await navigate(page, 'Settings');
+    page.once('dialog', dialog => dialog.accept());
     await page.getByRole('button', { name: 'Clear local NexWrite data' }).click();
+    await page.waitForFunction((owned) => Object.values(owned).every(key => localStorage.getItem(key) === null), keys);
+    await navigate(page, 'Write');
     assert.equal(await source(page).inputValue(), 'Keep this current source.');
     assert.deepEqual(await page.evaluate((owned) => Object.values(owned).map((key) => localStorage.getItem(key)), keys), [null, null, null]);
     assert.equal(await page.evaluate(() => localStorage.getItem('unrelated.application')), 'keep');
@@ -276,7 +291,9 @@ try {
     await context.addInitScript(() => { Storage.prototype.setItem = function () { throw new DOMException('Blocked', 'QuotaExceededError'); }; });
     await start(page);
     await source(page).fill('Keep  editing.');
+    await navigate(page, 'Settings');
     await page.getByRole('checkbox', { name: 'Save draft in this browser' }).check();
+    await navigate(page, 'Write');
     await page.getByTestId('storage-state').filter({ hasText: 'Storage unavailable' }).waitFor();
     await page.getByRole('button', { name: 'Accept suggestion' }).click();
     assert.equal(await source(page).inputValue(), 'Keep editing.');
@@ -291,7 +308,9 @@ try {
       await context.addInitScript(({ owned, saved }) => { localStorage.setItem(owned.consent, '1'); localStorage.setItem(owned.draft, saved); }, { owned: keys, saved: record });
       await start(page);
       assert.equal(await source(page).inputValue(), '');
-      assert.equal(await page.getByRole('checkbox', { name: 'Save draft in this browser' }).isChecked(), false);
+      await navigate(page, 'Settings');
+    assert.equal(await page.getByRole('checkbox', { name: 'Save draft in this browser' }).isChecked(), false);
+    await navigate(page, 'Write');
       await page.getByText('A saved setting or draft could not be read safely.', { exact: false }).waitFor();
       await source(page).fill('Still  editable.');
       await page.getByRole('button', { name: 'Accept suggestion' }).waitFor();
@@ -366,6 +385,179 @@ try {
     assert.equal(await source(page).inputValue(), 'Keep  this source.');
   });
 
+  await test('local library save/search/rename/duplicate/delete and reload preserve exact source', async ({ page }) => {
+    await start(page);
+    const text = 'A saved idea 😀.\n\nKeep  this exact source.';
+    await source(page).fill(text);
+    await page.getByRole('textbox', { name: 'Document title' }).fill('A thoughtful note');
+    await page.getByRole('button', { name: 'Save document', exact: true }).click();
+    await page.getByTestId('document-save-state').filter({ hasText: 'Saved in this browser' }).waitFor();
+    await navigate(page, 'Library');
+    await page.getByRole('heading', { name: 'A thoughtful note', exact: true }).waitFor();
+    await page.screenshot({ path: path.join(output, 'library.png'), fullPage: true });
+    await page.getByRole('searchbox', { name: 'Search local documents' }).fill('not present');
+    await page.getByText('No documents match this search.').waitFor();
+    await page.getByRole('searchbox').fill('exact source');
+    await page.getByRole('heading', { name: 'A thoughtful note', exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Duplicate A thoughtful note', exact: true }).click();
+    await page.getByRole('heading', { name: 'A thoughtful note copy', exact: true }).waitFor();
+    page.once('dialog', dialog => dialog.accept('Renamed note'));
+    await page.getByRole('button', { name: 'Rename A thoughtful note copy', exact: true }).click();
+    await page.getByRole('heading', { name: 'Renamed note', exact: true }).waitFor();
+    page.once('dialog', dialog => dialog.dismiss());
+    await page.getByRole('button', { name: 'Delete Renamed note', exact: true }).click();
+    assert.equal(await page.getByRole('heading', { name: 'Renamed note' }).count(), 1);
+    page.once('dialog', dialog => dialog.accept());
+    await page.getByRole('button', { name: 'Delete Renamed note', exact: true }).click();
+    await page.getByRole('heading', { name: 'Renamed note' }).waitFor({ state: 'detached' });
+    await page.reload(); await checked(page, 0);
+    await navigate(page, 'Library');
+    await page.getByRole('heading', { name: 'A thoughtful note', exact: true }).click();
+    assert.equal(await source(page).inputValue(), text);
+    assert.equal(await page.getByRole('textbox', { name: 'Document title' }).inputValue(), 'A thoughtful note');
+    await source(page).fill('Unsaved source stays.');
+    await navigate(page, 'Library');
+    page.once('dialog', dialog => dialog.dismiss());
+    await page.getByRole('button', { name: 'New document', exact: true }).click();
+    await navigate(page, 'Write');
+    assert.equal(await source(page).inputValue(), 'Unsaved source stays.');
+  });
+
+  await test('denied IndexedDB Save stays unsaved while local checking works', async ({ page, context }) => {
+    await context.addInitScript(() => { IDBFactory.prototype.open = function () { throw new DOMException('Denied', 'SecurityError'); }; });
+    await start(page);
+    await source(page).fill('Still  writing.');
+    await page.getByRole('button', { name: 'Save document', exact: true }).click();
+    await page.locator('.action-notice').filter({ hasText: 'The document library is unavailable. Your current draft remains in memory.' }).filter({ visible: true }).waitFor();
+    assert.match(await page.getByTestId('document-save-state').innerText(), /Unsaved/);
+    await page.getByRole('button', { name: 'Accept suggestion' }).click();
+    assert.equal(await source(page).inputValue(), 'Still writing.');
+  });
+
+  await test('SAF-style local file import adopts LF and rejects invalid UTF8 without replacing source', async ({ page }) => {
+    await start(page);
+    const raw = 'A  file.\r\n😀 Next line.\rLast.';
+    await page.getByLabel('Import source file').setInputFiles({ name: 'note.md', mimeType: 'text/markdown', buffer: Buffer.from(raw) });
+    await page.getByText('Source imported into this draft.', { exact: false }).waitFor();
+    assert.equal(await source(page).inputValue(), raw.replace(/\r\n?/g, '\n'));
+    assert.equal(await page.getByRole('combobox', { name: 'Source format' }).inputValue(), 'markdown');
+    page.once('dialog', dialog => dialog.accept());
+    await page.getByLabel('Import source file').setInputFiles({ name: 'bad.txt', mimeType: 'text/plain', buffer: Buffer.from([0xc3, 0x28]) });
+    await page.getByText('This file could not be imported.', { exact: false }).waitFor();
+    assert.equal(await source(page).inputValue(), raw.replace(/\r\n?/g, '\n'));
+  });
+
+  const mockBase = 'https://backend.nexwrite.test';
+  const fixtureHeaders = { 'access-control-allow-origin': origin, 'access-control-allow-headers': 'authorization,content-type', 'access-control-allow-methods': 'GET,POST,OPTIONS' };
+  const mockProfile = { protocol_version: 1, version: 'contract-fixture', engine: { available: true, rule_count: 1, locales: ['en-US'], input_formats: ['plain', 'markdown'] }, tasks: ['rewrite', 'summarize', 'compose'], providers: [{ id: 'openai', label: 'Contract test provider', configured: true, models: ['contract-model'] }], accounts: false, cloud_docs: false, auth_required: true };
+  async function connectFixture(page) {
+    await page.route(`${mockBase}/v1/capabilities`, route => route.fulfill({ headers: fixtureHeaders, ...(route.request().method() === 'OPTIONS' ? { status: 204, body: '' } : { json: mockProfile }) }));
+    await navigate(page, 'Settings');
+    await page.getByRole('textbox', { name: 'Backend HTTPS address' }).fill(mockBase);
+    await page.getByLabel('Backend access token').fill('browser-contract-token');
+    await page.getByRole('button', { name: 'Connect backend', exact: true }).click();
+    await page.getByTestId('connection-status').filter({ hasText: 'Connected to backend.nexwrite.test' }).waitFor();
+    await navigate(page, 'Assist');
+  }
+  const fixtureResponse = (request, replacement = 'A proposed change 😀.') => ({ request_id: '860ff713-a57c-4ab6-85be-a54b1079582d', doc_version: request.doc_version, provider: request.provider, model: request.model, task: request.task, preset: request.preset, original: request.text, replacement, warnings: ['Local protocol fixture; no live provider was called.'] });
+
+  await test('optional AI starts unconfigured and no text request occurs without explicit consent', async ({ page }) => {
+    const sent = [];
+    page.on('request', request => { if (request.method() === 'POST') sent.push(request.url()); });
+    await start(page); await source(page).fill('Private writing.');
+    await navigate(page, 'Assist');
+    await page.getByRole('button', { name: 'Set up AI connection' }).waitFor();
+    assert.deepEqual(sent, []);
+    await connectFixture(page);
+    assert.equal(await page.getByRole('button', { name: 'Send AI request' }).isDisabled(), true);
+    assert.equal(await page.getByTestId('ai-source-preview').innerText(), 'Private writing.');
+    assert.deepEqual(sent, []);
+    assert.equal(await page.evaluate(() => Object.values(localStorage).some(value => value.includes('browser-contract-token'))), false);
+    await scan(page, 'AI consent with configured protocol fixture');
+  });
+
+  await test('AI protocol fixture Apply/Undo preserves Unicode, literal text, consent and provenance', async ({ page }) => {
+    let submitted;
+    await start(page);
+    const original = 'My source 😀.';
+    const replacement = '<script>literal, never executed</script> 😀';
+    await source(page).fill(original);
+    await connectFixture(page);
+    await page.route(`${mockBase}/v1/rewrite`, async route => { if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers: fixtureHeaders, body: '' }); return; } submitted = route.request().postDataJSON(); await route.fulfill({ headers: fixtureHeaders, json: fixtureResponse(submitted, replacement) }); });
+    await page.getByRole('checkbox', { name: 'I agree to send this text' }).check();
+    await page.getByRole('button', { name: 'Send AI request' }).click();
+    await page.getByTestId('ai-proposal').waitFor();
+    await page.screenshot({ path: path.join(output, 'assist.png'), fullPage: true });
+    assert.equal(submitted.text, original); assert.equal(submitted.cloud_consent, true);
+    assert.equal(await page.getByRole('checkbox', { name: 'I agree to send this text' }).isChecked(), false);
+    await page.getByRole('button', { name: 'Apply AI proposal', exact: true }).click();
+    assert.equal(await source(page).inputValue(), replacement);
+    assert.equal(await page.locator('main script').count(), 0);
+    await page.getByTestId('ai-provenance').filter({ hasText: 'openai / contract-model' }).waitFor();
+    await page.getByRole('button', { name: 'Undo accept' }).click();
+    assert.equal(await source(page).inputValue(), original);
+  });
+
+  await test('AI protocol fixture rejects stale Apply and cancellation leaves the source unchanged', async ({ page }) => {
+    let waiting;
+    await start(page); await source(page).fill('Original draft.'); await connectFixture(page);
+    await page.route(`${mockBase}/v1/rewrite`, async route => { if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers: fixtureHeaders, body: '' }); return; } const request = route.request().postDataJSON(); await new Promise(resolve => { waiting = () => resolve(route.fulfill({ headers: fixtureHeaders, json: fixtureResponse(request) }).catch(() => {})); }); });
+    await page.getByRole('checkbox', { name: 'I agree to send this text' }).check();
+    await page.getByRole('button', { name: 'Send AI request' }).click();
+    await page.waitForFunction(() => document.querySelector('[data-testid="ai-status"]').textContent.includes('Waiting'));
+    while (!waiting) await page.waitForTimeout(20);
+    await navigate(page, 'Write'); await source(page).fill('A newer draft.');
+    await waiting(); await navigate(page, 'Assist');
+    await page.getByTestId('ai-proposal').waitFor();
+    assert.equal(await page.getByRole('button', { name: 'Apply AI proposal' }).isDisabled(), true);
+    waiting = null;
+    await page.getByRole('checkbox', { name: 'I agree to send this text' }).check();
+    await page.getByRole('button', { name: 'Send AI request' }).click();
+    while (!waiting) await page.waitForTimeout(20);
+    await page.getByRole('button', { name: 'Cancel AI request' }).click();
+    await waiting();
+    await page.getByTestId('ai-status').filter({ hasText: 'cancelled' }).waitFor();
+    assert.equal(await page.getByTestId('ai-proposal').count(), 0);
+    await navigate(page, 'Write'); assert.equal(await source(page).inputValue(), 'A newer draft.');
+  });
+
+  await test('AI rate-limit and mismatched-response protocol fixtures never change the source', async ({ page }) => {
+    await start(page); await source(page).fill('A protected draft.'); await connectFixture(page);
+    let attempt = 0;
+    await page.route(`${mockBase}/v1/rewrite`, async route => {
+      if (route.request().method() === 'OPTIONS') { await route.fulfill({ status: 204, headers: fixtureHeaders, body: '' }); return; }
+      const request = route.request().postDataJSON();
+      if (attempt++ === 0) await route.fulfill({ status: 429, headers: fixtureHeaders, json: { title: 'Rate limited' } });
+      else await route.fulfill({ headers: fixtureHeaders, json: { ...fixtureResponse(request), doc_version: request.doc_version + 1 } });
+    });
+    await page.getByRole('checkbox', { name: 'I agree to send this text' }).check();
+    await page.getByRole('button', { name: 'Send AI request' }).click();
+    await page.getByTestId('ai-status').filter({ hasText: 'The backend is busy' }).waitFor();
+    await page.getByRole('checkbox', { name: 'I agree to send this text' }).check();
+    await page.getByRole('button', { name: 'Send AI request' }).click();
+    await page.getByTestId('ai-status').filter({ hasText: 'does not match this request' }).waitFor();
+    assert.equal(await page.getByTestId('ai-proposal').count(), 0);
+    await navigate(page, 'Write'); assert.equal(await source(page).inputValue(), 'A protected draft.');
+  });
+
+  await test('offline static shell restores only explicitly saved local documents and never caches API data', async ({ page, context }) => {
+    await start(page);
+    await source(page).fill('An offline note 😀.');
+    await page.getByRole('textbox', { name: 'Document title' }).fill('Offline note');
+    await page.getByRole('button', { name: 'Save document', exact: true }).click();
+    await page.getByTestId('document-save-state').filter({ hasText: 'Saved in this browser' }).waitFor();
+    await page.evaluate(async () => { await navigator.serviceWorker.ready; if (!navigator.serviceWorker.controller) await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true })); });
+    const cached = await page.evaluate(async () => (await Promise.all((await caches.keys()).filter(key => key.startsWith('nexwrite-shell-')).map(async key => (await (await caches.open(key)).keys()).map(request => new URL(request.url).pathname)))).flat());
+    assert.ok(cached.some(url => url.endsWith('.wasm')));
+    assert.ok(cached.includes('/index.html'));
+    assert.ok(cached.every(url => !url.includes('/v1/') && !url.includes('document') && !url.includes('token')));
+    await context.setOffline(true); await page.reload(); await checked(page, 0);
+    await navigate(page, 'Library'); await page.getByRole('heading', { name: 'Offline note', exact: true }).click();
+    await checked(page, 3);
+    assert.equal(await source(page).inputValue(), 'An offline note 😀.');
+    await page.getByText('Offline · local tools ready').waitFor();
+  }, { serviceWorkers: 'allow' });
+
   await test('320px keyboard, light/dark, reduced motion and forced colors remain operable', async ({ page }) => {
     await start(page);
     await noOverflow(page);
@@ -376,7 +568,9 @@ try {
     await source(page).fill('A  little space.');
     await page.getByRole('button', { name: 'Accept suggestion' }).waitFor();
     await scan(page, '320px dark suggestion');
+    await navigate(page, 'Settings');
     await page.getByRole('combobox', { name: 'Appearance' }).selectOption('light');
+    await navigate(page, 'Write');
     await scan(page, '320px light suggestion');
     await noOverflow(page);
     await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });

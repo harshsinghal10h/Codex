@@ -42,12 +42,25 @@ for (const [name, filename] of licenses) {
   const dependencyRequire = name === 'scheduler' ? createRequire(require.resolve('react-dom/package.json')) : require;
   await copyFile(path.join(path.dirname(dependencyRequire.resolve(`${name}/package.json`)), 'LICENSE'), path.join(notices, filename));
 }
-const metadataRun = spawnSync('cargo', ['metadata', '--locked', '--offline', '--format-version', '1'], { cwd: root, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+const metadataRun = spawnSync('cargo', ['metadata', '--locked', '--offline', '--filter-platform', 'wasm32-unknown-unknown', '--format-version', '1'], { cwd: root, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 if (metadataRun.status !== 0) throw new Error('Unable to collect locked engine dependency notices.');
 const metadata = JSON.parse(metadataRun.stdout);
-const registryPackages = metadata.packages.filter((dependency) => dependency.source?.startsWith('registry+'))
+// Walk this artifact's production/build graph. Other workspace surfaces (e.g.
+// JNI) are not linked into WASM and must not be advertised as its dependencies.
+const nodes = new Map(metadata.resolve.nodes.map((node) => [node.id, node]));
+const reachable = new Set();
+const pending = [metadata.packages.find((dependency) => dependency.name === 'nw-wasm')?.id];
+while (pending.length) {
+  const id = pending.pop();
+  if (!id || reachable.has(id)) continue;
+  reachable.add(id);
+  const node = nodes.get(id);
+  if (!node) throw new Error('Incomplete WASM dependency graph.');
+  for (const dependency of node.deps) if (dependency.dep_kinds.some((item) => item.kind !== 'dev')) pending.push(dependency.pkg);
+}
+const registryPackages = metadata.packages.filter((dependency) => reachable.has(dependency.id) && dependency.source?.startsWith('registry+'))
   .sort((a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
-const engineNotices = ['NexWrite engine — locked registry dependency notices\nConservative workspace registry superset; includes build-time dependencies.\n'];
+const engineNotices = ['NexWrite WASM engine — locked registry dependency notices\nProduction and build graph for wasm32-unknown-unknown; includes build-time dependencies.\n'];
 for (const dependency of registryPackages) {
   const directory = path.dirname(dependency.manifest_path);
   const licenseFiles = (await readdir(directory)).filter((filename) => /^(license|copying|notice)([._-]|$)/i.test(filename));

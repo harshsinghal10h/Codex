@@ -1,0 +1,12 @@
+{
+  "name": "NexWrite",
+  "short_name": "NexWrite",
+  "description": "Local writing, saved documents, and optional connected AI.",
+  "id": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0D10",
+  "theme_color": "#0B0D10",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }],
+  "x-spdx": "SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary"
+}
