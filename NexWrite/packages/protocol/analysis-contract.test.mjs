@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, rm } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 
 const suggestionSchema = JSON.parse(await readFile(new URL('./schema/suggestion.schema.json', import.meta.url), 'utf8'));
@@ -106,4 +110,76 @@ test('analysis schema rejects missing, extra, invalid, nullable and nonfinite wi
     const malformed = structuredClone(fixture()); corrupt(malformed);
     assert.equal(validate(malformed), false, 'schema accepted malformed analysis');
   }
+});
+
+test('real CLI analysis validates against the canonical registry and retains exact source coordinates', async () => {
+  const validate = validator();
+  const directory = await mkdtemp(resolve(tmpdir(), 'nw-analysis-contract-'));
+  const run = (...args) => {
+    const result = spawnSync('cargo', ['run', '--quiet', '--locked', '-p', 'nw-cli', '--', ...args], {
+      cwd: fileURLToPath(new URL('../../', import.meta.url)), encoding: 'utf8', timeout: 180_000,
+    });
+    assert.equal(result.status, 0, result.error?.message ?? result.stderr);
+    return JSON.parse(result.stdout);
+  };
+  const samples = [
+    { text: '😀 Hi  café.', input_format: 'plain', tokens: fixture().tokens, suggestions: [space], protected_regions: [] },
+    {
+      text: '😀 Hi  café.\n\n`ignore  this`', input_format: 'markdown', tokens: fixture().tokens,
+      suggestions: [space], protected_regions: [{ kind: 'code', span: { utf8: [17, 31], utf16: [14, 28], scalar: [13, 27] } }],
+    },
+    {
+      text: '  e\u0301  שלום\r\nA  123.', input_format: 'plain', protected_regions: [],
+      tokens: [
+        { kind: 'word', span: { utf8: [2, 5], utf16: [2, 4], scalar: [2, 4] } },
+        { kind: 'word', span: { utf8: [7, 15], utf16: [6, 10], scalar: [6, 10] } },
+        { kind: 'word', span: { utf8: [17, 18], utf16: [12, 13], scalar: [12, 13] } },
+        { kind: 'word', span: { utf8: [20, 23], utf16: [15, 18], scalar: [15, 18] } },
+      ],
+      suggestions: [
+        { utf8: [0, 2], utf16: [0, 2], scalar: [0, 2] },
+        { utf8: [5, 7], utf16: [4, 6], scalar: [4, 6] },
+        { utf8: [18, 20], utf16: [13, 15], scalar: [13, 15] },
+      ],
+    },
+  ];
+  try {
+    assert.deepEqual(run('schema', 'analysis'), analysisSchema);
+    for (const [index, sample] of samples.entries()) {
+      const input = resolve(directory, `sample-${index}.txt`);
+      await writeFile(input, sample.text);
+      const args = ['analyze', input, '--format', 'json', '--doc-version', '42', '--locale', 'en-US'];
+      // Exercise both the default plain format and explicit Markdown dispatch.
+      if (sample.input_format === 'markdown') args.push('--input-format', 'markdown');
+      const report = run(...args);
+      assert.equal(validate(report), true, JSON.stringify(validate.errors));
+      assert.equal(report.doc_version, 42);
+      assert.equal(report.locale, 'en-US');
+      assert.equal(report.input_format, sample.input_format);
+      assert.deepEqual(report.tokens, sample.tokens);
+      assert.deepEqual(report.protected_regions, sample.protected_regions);
+      assert.deepEqual(report.suggestions.map(suggestion => suggestion.span), sample.suggestions);
+      assert.equal(report.metrics.word_count, sample.tokens.length);
+      assert.equal(report.metrics.source_utf8_bytes, Buffer.byteLength(sample.text));
+      assert.equal(report.metrics.source_utf16_units, sample.text.length);
+      assert.equal(report.metrics.source_scalar_count, [...sample.text].length);
+      const spans = [...report.prose_regions, ...report.sentences, ...report.paragraphs,
+        ...report.tokens.map(token => token.span), ...report.protected_regions.map(region => region.span),
+        ...report.suggestions.map(suggestion => suggestion.span)];
+      for (const span of spans) {
+        const bytes = Buffer.from(sample.text).subarray(...span.utf8).toString('utf8');
+        assert.equal(bytes, sample.text.slice(...span.utf16));
+        assert.equal(bytes, [...sample.text].slice(...span.scalar).join(''));
+      }
+      for (const suggestion of report.suggestions) {
+        assert.equal(sample.text.slice(...suggestion.span.utf16), suggestion.original);
+        assert.equal(suggestion.doc_version, report.doc_version);
+      }
+      if (sample.input_format === 'markdown') {
+        assert.deepEqual(report.prose_regions, [whole]);
+        assert.equal(report.metrics.analyzed_scalar_count, 11);
+        assert.ok(report.metrics.warnings.includes('incomplete_readability_projection'));
+      }
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
 });

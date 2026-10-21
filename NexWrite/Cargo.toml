@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
 [workspace]
-members = ["core/text", "core/schema", "core/rules", "core/engine", "core/cli", "core/wasm"]
+members = ["core/text", "core/schema", "core/rules", "core/structure", "core/score", "core/engine", "core/cli", "core/wasm"]
 resolver = "2"
 
 [workspace.package]
@@ -16,11 +16,14 @@ serde_json = "1"
 regex = "1"
 serde-saphyr = { version = "=2.0.0", default-features = false, features = ["deserialize"] }
 unicode-segmentation = "1"
+pulldown-cmark = { version = "=0.13.4", default-features = false }
 wasm-bindgen = "=0.2.129"
 nw-schema = { path = "core/schema", version = "=0.1.0" }
 nw-text = { path = "core/text", version = "=0.1.0" }
 nw-rules = { path = "core/rules", version = "=0.1.0" }
 nw-engine = { path = "core/engine", version = "=0.1.0" }
+nw-structure = { path = "core/structure", version = "=0.1.0" }
+nw-metrics = { path = "core/score", version = "=0.1.0" }
 
 [profile.release]
 lto = true

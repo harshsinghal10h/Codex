@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+[package]
+name = "nw-structure"
+version.workspace = true
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+
+[dependencies]
+nw-schema.workspace = true
+nw-text.workspace = true
+pulldown-cmark.workspace = true

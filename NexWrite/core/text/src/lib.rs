@@ -3,6 +3,9 @@
 use nw_schema::Span;
 use unicode_segmentation::UnicodeSegmentation;
 
+mod segment;
+pub use segment::{Segmentation, Segments, segment};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OffsetError {
     InvalidUtf8,

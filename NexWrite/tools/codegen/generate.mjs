@@ -19,7 +19,7 @@ const pascal = value => value.split('_').map(part => part[0].toUpperCase() + par
 const numberNames = { 1: 'One', 2: 'Two', 3: 'Three' };
 const fail = message => { throw new Error(`Unsupported schema: ${message}`); };
 const entries = Object.entries;
-const definitions = {};
+const definitions = Object.create(null);
 const owners = new WeakMap();
 function own(node, schema) {
   if (!node || typeof node !== 'object') return;

@@ -10,6 +10,8 @@ publish.workspace = true
 nw-text.workspace = true
 nw-schema.workspace = true
 nw-rules.workspace = true
+nw-structure.workspace = true
+nw-metrics.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true

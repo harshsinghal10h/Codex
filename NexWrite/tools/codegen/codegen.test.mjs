@@ -53,6 +53,7 @@ test('schema generator detects drift and rejects unsupported or ambiguous contra
       schema => { schema.title = 'Suggestion'; },
       schema => { schema.$defs.MetricScore.properties.value = { $ref: 'analysis.schema.json' }; },
       schema => { schema.$defs.Token.$id = 'https://unregistered.example/token'; },
+      schema => { Object.defineProperty(schema.$defs, '__proto__', { value: { type: 'unknown_unsupported' }, enumerable: true }); },
       schema => { schema.$defs.TextMetrics.properties.warnings.items.type = ['string', 'null']; },
     ]) {
       const schema = JSON.parse(analysisCanonical); change(schema);

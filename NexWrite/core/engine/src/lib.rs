@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
-//! Deterministic, local-only plain-text bootstrap analysis. No I/O or networking.
+//! Deterministic local analysis of original source. No I/O, networking, or edits.
 use nw_rules::{BUNDLED_RULE, Rule};
 use nw_schema::{
-    Explanation, Flags, Replacement, ReplacementKind, Source, Suggestion, TelemetryClass,
+    AnalysisResult, Explanation, Flags, InputFormat, Replacement, ReplacementKind, Source, Span,
+    Suggestion, TelemetryClass,
 };
 use nw_text::TextOffsets;
 
 pub struct Engine {
     rule: Rule,
 }
+
+pub const MAX_ANALYSIS_UTF8_BYTES: usize = 1_048_576;
+
 impl Engine {
     pub fn new() -> Result<Self, String> {
         Rule::compile(BUNDLED_RULE).map(|rule| Self { rule })
@@ -29,11 +33,74 @@ impl Engine {
         if text.len() > u32::MAX as usize {
             return Err("document exceeds portable offset limit".into());
         }
+        self.suggestions(text, doc_version, locale, None)
+    }
+
+    /// Source-oriented analysis is additive: legacy `check` never applies protection.
+    pub fn analyze(
+        &self,
+        text: &str,
+        doc_version: u64,
+        locale: &str,
+        input_format: InputFormat,
+    ) -> Result<AnalysisResult, String> {
+        if text.len() > MAX_ANALYSIS_UTF8_BYTES {
+            return Err("analysis input exceeds 1048576 UTF-8 byte limit".into());
+        }
+        if doc_version > 9_007_199_254_740_991 {
+            return Err("document version exceeds portable safe-integer limit".into());
+        }
+        if locale != "en-US" {
+            return Err("analysis supports en-US only".into());
+        }
+        let projection = nw_structure::project(text, input_format)?;
+        let segments = nw_text::segment(text, &projection.prose_regions)?;
+        let metrics = nw_metrics::measure(nw_metrics::MetricInput {
+            text,
+            prose_regions: &projection.prose_regions,
+            tokens: &segments.tokens,
+            sentences: &segments.sentences,
+            paragraphs: &segments.paragraphs,
+            input_format,
+            incomplete_projection: !projection.protected_regions.is_empty(),
+            projection_warnings: &projection.warnings,
+        })?;
+        let suggestions =
+            self.suggestions(text, doc_version, locale, Some(&projection.prose_regions))?;
+        Ok(AnalysisResult {
+            doc_version,
+            locale: locale.into(),
+            input_format,
+            prose_regions: projection.prose_regions,
+            protected_regions: projection.protected_regions,
+            tokens: segments.tokens,
+            sentences: segments.sentences,
+            paragraphs: segments.paragraphs,
+            metrics,
+            suggestions,
+        })
+    }
+
+    fn suggestions(
+        &self,
+        text: &str,
+        doc_version: u64,
+        locale: &str,
+        prose: Option<&[Span]>,
+    ) -> Result<Vec<Suggestion>, String> {
         let offsets = TextOffsets::new(text);
         let rule = &self.rule.definition;
         self.rule
             .ranges(text)
             .into_iter()
+            .filter(|[start, end]| {
+                prose.is_none_or(|regions| {
+                    let index = regions.partition_point(|region| region.utf8[1] <= *start);
+                    regions
+                        .get(index)
+                        .is_some_and(|region| region.utf8[0] <= *start && *end <= region.utf8[1])
+                })
+            })
             .map(|[start, end]| {
                 let span = offsets
                     .from_utf8([start, end])

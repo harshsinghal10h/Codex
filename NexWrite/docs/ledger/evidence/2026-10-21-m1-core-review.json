@@ -1,0 +1,116 @@
+{
+  "scope": "independent original-source core review",
+  "seed": 20261020,
+  "generated_cases": 400,
+  "regressions": [
+    {
+      "case": "duplicate_multiline_definition_0",
+      "result": "PASS"
+    },
+    {
+      "case": "duplicate_multiline_definition_1",
+      "result": "PASS"
+    },
+    {
+      "case": "duplicate_multiline_definition_2",
+      "result": "PASS"
+    },
+    {
+      "case": "malformed_parser_html_warning",
+      "result": "PASS"
+    }
+  ],
+  "performance": [
+    {
+      "case": "unclosed_brackets",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.176,
+      "max_rss_kib": 110660,
+      "stderr": ""
+    },
+    {
+      "case": "balanced_brackets",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.214,
+      "max_rss_kib": 88896,
+      "stderr": ""
+    },
+    {
+      "case": "many_links",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.46,
+      "max_rss_kib": 69828,
+      "stderr": ""
+    },
+    {
+      "case": "many_inline_code",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.844,
+      "max_rss_kib": 90696,
+      "stderr": ""
+    },
+    {
+      "case": "many_entities",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.667,
+      "max_rss_kib": 74624,
+      "stderr": ""
+    },
+    {
+      "case": "many_headings",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 1.315,
+      "max_rss_kib": 202984,
+      "stderr": ""
+    },
+    {
+      "case": "plain_words",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 0.568,
+      "max_rss_kib": 94672,
+      "stderr": ""
+    },
+    {
+      "case": "dense_suggestions",
+      "source_utf8_bytes": 1048576,
+      "exit": 0,
+      "wall_s": 2.525,
+      "max_rss_kib": 587492,
+      "stderr": ""
+    },
+    {
+      "case": "html_suffix_scan_128k",
+      "source_utf8_bytes": 131072,
+      "exit": 0,
+      "wall_s": 0.049,
+      "max_rss_kib": 11336,
+      "stderr": ""
+    },
+    {
+      "case": "html_suffix_scan_512k",
+      "source_utf8_bytes": 524288,
+      "exit": 0,
+      "wall_s": 0.206,
+      "max_rss_kib": 36292,
+      "stderr": ""
+    },
+    {
+      "case": "html_suffix_scan_1m",
+      "source_utf8_bytes": 1048574,
+      "exit": 0,
+      "wall_s": 0.573,
+      "max_rss_kib": 69984,
+      "stderr": ""
+    }
+  ],
+  "errors": [],
+  "generated_coordinates_and_containment": "PASS",
+  "result": "PASS"
+}
