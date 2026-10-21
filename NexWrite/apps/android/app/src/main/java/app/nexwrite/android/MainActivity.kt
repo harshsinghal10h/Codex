@@ -19,6 +19,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
@@ -75,10 +76,12 @@ private fun WritingApp(model: WritingModel) {
                 .onSuccess { model.receive(it) }.onFailure { model.message("Could not import. Choose a UTF-8 text file of at most 64 KiB.") }
         }
     }
-    var exportSource by remember { mutableStateOf("") }
+    var exportSource by rememberSaveable { mutableStateOf("") }
     val export = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
+        val snapshot = exportSource
+        exportSource = ""
         if (uri != null) scope.launch {
-            runCatching { withContext(Dispatchers.IO) { context.contentResolver.openOutputStream(uri)?.use { it.write(exportSource.toByteArray(Charsets.UTF_8)) } ?: error("Unwritable") } }
+            runCatching { withContext(Dispatchers.IO) { context.contentResolver.openOutputStream(uri)?.use { it.write(snapshot.toByteArray(Charsets.UTF_8)) } ?: error("Unwritable") } }
                 .onSuccess { model.message("Exported source.") }.onFailure { model.message("Export failed. Your source is still in the editor.") }
         }
     }

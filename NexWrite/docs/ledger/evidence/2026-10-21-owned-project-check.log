@@ -1,0 +1,6 @@
+Generated bindings match canonical schema.
+API contract artifacts match.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: passed
+license-check: passed

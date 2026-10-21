@@ -1,6 +1,29 @@
 <!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
 # Evidence index and reporting contract
 
+## Owned application preview (2026-10-21)
+
+These are observed local results, separate from immutable release APK and CI
+results attached to the owned GitHub release. No row is promoted to verified.
+
+| ID | Kind | Record and bounded result |
+| --- | --- | --- |
+| EV-20261021-APP-01 | local | evidence/2026-10-21-owned-project-check.log: canonical/API/token generation, ledger, provenance and declared license gates pass |
+| EV-20261021-APP-02 | local | evidence/2026-10-21-owned-node-tests.log: 92 tests pass, 0 fail/skip; includes 8 service and 5 notice groups |
+| EV-20261021-APP-03 | local | evidence/2026-10-21-owned-rust-tests.log: 54 Rust tests pass; host JVM bridge smoke is recorded by the release coordinator separately |
+| EV-20261021-APP-04 | local | evidence/2026-10-21-owned-browser.json: 26 actual production Chromium cases pass; 4 axe states have zero violations. AI fixtures are protocol simulations |
+| EV-20261021-APP-05 | local | evidence/2026-10-21-owned-api-tests.log and owned-api-container.json: actual service tests/Rust parity, real restricted container/auth/unconfigured-provider states pass; no public hosting/live-provider evidence |
+| EV-20261021-APP-06 | local | evidence/2026-10-21-owned-apktool-build.json: uploaded Apache-2.0 source built, version/help and 173 library tests pass; own APK inspection is separate |
+| EV-20261021-APP-07 | local artifact | evidence/2026-10-21-owned-android-release-local.log: release build, lint and 7 JVM tests pass. The signed APK SHA-256 is `6302b4e4ee4c8ffc317554e49bf23ca09467f4ee9be60b1daa2d3bdb398fc591`; it verifies with APK Signature Schemes v2 and v3 and has a 16 KiB-aligned ZIP layout. No emulator or physical-device pass is asserted. |
+| EV-20261021-APP-08 | local own-artifact audit | evidence/2026-10-21-owned-android-apktool-audit.json records uploaded-source Apktool decoding/rebuilding an unsigned inspection copy while preserving dex/native bytes; evidence/2026-10-21-owned-android-rea-audit.json records JADX/REA manifest inspection. Both confirm `app.nexwrite.android`, minSdk 26, targetSdk 36, and only `INTERNET` plus Android's generated signature permission. They are static inspection, not a comprehensive security, privacy, or device test. |
+
+Baseline CI https://github.com/harshsinghal10h/Codex/actions/runs/39550056484
+passed Linux, Windows, WASM and supply-chain jobs and failed browser/macOS jobs.
+Managed-policy log/artifact redirect denials prevented reading their full logs.
+New workflows expose bounded failure annotations and add actual Android emulator
+tests. Use the actual release run's conclusions, never substitute these local
+records or configured test sources for a CI/device pass.
+
 IDs have the stable form `EV-YYYYMMDD-NNN` and are never reused. Each record states observation, derivation, inference or unknown; source kind, exact command/artifact hash, date, environment/tool versions, exit status, result and limits. Preserve meaningful outputs under evidence/. Text fixtures are synthetic/original; never store user document content or credentials. Record real failures. Truncated, skipped and simulated output remains visibly limited.
 
 ## Kinds and verification

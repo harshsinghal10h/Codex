@@ -36,3 +36,25 @@ No new external illustration, logo or icon package is introduced by this M1 slic
 | Tracked asset | Author / source | License | Review / distribution |
 | --- | --- | --- | --- |
 | apps/web/public/favicon.svg | Original NexWrite project mark drawn in this implementation, 2026-10-20; no external asset source | LicenseRef-NexWrite-Proprietary | First-party local demo favicon; SHA-256 `6fe4852dec73dffba2ab0e3c168e9a603de347089db0f0921ad3eb9feba1ef5a`; mark/name clearance remains UNK-BOOT-03 |
+
+## Owned Android preview assets (2026-10-21)
+
+The Android launcher vector is original project artwork, drawn as XML geometry
+from NexWrite's existing palette and lettering. No ClearPDF logo, launcher icon,
+screenshot, PDF illustration, font, CSS or other source asset is imported. Its
+licensed source informed high-level grouping/navigation only, as recorded in
+THIRD_PARTY.md and the analyst specification. Android uses platform typefaces;
+the web's already licensed self-hosted font packages remain a separate surface.
+
+| Tracked asset | Author / source | License | Review / distribution |
+| --- | --- | --- | --- |
+| apps/android/app/src/main/res/drawable/ic_nexwrite.xml | Original NexWrite vector geometry authored in this implementation, 2026-10-21; no external asset source | LicenseRef-NexWrite-Proprietary | Owned Android launcher mark; SHA-256 `aca5fc168598db2cbf4feab80febe1511f2cfc01c01c7a49a1131058f4b1b78b`; provisional name/mark clearance remains UNK-BOOT-03 |
+
+The APK's generated `assets/notices/` files are unmodified upstream legal texts
+and generated inventory metadata, rather than first-party artwork or vendored
+implementation source. `tools/android-notices.mjs` packages them from installed
+locked Cargo packages, the Rust toolchain distribution and resolved Gradle
+artifacts/POMs. Their original third-party notices remain intact. Generated
+outputs live only under ignored `target/android-assets/notices/`; they are not
+relabeled as first-party proprietary content. Notice inventory gaps are retained
+explicitly and do not become complete legal-clearance claims.

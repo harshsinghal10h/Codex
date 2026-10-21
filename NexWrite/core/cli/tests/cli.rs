@@ -72,7 +72,7 @@ fn malformed_input_and_options_fail_without_echoing_text() {
 
 #[cfg(unix)]
 #[test]
-fn non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly() {
+fn native_paths_work_and_non_utf8_commands_or_options_fail_cleanly() {
     use std::{ffi::OsString, os::unix::ffi::OsStringExt};
     let mut path = std::env::temp_dir()
         .join(format!(
@@ -85,7 +85,12 @@ fn non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly() {
         ))
         .into_os_string()
         .into_vec();
-    path.push(0xff);
+    // APFS requires valid UTF-8 filenames; Linux filesystems also admit raw bytes.
+    if cfg!(target_os = "macos") {
+        path.extend_from_slice("é👩‍💻".as_bytes());
+    } else {
+        path.push(0xff);
+    }
     let path = OsString::from_vec(path);
     fs::write(&path, b"One  two").unwrap();
     let output = Command::new(env!("CARGO_BIN_EXE_nw"))

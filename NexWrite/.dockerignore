@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+**/node_modules
+**/target
+**/dist
+**/.git
+**/.gradle
+**/.kotlin
+**/.turbo
+**/build
+**/test-results
+**/coverage
+**/.env
+**/.env.*
+**/*.keystore
+**/*.jks
+**/*.log
+**/local.properties
+artifacts
+ci/reports

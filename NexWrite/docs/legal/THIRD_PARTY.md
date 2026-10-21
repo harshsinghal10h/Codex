@@ -192,3 +192,298 @@ Observed from actual installed package.json files after the M1 workspace install
 | typescript | 7.0.2 | Apache-2.0 |
 | undici-types | 7.24.6 | MIT |
 | vite | 8.3.4 | MIT |
+
+## Owned Android and backend intake (2026-10-21)
+
+This release work builds the operator's NexWrite application. It does not rename
+or redistribute another project's APK. The observations below are installed
+source/metadata/license-text intake, not complete license clearance, an exact
+runtime-linkage SBOM, or device/CI verification. Historical snapshots above remain
+unchanged. The current locked metadata includes **68 Cargo registry packages**;
+the current Linux pnpm installation has **83 package/version entries**.
+
+| Source/tool reference | Observed provenance | Distribution boundary |
+| --- | --- | --- |
+| ClearPDF licensed source | https://github.com/Chethan616/ClearPDF at `7e00db1dd65fea94256afcf95b04ed53b3c71f30`; root MIT license, copyright 2026 Chethan616; LICENSE SHA-256 `a03f3574b14dc58163947d66e2b82719cbc89888f87936dbe69ec7a47c392f17` | E3 reference for grouped cards/navigation organization. No source, styles, strings, logos, screenshots or other assets copied into NexWrite. Its package identity, PDFs and upstream APK are not NexWrite deliverables. |
+| Operator-supplied Apktool-main.zip | Archive SHA-256 `18d93873f4e4d4b220dd47e55f866b0c245340064afb613eacba6e8dd753dd2b`; 611 entries, 57,111,913 uncompressed bytes; no traversal paths/symlinks or SKILL.md observed; top-level Apache-2.0 LICENSE.md SHA-256 `c49c53fdc79e1143a1892eb7333b595eecdbe40623e72be325267db28cb72114` | External development/audit source, not an Android skill package. Reviewed Gradle source build produced actual CLI reporting `3.1.0-dirty`; tool used only against owned NexWrite artifacts. Neither its sources/dependencies nor its executable are bundled in the APK or tracked repository. Apache-2.0 at the archive root does not clear every tool dependency. |
+| Gradle 9.3.0 distribution | Official distribution SHA-256 pin `0d585f69da091fc5b2beced877feab55a3064d43b8a1d46aeb07996b0915e0e0`; original bootstrap downloads and verifies into ignored build cache | Development build tool, no wrapper JAR or Gradle binary tracked/shipped in product. Android SDK/NDK/JDK remain installed external toolchains with their own terms/notices. |
+
+### JNI dependency additions
+
+`jni` is pinned to 0.21.1 with default features disabled. The exact installed
+`LICENSE-MIT`/`LICENSE-APACHE` texts were inspected; JNI is a reviewed JSON boundary,
+not a claim that UniFFI was implemented. The following 25 registry package/version
+additions are relative to the prior 43-package snapshot, including platform and
+build-time dependencies that need not be linked into the Android APK. Origin for
+each is its locked crates.io package and repository declared in its Cargo manifest.
+
+| Package | Locked version | Actual declared license | Installed notice files |
+| --- | --- | --- | --- |
+| bytes | 1.12.1 | MIT | LICENSE |
+| cesu8 | 1.1.0 | Apache-2.0/MIT | COPYRIGHT-RUST.txt |
+| combine | 4.6.9 | MIT | LICENSE |
+| jni | 0.21.1 | MIT/Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| jni-sys | 0.3.1 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| jni-sys | 0.4.1 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| jni-sys-macros | 0.4.1 | MIT OR Apache-2.0 | Declaration only; no complete notice text |
+| log | 0.4.34 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| same-file | 1.0.6 | Unlicense/MIT | COPYING, LICENSE-MIT |
+| syn | 2.0.119 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| thiserror | 1.0.69 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| thiserror-impl | 1.0.69 | MIT OR Apache-2.0 | LICENSE-APACHE, LICENSE-MIT |
+| walkdir | 2.5.0 | Unlicense/MIT | COPYING, LICENSE-MIT |
+| winapi-util | 0.1.11 | Unlicense OR MIT | COPYING, LICENSE-MIT |
+| windows-link | 0.2.1 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows-sys | 0.45.0 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows-sys | 0.61.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows-targets | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_aarch64_gnullvm | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_aarch64_msvc | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_i686_gnu | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_i686_msvc | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_x86_64_gnu | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_x86_64_gnullvm | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+| windows_x86_64_msvc | 0.42.2 | MIT OR Apache-2.0 | license-apache-2.0, license-mit |
+
+`MIT/Apache-2.0` and `Apache-2.0/MIT` are the known historical dual-choice spelling;
+they are preserved as observed and normalized narrowly to `MIT OR Apache-2.0` by
+the engineering gate. `same-file` 1.0.6 and `walkdir` 2.5.0 similarly declare
+`Unlicense/MIT`; their complete COPYING and MIT texts were inspected, including
+Andrew Gallant's 2017 and 2015 copyright notices respectively. Only this exact
+known spelling is normalized to `Unlicense OR MIT`; arbitrary slash expressions
+remain unsupported. The installed `cesu8` attribution is COPYRIGHT-RUST.txt,
+which notice collectors must preserve along with its Rust/Eric Kidd attribution.
+
+Open notice-text gap: `jni-sys-macros` 0.4.1 declares MIT OR Apache-2.0 but its
+registry archive contains no complete LICENSE/NOTICE text. It is a proc-macro
+build tool, not a separately linked runtime library. The generated notice
+inventory reports this gap explicitly; metadata acceptance does not mean its
+source-distribution notice obligations have been closed.
+
+### Backend npm additions
+
+The actual `@nexwrite/api` manifest adds Fastify 5.12.7 (MIT), reuses AJV 8.20.0
+(MIT), and uses the shared first-party protocol package. These 43 newly installed
+Linux package/version entries are relative to the historical 40-entry snapshot.
+Each license below is from its installed package.json; listed notice files were
+present locally. Package repositories are recorded by those installed manifests
+and the npm registry package/version identifiers. Development/test-only and
+transitive packages are included conservatively; this table is not a runtime
+reachability proof. These Node dependencies are backend/build components and are
+not shipped inside the native APK.
+
+| Package | Installed version | Declared license | Installed notice files |
+| --- | --- | --- | --- |
+| @fastify/ajv-compiler | 4.0.7 | MIT | LICENSE |
+| @fastify/deepmerge | 3.2.2 | MIT | LICENSE |
+| @fastify/error | 4.2.1 | MIT | LICENSE |
+| @fastify/fast-json-stringify-compiler | 5.1.1 | MIT | LICENSE |
+| @fastify/forwarded | 3.1.1 | MIT | LICENSE |
+| @fastify/merge-json-schemas | 0.2.2 | MIT | LICENSE |
+| @fastify/proxy-addr | 5.1.2 | MIT | LICENSE |
+| @pinojs/redact | 0.4.0 | MIT | LICENSE |
+| abstract-logging | 2.0.1 | MIT | Metadata/README link only; no bundled full text |
+| ajv-formats | 3.0.1 | MIT | LICENSE |
+| atomic-sleep | 1.0.0 | MIT | LICENSE |
+| avvio | 9.3.1 | MIT | LICENSE |
+| cookie | 2.0.1 | MIT | LICENSE |
+| dequal | 2.0.3 | MIT | license |
+| fast-decode-uri-component | 1.0.1 | MIT | LICENSE |
+| fast-json-stringify | 7.1.2 | MIT | LICENSE |
+| fast-querystring | 1.1.2 | MIT | LICENSE |
+| fast-uri | 4.2.3 | BSD-3-Clause | LICENSE |
+| fastify | 5.12.7 | MIT | LICENSE |
+| fastq | 1.20.3 | ISC | LICENSE |
+| find-my-way | 9.10.0 | MIT | LICENSE |
+| ipaddr.js | 2.5.0 | MIT | LICENSE |
+| json-schema-ref-resolver | 3.0.1 | MIT | LICENSE |
+| light-my-request | 6.8.0 | BSD-3-Clause | LICENSE |
+| on-exit-leak-free | 2.1.2 | MIT | LICENSE |
+| pino | 10.4.0 | MIT | LICENSE |
+| pino-abstract-transport | 3.0.0 | MIT | LICENSE |
+| pino-std-serializers | 7.1.0 | MIT | LICENSE |
+| process-warning | 5.1.1 | MIT | LICENSE |
+| quick-format-unescaped | 4.0.4 | MIT | LICENSE |
+| real-require | 1.0.0 | MIT | LICENSE.md |
+| ret | 0.5.1 | MIT | LICENSE |
+| reusify | 1.1.0 | MIT | LICENSE |
+| rfdc | 1.4.1 | MIT | LICENSE |
+| safe-regex2 | 5.1.2 | MIT | LICENSE |
+| safe-stable-stringify | 2.5.0 | MIT | LICENSE |
+| secure-json-parse | 4.1.1 | BSD-3-Clause | LICENSE |
+| semver | 7.8.5 | ISC | LICENSE |
+| set-cookie-parser | 3.1.4 | MIT | LICENSE |
+| sonic-boom | 4.2.1 | MIT | LICENSE |
+| split2 | 4.2.0 | ISC | LICENSE |
+| thread-stream | 4.2.0 | MIT | LICENSE |
+| toad-cache | 3.7.4 | MIT | LICENSE |
+
+Open backend notice-text gap: `abstract-logging` 2.0.1 declares MIT and its README
+links to the author's MIT-license page, but its installed package contains no
+complete license/copyright text. Preserve package notices when distributing the
+backend and obtain a version-matched upstream notice before claiming complete
+backend distribution notice readiness. A permissive metadata result does not
+close this gap. API logging is disabled independently of this license inventory.
+
+### Android notice packaging
+
+`tools/android-notices.mjs` reads locked offline Cargo metadata, installed Rust
+library/toolchain notices, and the actual Gradle `releaseRuntimeClasspath`
+artifact inventory generated by `:app:runtimeComponentInventory`. It reads local
+POM license declarations and preserves embedded LICENSE/NOTICE/COPYRIGHT texts,
+including nested `classes.jar` notices, without extracting source or fetching
+reference URLs. Apache-declared Android dependencies lacking embedded license
+text are labelled distinctly and accompanied by the standard Apache-2.0 text
+from the installed Rust documentation. Other missing notices/POMs or unsupported
+inspection cases remain explicit gaps in `inventory.json`.
+
+The generated files live under ignored `target/android-assets/notices/` and are
+included through the native app's assets source directory. They include the
+combined `THIRD_PARTY_NOTICES.txt`, separate Rust engine/runtime/Android texts,
+file hashes and gap inventory. A successfully generated inventory is not complete
+legal clearance. `--require-complete` fails when any recorded gap remains. The
+combined native Settings viewer must expose the full generated text without
+silently truncating it. The Rust notice list is a conservative locked-workspace
+superset; toolchain license resources are also a distribution superset, not an
+assertion that all components mentioned in those notices are linked into the app.
+
+Do not infer a bundled SQLite native engine from a Room dependency alone. Any
+actual SQLite-bundled artifact must be reconciled separately, including its
+public-domain notice; use of Android framework SQLite does not redistribute the
+OS implementation. Final Gradle artifact counts/licenses and notice sizes are
+recorded only after actual dependency resolution and packaging below.
+
+### Actual resolved Android notice inventory (2026-10-21)
+
+Executed locally against `releaseRuntimeClasspath`: **92 Android artifacts** and
+**68 Rust registry packages**. License coverage observed for the Android artifacts:
+54 contain embedded notice texts, 37 use local POM Apache-2.0 declarations plus
+the packaged standard Apache text, and 1 uses a pinned exact upstream license.
+The remaining generated inventory gap is the build-only `jni-sys-macros` notice
+text described above. This does not establish a complete runtime reachability
+SBOM, legal clearance or absence of other release obligations.
+
+The Google Maven `datastore-preferences-external-protobuf` 1.1.7 jar declares
+BSD-3-Clause but omits the full notice. Its public RuntimeVersion constants were
+read as 4.28.2; the exact inspected jar SHA-256 is
+`fcb3f373cf743426c85ebb0d3cc644aefaf26f39b7fa55bb90238d41b689eca7`.
+The matching upstream Protobuf v28.2 LICENSE was retrieved from
+https://raw.githubusercontent.com/protocolbuffers/protobuf/v28.2/LICENSE,
+SHA-256 `6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d`,
+and preserves copyright 2008 Google Inc. and the complete BSD-3-Clause terms.
+The generator accepts this supplemental notice only for that exact artifact
+coordinate and checksum. `--fetch-license-inputs` optionally retrieves only this
+fixed legal text into ignored build inputs, retaining TLS/proxy/CA settings,
+a 64 KiB bound and the reviewed checksum. It never fetches arbitrary POM URLs.
+The published same-version sources jar was also inspected but was empty apart
+from its manifest; it supplied no license text and is not presented as proof of
+complete source reconciliation.
+
+`com.google.guava:listenablefuture` 1.0 inherits its Apache-2.0 declaration from
+the actually cached `guava-parent` 26.0-android POM; parent metadata is resolved
+locally with bounded depth and without remote entity/reference fetching.
+`androidx.sqlite:sqlite-android` and `sqlite-framework-android` are both 2.5.1;
+no sqlite-bundled artifact is present in this resolved release graph. The OS
+SQLite engine is not redistributed by including these framework wrappers.
+
+| Resolved Android coordinate | Version | Local declared license | Packaged notice coverage |
+| --- | --- | --- | --- |
+| androidx.activity:activity-compose | 1.12.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.activity:activity-ktx | 1.12.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.activity:activity | 1.12.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.annotation:annotation-experimental | 1.4.1 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.annotation:annotation-jvm | 1.9.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.arch.core:core-common | 2.2.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.arch.core:core-runtime | 2.2.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.autofill:autofill | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.collection:collection-jvm | 1.5.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.collection:collection-ktx | 1.5.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.animation:animation-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.animation:animation-core-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.foundation:foundation-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.foundation:foundation-layout-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.material:material-ripple-android | 1.8.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.material3:material3-android | 1.4.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.runtime:runtime-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.runtime:runtime-annotation-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.runtime:runtime-retain-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.runtime:runtime-saveable-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-geometry-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-graphics-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-text-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-tooling-preview-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-unit-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.compose.ui:ui-util-android | 1.10.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.concurrent:concurrent-futures | 1.1.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.core:core-ktx | 1.17.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.core:core-viewtree | 1.0.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.core:core | 1.17.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.core:core | 1.17.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.customview:customview-poolingcontainer | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-android | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-core-android | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-core-okio-jvm | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-preferences-android | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-preferences-core-android | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.datastore:datastore-preferences-external-protobuf | 1.1.7 | BSD-3-Clause | pinned-upstream-license-text |
+| androidx.datastore:datastore-preferences-proto | 1.1.7 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.documentfile:documentfile | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.dynamicanimation:dynamicanimation | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.emoji2:emoji2 | 1.4.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.graphics:graphics-path | 1.0.1 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.interpolator:interpolator | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.legacy:legacy-support-core-utils | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.lifecycle:lifecycle-common-java8 | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-common-jvm | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-livedata-core-ktx | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-livedata-core | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-livedata | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-process | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-runtime-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-runtime-compose-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-runtime-ktx-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-viewmodel-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-viewmodel-compose-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-viewmodel-ktx | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-viewmodel-savedstate-android | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.lifecycle:lifecycle-viewmodel | 2.9.4 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.loader:loader | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.localbroadcastmanager:localbroadcastmanager | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.navigationevent:navigationevent-android | 1.0.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.navigationevent:navigationevent-compose-android | 1.0.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.print:print | 1.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.profileinstaller:profileinstaller | 1.4.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.room:room-common-jvm | 2.7.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.room:room-runtime-android | 2.7.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.savedstate:savedstate-android | 1.3.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.savedstate:savedstate-compose-android | 1.3.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.savedstate:savedstate-ktx | 1.3.2 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.sqlite:sqlite-android | 2.5.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.sqlite:sqlite-framework-android | 2.5.1 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.startup:startup-runtime | 1.1.1 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.tracing:tracing | 1.2.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.transition:transition | 1.6.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.versionedparcelable:versionedparcelable | 1.1.1 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| androidx.window:window-core-android | 1.5.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| androidx.window:window | 1.5.0 | The Apache Software License, Version 2.0 | embedded-notice-texts |
+| com.google.guava:listenablefuture | 1.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| com.squareup.okio:okio-jvm | 3.4.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains:annotations | 23.0.0 | The Apache Software License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlin:kotlin-android-extensions-runtime | 1.9.22 | The Apache License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlin:kotlin-parcelize-runtime | 1.9.22 | The Apache License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlin:kotlin-stdlib-jdk7 | 1.8.0 | The Apache License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlin:kotlin-stdlib-jdk8 | 1.8.0 | The Apache License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlin:kotlin-stdlib | 2.3.0 | Apache-2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlinx:kotlinx-coroutines-android | 1.10.2 | Apache-2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm | 1.10.2 | Apache-2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlinx:kotlinx-serialization-core-jvm | 1.8.1 | Apache-2.0 | pom-declaration-and-standard-Apache-text |
+| org.jetbrains.kotlinx:kotlinx-serialization-json-jvm | 1.8.1 | Apache-2.0 | pom-declaration-and-standard-Apache-text |
+| org.jspecify:jspecify | 1.0.0 | The Apache License, Version 2.0 | pom-declaration-and-standard-Apache-text |
+
+The generated combined `THIRD_PARTY_NOTICES.txt` measured **2,896,041 bytes**,
+SHA-256 `cb134641e1c7eb399f99def25f3cfe0832cbdff941d027e0eae135263e2354f5`,
+at this execution. Actual final APK inclusion and downloaded-artifact matching
+remain separate release evidence. Fixture tests cover exact copyright retention,
+missing-license gap reporting, safe paths, local parent POM inheritance, nested
+AAR notices, DTD/entity rejection and supplemental-license checksum failure.

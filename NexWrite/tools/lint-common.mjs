@@ -13,7 +13,7 @@ export function localPath(base, file) {
 }
 export function files(base, prefix = '') {
   const ignored = new Set(['.git', 'node_modules', 'target', 'dist', '.turbo', '.pnpm-store']);
-  const generated = new Set(['apps/web/public/engine', 'apps/web/public/notices', 'apps/web/test-results']);
+  const generated = new Set(['apps/web/public/engine', 'apps/web/public/notices', 'apps/web/test-results', 'apps/android/.gradle', 'apps/android/.kotlin', 'apps/android/build', 'apps/android/app/build']);
   return fs.readdirSync(path.join(base, prefix), { withFileTypes: true }).flatMap(entry => {
     if (ignored.has(entry.name) || entry.isSymbolicLink()) return [];
     const file = path.posix.join(prefix, entry.name);

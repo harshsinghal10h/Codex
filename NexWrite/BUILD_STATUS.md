@@ -1,6 +1,59 @@
 <!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
 # NexWrite build status — 2026-10-21
 
+## Current owned application preview
+
+The user's corrected request is implemented as owned NexWrite source: native
+Android app/keyboard/PROCESS_TEXT, original card/navigation frontend, responsive
+web library/editor/Assist/Settings, and an optional stateless personal AI gateway.
+The user explicitly chose to configure a backend later. Cloud AI starts inactive;
+no public endpoint, live-provider pass, account system or cloud document store
+is claimed. Native desktop/iOS/extensions and the complete product roadmap remain
+incomplete. This preview is not an upstream PDF application.
+
+Observed local validation before remote publication:
+
+- 54 Rust workspace tests, strict bridge boundary/parity and an actual host JVM
+  `-Xcheck:jni` smoke pass. All three Android ABI libraries build; arm64 ELF LOAD
+  alignment is 16 KiB. Native cancellation discards stale delivery but cannot
+  interrupt an already-running Rust call.
+- All 92 Node tests and project generation/ledger/provenance/license gates pass.
+  The Node count includes eight actual backend groups and five notice fixtures.
+- The production browser build and all 26 real Chromium cases pass; four tested
+  axe states report zero violations. AI provider responses in browser/backend
+  protocol tests are labelled simulations, never a live-provider quality pass.
+- A real backend Docker image built and ran as nonroot with a read-only root
+  filesystem, all capabilities dropped and bounded temporary storage. Actual
+  HTTP analysis matched the real Rust CLI on a Unicode/Markdown fixture; auth,
+  capability discovery and unconfigured-provider states passed. Image ID:
+  `sha256:13f886cd6d58aec3c8acd8ffc114fcf9c6dbbe1f5d7dcc05bf2678255c4c5d26`.
+- The supplied Apktool source built with its actual version/help checks and
+  173 upstream library tests passing. It decoded and rebuilt an unsigned
+  inspection copy of the owned signed APK while preserving all dex/native bytes.
+- Android release build, lint and seven JVM tests pass. The signed universal APK
+  is package `app.nexwrite.android`, version `0.2.0-preview.1`, minSdk 26 and
+  targetSdk 36, with SHA-256
+  `6302b4e4ee4c8ffc317554e49bf23ca09467f4ee9be60b1daa2d3bdb398fc591`.
+  APK Signature Schemes v2/v3 verify and 16 KiB ZIP alignment verifies. REA/JADX
+  confirms the declarations and only `INTERNET` plus Android's generated
+  signature permission. Physical Android/OEM/assistive-technology/low-RAM
+  evidence remains open.
+
+The ledger now has 149 rows: 19 in-progress, 130 planned and zero verified.
+Twelve additional partial rows cover the personal AI/document/native surfaces.
+Current unknowns are UNK-APP-01–05 plus the retained baseline obligations. The
+source review/build units are specs `583327b`, API contract `c93d6ae`, JNI bridge
+`9e3e8c5`, personal API `26793af`, web `d3d45a4` and native app `b3e97ff`.
+
+Publication: baseline source branch was pushed successfully. The baseline CI
+run https://github.com/harshsinghal10h/Codex/actions/runs/39550056484 passed four
+jobs and failed browser/macOS jobs; log/artifact redirects were denied by the
+managed network. Improved failure annotations and release CI are configured.
+Final source branch/PR, CI run and the owned signed APK link are pending
+publication. No CI or device pass is inferred from these local results.
+
+## Historical bounded M1 baseline
+
 The bounded M1 source-analysis slice and local browser demo are implemented and
 tested on this Linux x86_64 cloud host. The app uses the real Rust/WASM engine
 in a Worker for one original double-space rule, Unicode counts and labelled

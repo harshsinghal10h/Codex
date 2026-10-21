@@ -115,6 +115,8 @@ test('SPDX expression policy allows a permitted alternative and rejects unreview
 test('Cargo historical dual-license spelling preserves its OR meaning without accepting unknown licenses', () => {
   assert.equal(acceptable(rustLicense('MIT/Apache-2.0')), true);
   assert.equal(acceptable(rustLicense('Apache-2.0/MIT')), true);
+  assert.equal(acceptable(rustLicense('Unlicense/MIT')), true);
+  assert.equal(acceptable(rustLicense('MIT/Unlicense')), true);
   assert.equal(acceptable(rustLicense('MIT/GPL-3.0-only')), false);
 });
 test('reviewed npm exceptions require exact names, versions and declared licenses', () => {

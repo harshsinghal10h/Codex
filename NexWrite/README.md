@@ -1,9 +1,11 @@
 <!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
 # NexWrite
 
-NexWrite is an original, local-first writing-assistant project alongside the existing projects in the Codex repository. It includes a Rust engine, CLI, compiled WASM and a small browser editor. Mobile, desktop, extension, backend, account, billing and AI-provider integrations remain roadmap work.
+NexWrite is an original, local-first writing assistant alongside the existing projects in the Codex repository. The preview includes a native Android app and writing keyboard, a responsive offline-capable browser workspace, a shared Rust engine/CLI/WASM, and an optional personal AI backend with OpenAI-compatible and Gemini adapters. Accounts, cloud document sync, native desktop/iOS applications, extensions and the remaining full-product roadmap are still incomplete.
 
-The bounded M1 slice adds source-preserving Unicode segmentation, conservative Markdown protection and explicitly gated readability estimates. The editor uses the same local WASM engine for one original ASCII double-space rule, safe Accept/Undo and text export. Draft storage requires opt-in. The ledger tracks all 149 requested feature/platform entries; this is part of M1, with one spacing rule rather than the planned grammar/dictionary engine. Local results and limits are recorded in BUILD_STATUS.md and docs/ledger/EVIDENCE.md. No feature is called CI-verified without a real run.
+Library, Write, Assist and Settings use original NexWrite cards/navigation. Save explicitly stores a local document; automatic draft storage is a separate opt-in. The local engine currently provides one original spacing rule, Unicode counts, conservative Markdown protection and labelled readability estimates. AI starts unconfigured: enter your self-hosted HTTPS backend in Settings, discover its configured models and approve each request. Provider keys stay on the server. This is a preview rather than the planned complete grammar/dictionary engine or all-surface product. [Build status](BUILD_STATUS.md) and the [149-row ledger](docs/ledger/FEATURES.csv) record actual evidence and limits.
+
+Android requires Android 8.0 or later and supports arm64-v8a, armeabi-v7a and x86_64. See [native build and behavior](apps/android/README.md), [web behavior](apps/web/README.md), and [backend deployment](services/api/README.md). Browser installation provides the web surface on supported operating systems; it does not establish a native app for every OS.
 
 ## Run locally
 

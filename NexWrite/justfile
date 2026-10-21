@@ -28,6 +28,18 @@ web:
 browser-test:
     pnpm --filter @nexwrite/web test:e2e
 
+api:
+    pnpm --filter @nexwrite/api dev
+
+api-test:
+    pnpm --filter @nexwrite/api test
+
+android-core:
+    bash tools/build-android-core.sh
+
+android: android-core
+    bash apps/android/gradlew :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
+
 bench-analysis:
     node tools/analysis-benchmark.mjs
 

@@ -1,6 +1,19 @@
 <!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
 # Changelog
 
+## 0.2.0-preview.1 — owned writing application (2026-10-21)
+
+- Add separately specified OpenAPI/DTO contracts, a strict shared Rust JNI bridge,
+  and a personal opt-in AI gateway with OpenAI-compatible/Gemini adapters.
+- Add original Library/Write/Assist/Settings surfaces to web and native Android,
+  explicit local documents, UTF-8 text import/export and guarded AI Apply/Undo.
+- Add native private-field-aware keyboard, PROCESS_TEXT/share entry points,
+  Keystore-backed connection settings, offline web shell and own APK signing path.
+- Build the uploaded Apktool source for owned-artifact inspection; package actual
+  Android/native runtime notices and record license-text limits separately.
+- Add backend/container/browser/native bridge tests and Android emulator CI.
+  Keep live-provider, physical-device and remaining all-OS roadmap claims open.
+
 ## Unreleased — bounded M1 analysis and local editor (2026-10-21)
 
 - Add the separately specified AnalysisResult contract with shared Suggestion/Span references and generated Rust/TypeScript/Kotlin/Swift bindings.

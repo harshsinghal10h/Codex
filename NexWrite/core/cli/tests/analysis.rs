@@ -114,7 +114,12 @@ fn analyze_retains_native_paths_and_rejects_non_unicode_options() {
     let path =
         std::env::temp_dir().join(format!("nw-analysis-native-path-{}-", std::process::id()));
     let mut bytes = path.into_os_string().into_vec();
-    bytes.push(0xff);
+    // APFS requires valid UTF-8 filenames; Linux filesystems also admit raw bytes.
+    if cfg!(target_os = "macos") {
+        bytes.extend_from_slice("é👩‍💻".as_bytes());
+    } else {
+        bytes.push(0xff);
+    }
     let path = OsString::from_vec(bytes);
     fs::write(&path, b"One  two").unwrap();
     let success = Command::new(env!("CARGO_BIN_EXE_nw"))

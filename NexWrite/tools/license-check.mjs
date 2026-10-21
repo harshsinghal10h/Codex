@@ -27,7 +27,9 @@ export function productionNpmNames(workspaces, installed) {
 }
 // Cargo's legacy MIT/Apache-2.0 spelling denotes the same dual-license OR choice.
 export function rustLicense(expression) {
-  return expression === 'MIT/Apache-2.0' || expression === 'Apache-2.0/MIT' ? 'MIT OR Apache-2.0' : expression;
+  if (expression === 'MIT/Apache-2.0' || expression === 'Apache-2.0/MIT') return 'MIT OR Apache-2.0';
+  if (expression === 'Unlicense/MIT' || expression === 'MIT/Unlicense') return 'Unlicense OR MIT';
+  return expression;
 }
 export function acceptable(expression) {
   if (typeof expression !== 'string') return false;

@@ -5,7 +5,7 @@ This directory is the independent NexWrite project inside the existing Codex che
 
 ## Start and finish
 
-Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md, BUILD_STATUS.md and docs/handoff/<lane>.md before work. The user's 2026-10-20/21 continuations cover the bounded M1 source-analysis/readability (L1) and minimal local editor (L3) slices, from prior analyst specifications and separate implementation review units. Both now have local implementation evidence; full M1 and later milestones remain incomplete. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
+Read this file, docs/MASTER_PROMPT.md (S1–S3, S14 and the current lane), docs/ledger/FEATURES.csv, docs/ledger/UNKNOWNS.md, BUILD_STATUS.md and docs/handoff/<lane>.md before work. The user's 2026-10-21 correction authorizes the owned NexWrite application, an original frontend informed by the licensed PDF reference, native Android/keyboard/PROCESS_TEXT, opt-in backend and GitHub source/APK publication beyond the prior bounded M1 slice. Follow docs/spec/owned-android-ai-release.md and its contract-first review units. The user chose to configure a backend later: blank-default connection settings and unavailable cloud actions are intentional until configured. Full M1 and the complete all-OS roadmap remain incomplete. Finish by updating affected ledger rows, unknowns, evidence index, handoff and CHANGELOG.md. Keep the complete master prompt unchanged.
 
 ## Commands (run from this directory)
 

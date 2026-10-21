@@ -49,6 +49,8 @@ class WritingModel(application: Application) : AndroidViewModel(application) {
     private var aiGeneration = 0L
     private val storageLock = Mutex()
     private var storageGeneration = 0L
+    private var autosaveGeneration = 0L
+    private var automaticSavingBlocked = false
 
     init {
         viewModelScope.launch { store.preferences.collect { preferences = it } }
@@ -88,7 +90,7 @@ class WritingModel(application: Application) : AndroidViewModel(application) {
     private fun changed() {
         draft = history.draft; dirty = true; analysis = null; proposal = null; proposalTarget = null; cancelAi()
         scheduleAnalysis(); autosaveJob?.cancel()
-        if (preferences.autosave) autosaveJob = viewModelScope.launch { delay(700); saveNow() }
+        if (preferences.autosave && !automaticSavingBlocked) scheduleAutosave(700)
     }
     fun undo() {
         if (history.undo()) afterReplacement("Undid the accepted change.")
@@ -102,7 +104,12 @@ class WritingModel(application: Application) : AndroidViewModel(application) {
     }
     private fun afterReplacement(message: String) {
         cancelAi(); draft = history.draft; editor = TextFieldValue(draft.source); dirty = true; proposal = null; proposalTarget = null; status = message; scheduleAnalysis()
-        if (preferences.autosave) save()
+        if (preferences.autosave && !automaticSavingBlocked) scheduleAutosave(0)
+    }
+    private fun scheduleAutosave(delayMilliseconds: Long) {
+        autosaveJob?.cancel()
+        val generation = autosaveGeneration
+        autosaveJob = viewModelScope.launch { delay(delayMilliseconds); saveNow(automaticGeneration = generation) }
     }
     private fun scheduleAnalysis() {
         analysisJob?.cancel(); analysis = null
@@ -128,17 +135,18 @@ class WritingModel(application: Application) : AndroidViewModel(application) {
         val snapshot = draft; val generation = storageGeneration
         viewModelScope.launch { saveNow(snapshot, generation) }
     }
-    private suspend fun saveNow(snapshot: Draft = draft, generation: Long = storageGeneration) {
+    private suspend fun saveNow(snapshot: Draft = draft, generation: Long = storageGeneration, automaticGeneration: Long? = null) {
         status = "Saving…"
         try {
             storageLock.withLock {
-                if (generation != storageGeneration) return
+                if (generation != storageGeneration || (automaticGeneration != null && (automaticGeneration != autosaveGeneration || automaticSavingBlocked || !preferences.autosave))) return
                 store.save(snapshot)
             }
             if (generation != storageGeneration) return
             if (draft.id == snapshot.id && draft.version == snapshot.version) { dirty = false; status = "Saved on this device." }
             refresh()
-        } catch (_: Exception) { status = "Could not save. Your current source is still in memory; export a copy." }
+        } catch (error: CancellationException) { throw error }
+        catch (_: Exception) { if (generation == storageGeneration) status = "Could not save. Your current source is still in memory; export a copy." }
     }
     fun duplicate(document: StoredDocument) {
         val generation = storageGeneration
@@ -169,14 +177,18 @@ class WritingModel(application: Application) : AndroidViewModel(application) {
         refresh(); status = "Deleted from this device."
     }
     fun clearLocalData() {
-        autosaveJob?.cancel(); storageGeneration++; connectionGeneration++; cancelAi()
+        autosaveJob?.cancel(); automaticSavingBlocked = true; storageGeneration++; connectionGeneration++; cancelAi()
         switchTo(Draft()); dirty = false; capabilities = null; documents = emptyList(); pendingReceived = null
         attempt("Could not clear local data.") {
             storageLock.withLock { store.clearDocuments(); store.clearSettings() }
             refresh(); status = "Cleared this app’s saved documents and settings."
         }
     }
-    fun settings(appearance: String, autosave: Boolean) = attempt("Could not save settings.") { store.settings(appearance, autosave) }
+    fun settings(appearance: String, autosave: Boolean) {
+        automaticSavingBlocked = !autosave
+        if (!autosave) { autosaveJob?.cancel(); autosaveGeneration++ }
+        attempt("Could not save settings.") { store.settings(appearance, autosave) }
+    }
     fun connection(address: String, token: String) = attempt("Could not save connection. Use a valid HTTPS address.") {
         cancelAi(); connectionGeneration++; capabilities = null; proposal = null; proposalTarget = null
         val validated = if (address.isBlank()) "" else ApiTransport.address(address)

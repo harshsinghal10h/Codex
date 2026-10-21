@@ -1,0 +1,113 @@
+{
+  "scope": "Owned NexWrite APK inspection and unsigned resource rebuild; not a comprehensive security audit or device test",
+  "uploaded_tool_source_sha256": "18d93873f4e4d4b220dd47e55f866b0c245340064afb613eacba6e8dd753dd2b",
+  "tool_jar": "/workspace/.toolchains/nexwrite/apktool-source/brut.apktool/apktool-cli/build/libs/apktool-cli.jar",
+  "tool_jar_sha256": "6ec50a89193de1786f3d9988cdefb6e34ecf5a3e62e831927a47618ae1e9bbe3",
+  "original_apk": "/workspace/artifacts/nexwrite-0.2.0-preview.1/NexWrite-0.2.0-preview.1-universal.apk",
+  "original_apk_sha256": "6302b4e4ee4c8ffc317554e49bf23ca09467f4ee9be60b1daa2d3bdb398fc591",
+  "roundtrip_unsigned_apk": "/workspace/.cloud-setup/owned-apktool-audit-20261021T152136Z/nexwrite-roundtrip-unsigned.apk",
+  "roundtrip_unsigned_apk_sha256": "9094c4967de68bdef18c3b77e95af1fed49c2b3cb60851bcb57679b808bbb5bb",
+  "badging_metadata": [
+    "package: name='app.nexwrite.android' versionCode='20001' versionName='0.2.0-preview.1' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "targetSdkVersion:'36'",
+    "native-code: 'arm64-v8a' 'armeabi-v7a' 'x86' 'x86_64'"
+  ],
+  "package": "app.nexwrite.android",
+  "manifest_version_name": null,
+  "manifest_version_code": null,
+  "badging_log": "/workspace/.cloud-setup/owned-apktool-audit-20261021T152136Z/badging.log",
+  "apktool_metadata_yaml": "/workspace/.cloud-setup/owned-apktool-audit-20261021T152136Z/decoded/apktool.yml",
+  "manifest_sdk": null,
+  "permissions": [
+    "android.permission.INTERNET",
+    "app.nexwrite.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "application": {
+    "{http://schemas.android.com/apk/res/android}theme": "@style/Theme.NexWrite",
+    "{http://schemas.android.com/apk/res/android}label": "@string/app_name",
+    "{http://schemas.android.com/apk/res/android}icon": "@drawable/ic_nexwrite",
+    "{http://schemas.android.com/apk/res/android}name": "app.nexwrite.android.NexWriteApplication",
+    "{http://schemas.android.com/apk/res/android}allowBackup": "false",
+    "{http://schemas.android.com/apk/res/android}supportsRtl": "true",
+    "{http://schemas.android.com/apk/res/android}extractNativeLibs": "false",
+    "{http://schemas.android.com/apk/res/android}usesCleartextTraffic": "false",
+    "{http://schemas.android.com/apk/res/android}appComponentFactory": "androidx.core.app.CoreComponentFactory"
+  },
+  "components": [
+    {
+      "kind": "activity",
+      "{http://schemas.android.com/apk/res/android}name": "app.nexwrite.android.MainActivity",
+      "{http://schemas.android.com/apk/res/android}exported": "true",
+      "{http://schemas.android.com/apk/res/android}windowSoftInputMode": "adjustResize"
+    },
+    {
+      "kind": "activity",
+      "{http://schemas.android.com/apk/res/android}name": "app.nexwrite.android.NoticesActivity",
+      "{http://schemas.android.com/apk/res/android}exported": "false"
+    },
+    {
+      "kind": "activity",
+      "{http://schemas.android.com/apk/res/android}label": "@string/process_text_label",
+      "{http://schemas.android.com/apk/res/android}name": "app.nexwrite.android.ProcessTextActivity",
+      "{http://schemas.android.com/apk/res/android}exported": "true"
+    },
+    {
+      "kind": "service",
+      "{http://schemas.android.com/apk/res/android}label": "@string/keyboard_name",
+      "{http://schemas.android.com/apk/res/android}name": "app.nexwrite.android.keyboard.NexWriteKeyboardService",
+      "{http://schemas.android.com/apk/res/android}permission": "android.permission.BIND_INPUT_METHOD",
+      "{http://schemas.android.com/apk/res/android}exported": "true"
+    },
+    {
+      "kind": "provider",
+      "{http://schemas.android.com/apk/res/android}name": "androidx.startup.InitializationProvider",
+      "{http://schemas.android.com/apk/res/android}exported": "false",
+      "{http://schemas.android.com/apk/res/android}authorities": "app.nexwrite.android.androidx-startup"
+    },
+    {
+      "kind": "service",
+      "{http://schemas.android.com/apk/res/android}name": "androidx.room.MultiInstanceInvalidationService",
+      "{http://schemas.android.com/apk/res/android}exported": "false",
+      "{http://schemas.android.com/apk/res/android}directBootAware": "true"
+    },
+    {
+      "kind": "receiver",
+      "{http://schemas.android.com/apk/res/android}name": "androidx.profileinstaller.ProfileInstallReceiver",
+      "{http://schemas.android.com/apk/res/android}permission": "android.permission.DUMP",
+      "{http://schemas.android.com/apk/res/android}enabled": "true",
+      "{http://schemas.android.com/apk/res/android}exported": "true",
+      "{http://schemas.android.com/apk/res/android}directBootAware": "false"
+    }
+  ],
+  "original_executable_entries": {
+    "classes.dex": "3528c3be984a16e3f8119836bd6a3437217c40381598d3ca74d0d6347e1f65df",
+    "lib/arm64-v8a/libandroidx.graphics.path.so": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+    "lib/arm64-v8a/libdatastore_shared_counter.so": "d3e48717c9aa147e0ab21063ba0e8e0211cabf8bf40b222640829519edbf58e1",
+    "lib/arm64-v8a/libnw_bridge.so": "28fe06856f697b60fc1886ec0d97ebe59a24c5e40bd568383eda5a9a0b77325d",
+    "lib/armeabi-v7a/libandroidx.graphics.path.so": "41399eba6fc2a60f6f14642375c1824f3cf25eb8fec7397d753730a3ceda3e2b",
+    "lib/armeabi-v7a/libdatastore_shared_counter.so": "716c5d8d2cac8ca0edf65da8f139c7886b726ac79d542a14edeb94994ba6d3dc",
+    "lib/armeabi-v7a/libnw_bridge.so": "fe2b8aa85b29bfa3cae5f7a498d06c5ad36091716f454d396d5843f65b1730e7",
+    "lib/x86/libandroidx.graphics.path.so": "eb0570b41fd3bff25d8204a967c03bd7550719e768b791f680cc40cbe35f29af",
+    "lib/x86/libdatastore_shared_counter.so": "cd4a1649e2c8350703146f94a6ee2bf4c3c8c9f172159f805b61a4a2abdf0659",
+    "lib/x86_64/libandroidx.graphics.path.so": "4e56c996f13670e70082658de7880c4020eabf4f25e43387f88ed78a713fc9f0",
+    "lib/x86_64/libdatastore_shared_counter.so": "fb6c9208988c49ae94943bc3236fa763ba584722e044fa4ea9a12d2941027105",
+    "lib/x86_64/libnw_bridge.so": "a187ef55bbe22a81708a2bf8ec1808346f39f495a10181da5759b3da5725106f"
+  },
+  "roundtrip_executable_entries": {
+    "classes.dex": "3528c3be984a16e3f8119836bd6a3437217c40381598d3ca74d0d6347e1f65df",
+    "lib/arm64-v8a/libandroidx.graphics.path.so": "41e9a793c43a0f4fddb19e33f346bace464f30f888ba7b9eaf96294ea115bfb6",
+    "lib/arm64-v8a/libdatastore_shared_counter.so": "d3e48717c9aa147e0ab21063ba0e8e0211cabf8bf40b222640829519edbf58e1",
+    "lib/arm64-v8a/libnw_bridge.so": "28fe06856f697b60fc1886ec0d97ebe59a24c5e40bd568383eda5a9a0b77325d",
+    "lib/armeabi-v7a/libandroidx.graphics.path.so": "41399eba6fc2a60f6f14642375c1824f3cf25eb8fec7397d753730a3ceda3e2b",
+    "lib/armeabi-v7a/libdatastore_shared_counter.so": "716c5d8d2cac8ca0edf65da8f139c7886b726ac79d542a14edeb94994ba6d3dc",
+    "lib/armeabi-v7a/libnw_bridge.so": "fe2b8aa85b29bfa3cae5f7a498d06c5ad36091716f454d396d5843f65b1730e7",
+    "lib/x86/libandroidx.graphics.path.so": "eb0570b41fd3bff25d8204a967c03bd7550719e768b791f680cc40cbe35f29af",
+    "lib/x86/libdatastore_shared_counter.so": "cd4a1649e2c8350703146f94a6ee2bf4c3c8c9f172159f805b61a4a2abdf0659",
+    "lib/x86_64/libandroidx.graphics.path.so": "4e56c996f13670e70082658de7880c4020eabf4f25e43387f88ed78a713fc9f0",
+    "lib/x86_64/libdatastore_shared_counter.so": "fb6c9208988c49ae94943bc3236fa763ba584722e044fa4ea9a12d2941027105",
+    "lib/x86_64/libnw_bridge.so": "a187ef55bbe22a81708a2bf8ec1808346f39f495a10181da5759b3da5725106f"
+  },
+  "executable_bytes_preserved": true,
+  "release_artifact_changed": false,
+  "roundtrip_signature": "Unsigned inspection copy; deliberately not a release artifact"
+}

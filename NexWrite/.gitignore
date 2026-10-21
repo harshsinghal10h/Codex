@@ -12,3 +12,9 @@ dist/
 .DS_Store
 coverage/
 ci/reports/
+.gradle/
+.kotlin/
+apps/android/**/build/
+apps/android/local.properties
+*.keystore
+*.jks
