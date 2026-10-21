@@ -1,0 +1,19 @@
+<!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
+<resources>
+    <string name="app_name">NexWrite</string>
+    <string name="keyboard_name">NexWrite keyboard</string>
+    <string name="process_text_label">Improve with NexWrite</string>
+    <string name="keyboard_subtype">English (US)</string>
+    <string name="keyboard_private">Private field · checks off</string>
+    <string name="keyboard_ready">Local writing keyboard</string>
+    <string name="keyboard_check">Check selection</string>
+    <string name="keyboard_accept">Use one space</string>
+    <string name="keyboard_assist">Open writing assistant</string>
+    <string name="keyboard_backspace">Delete</string>
+    <string name="keyboard_shift">Shift</string>
+    <string name="keyboard_space">Space</string>
+    <string name="keyboard_enter">Enter</string>
+    <string name="keyboard_symbols">Numbers and symbols</string>
+    <string name="keyboard_letters">Letters</string>
+</resources>
+

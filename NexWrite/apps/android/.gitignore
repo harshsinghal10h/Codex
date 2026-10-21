@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+.gradle/
+.kotlin/
+**/build/
+local.properties
+.signing/
+*.apk
+*.aab
+

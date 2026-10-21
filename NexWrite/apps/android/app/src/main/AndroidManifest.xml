@@ -1,0 +1,35 @@
+<!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:name=".NexWriteApplication" android:allowBackup="false"
+        android:label="@string/app_name" android:icon="@drawable/ic_nexwrite"
+        android:theme="@style/Theme.NexWrite" android:supportsRtl="true"
+        android:usesCleartextTraffic="false">
+        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/markdown" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".NoticesActivity" android:exported="false" />
+        <activity android:name=".ProcessTextActivity" android:exported="true" android:label="@string/process_text_label">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <service android:name=".keyboard.NexWriteKeyboardService" android:label="@string/keyboard_name"
+            android:permission="android.permission.BIND_INPUT_METHOD" android:exported="true">
+            <intent-filter><action android:name="android.view.InputMethod" /></intent-filter>
+            <meta-data android:name="android.view.im" android:resource="@xml/input_method" />
+        </service>
+    </application>
+</manifest>
+

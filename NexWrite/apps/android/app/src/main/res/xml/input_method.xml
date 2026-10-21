@@ -1,0 +1,4 @@
+<!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
+<input-method xmlns:android="http://schemas.android.com/apk/res/android" android:settingsActivity="app.nexwrite.android.MainActivity" android:supportsSwitchingToNextInputMethod="true">
+    <subtype android:label="@string/keyboard_subtype" android:imeSubtypeLocale="en_US" android:imeSubtypeMode="keyboard" android:isAsciiCapable="true" />
+</input-method>
