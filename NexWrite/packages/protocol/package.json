@@ -6,7 +6,10 @@
   "license": "LicenseRef-NexWrite-Proprietary",
   "x-spdx": "SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary",
   "types": "./dist/suggestion.d.ts",
-  "exports": {".": {"types": "./dist/suggestion.d.ts", "default": "./dist/suggestion.js"}},
-  "scripts": {"build": "tsc -p tsconfig.json", "check": "tsc --noEmit -p tsconfig.json"},
+  "exports": {
+    ".": {"types": "./dist/suggestion.d.ts", "default": "./dist/suggestion.js"},
+    "./api": {"types": "./dist/api/owned-api.d.ts", "default": "./dist/api/owned-api.js"}
+  },
+  "scripts": {"build": "tsc -p tsconfig.json && tsc -p tsconfig.api.json", "check": "tsc -p tsconfig.json && tsc --noEmit -p tsconfig.api.json"},
   "devDependencies": {"ajv": "8.20.0", "typescript": "7.0.2"}
 }

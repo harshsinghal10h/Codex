@@ -7,8 +7,8 @@
   "packageManager": "pnpm@12.14.0",
   "engines": { "node": ">=24.19.0 <25" },
   "scripts": {
-    "generate": "node tools/codegen/generate.mjs && node packages/design-tokens/generate.mjs",
-    "check": "node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs",
+    "generate": "node tools/codegen/generate.mjs && node tools/api-codegen.mjs && node packages/design-tokens/generate.mjs",
+    "check": "node tools/codegen/generate.mjs --check && node tools/api-codegen.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs",
     "test": "node --test",
     "build": "turbo run build",
     "build:core": "cargo build --workspace --release --locked",
