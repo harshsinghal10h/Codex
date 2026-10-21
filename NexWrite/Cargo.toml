@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
 [workspace]
-members = ["core/text", "core/schema", "core/rules", "core/structure", "core/score", "core/engine", "core/cli", "core/wasm"]
+members = ["core/text", "core/schema", "core/rules", "core/structure", "core/score", "core/engine", "core/cli", "core/wasm", "core/bridge"]
 resolver = "2"
 
 [workspace.package]
