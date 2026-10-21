@@ -1,0 +1,274 @@
+
+$ just check
+pnpm check
+$ node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs
+Generated bindings match canonical schema.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: passed
+license-check: passed
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+    Checking nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+    Checking nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+    Checking nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+    Checking nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+    Checking nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+    Checking nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.02s
+EXIT 0
+
+$ just test
+pnpm test
+$ node --test
+✔ dark: text on background meets normal-text AA (3.238169ms)
+✔ dark: textMuted on background meets normal-text AA (0.173909ms)
+✔ dark: correctness on background meets normal-text AA (1.11096ms)
+✔ dark: clarity on background meets normal-text AA (0.49398ms)
+✔ dark: engagement on background meets normal-text AA (0.189937ms)
+✔ dark: delivery on background meets normal-text AA (0.267965ms)
+✔ dark: focus on background meets non-text contrast (0.436426ms)
+✔ dark: text on surface meets normal-text AA (0.157529ms)
+✔ dark: textMuted on surface meets normal-text AA (3.854668ms)
+✔ dark: correctness on surface meets normal-text AA (0.733279ms)
+✔ dark: clarity on surface meets normal-text AA (0.358673ms)
+✔ dark: engagement on surface meets normal-text AA (0.115011ms)
+✔ dark: delivery on surface meets normal-text AA (0.070925ms)
+✔ dark: focus on surface meets non-text contrast (0.103864ms)
+✔ dark: text on surfaceRaised meets normal-text AA (0.061663ms)
+✔ dark: textMuted on surfaceRaised meets normal-text AA (0.058056ms)
+✔ dark: correctness on surfaceRaised meets normal-text AA (0.051459ms)
+✔ dark: clarity on surfaceRaised meets normal-text AA (0.055516ms)
+✔ dark: engagement on surfaceRaised meets normal-text AA (0.04784ms)
+✔ dark: delivery on surfaceRaised meets normal-text AA (0.047935ms)
+✔ dark: focus on surfaceRaised meets non-text contrast (0.051004ms)
+✔ dark: action label meets AA (0.156654ms)
+✔ light: text on background meets normal-text AA (0.064809ms)
+✔ light: textMuted on background meets normal-text AA (0.052083ms)
+✔ light: correctness on background meets normal-text AA (0.05065ms)
+✔ light: clarity on background meets normal-text AA (0.049128ms)
+✔ light: engagement on background meets normal-text AA (0.04997ms)
+✔ light: delivery on background meets normal-text AA (0.241775ms)
+✔ light: focus on background meets non-text contrast (0.079622ms)
+✔ light: text on surface meets normal-text AA (0.058296ms)
+✔ light: textMuted on surface meets normal-text AA (0.078385ms)
+✔ light: correctness on surface meets normal-text AA (0.069798ms)
+✔ light: clarity on surface meets normal-text AA (0.096314ms)
+✔ light: engagement on surface meets normal-text AA (0.206756ms)
+✔ light: delivery on surface meets normal-text AA (0.259393ms)
+✔ light: focus on surface meets non-text contrast (0.126684ms)
+✔ light: text on surfaceRaised meets normal-text AA (0.050982ms)
+✔ light: textMuted on surfaceRaised meets normal-text AA (0.17147ms)
+✔ light: correctness on surfaceRaised meets normal-text AA (0.054568ms)
+✔ light: clarity on surfaceRaised meets normal-text AA (0.048174ms)
+✔ light: engagement on surfaceRaised meets normal-text AA (0.045055ms)
+✔ light: delivery on surfaceRaised meets normal-text AA (0.042739ms)
+✔ light: focus on surfaceRaised meets non-text contrast (0.295096ms)
+✔ light: action label meets AA (0.07555ms)
+✔ categories carry distinct non-color identities (0.241754ms)
+✔ fonts are configured as pinned self-hosted licensed assets (3.81113ms)
+✔ real CLI output satisfies canonical schema; malformed wire suggestions fail (1533.8216ms)
+✔ schema generator detects drift and rejects unsupported or ambiguous contracts (679.272823ms)
+✔ CSV handles quoted commas, escaped quotes, CRLF and multiline text (6.063998ms)
+✔ all 149 S7 rows remain accounted for (36.358851ms)
+✔ duplicate and invented IDs are rejected (17.339968ms)
+✔ non-planned status needs a real specification; unknowns must resolve (8.599802ms)
+✔ private URLs and escaping local evidence are rejected (38.743374ms)
+✔ invalid evidence classes and cases are rejected (10.950069ms)
+✔ verified requires CI provenance and every passing required case (24.189071ms)
+✔ local evidence cannot be relabeled verified (25.317465ms)
+✔ fail, unknown, skipped and truncated never aggregate to pass (55.269669ms)
+✔ verified cannot retain unresolved obligations or missing evidence (12.968833ms)
+✔ source requires an SPDX header and original identifiers (8.112292ms)
+✔ binaries and vendored files need reviewed per-file provenance (4.851103ms)
+✔ SPDX expression policy allows a permitted alternative and rejects unreviewed obligations (1.398889ms)
+✔ local credential initializer generates independent values and preserves existing files (3.321795ms)
+ℹ tests 62
+ℹ suites 0
+ℹ pass 62
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2172.093939
+cargo test --workspace --locked
+   Compiling nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+   Compiling nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+   Compiling nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.04s
+     Running unittests src/main.rs (target/debug/deps/nw-c329dd137859c72a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-4a17fa28fc2bcdea)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-e52e7809d268ecb6)
+
+running 3 tests
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_rules-746b70116fbc2d63)
+
+running 3 tests
+test tests::antipattern_excludes_overlapping_region ... ok
+test tests::examples_compile_and_run ... ok
+test tests::rejects_malformed_and_unsupported_rules ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_schema-5b415a4758cf90e1)
+
+running 2 tests
+test tests::severity_is_a_bounded_wire_number ... ok
+test tests::offsets_have_exactly_two_unsigned_values ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_text-23c868e0cdd1a051)
+
+running 3 tests
+test tests::graphemes_preserve_zwj_combining_and_crlf ... ok
+test tests::malformed_utf8_and_surrogate_boundaries_rejected ... ok
+test tests::every_range_and_round_trip_in_all_units ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_wasm-db8981d871b88ed0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_schema
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+EXIT 0
+
+$ just build core
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling itoa v1.0.18
+   Compiling zmij v1.0.23
+   Compiling aho-corasick v1.1.5
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling regex-syntax v0.8.11
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling indexmap v2.14.2
+   Compiling nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+   Compiling wasm-bindgen-shared v0.2.129
+   Compiling ryu v1.0.23
+   Compiling regex-automata v0.4.18
+   Compiling unsafe-libyaml v0.2.11
+   Compiling serde_yaml_ng v0.10.0
+   Compiling regex v1.13.1
+   Compiling unicode-segmentation v1.13.3
+   Compiling unicode-ident v1.0.27
+   Compiling nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+   Compiling nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+   Compiling wasm-bindgen v0.2.129
+   Compiling cfg-if v1.0.5
+   Compiling once_cell v1.21.4
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+   Compiling js-sys v0.3.106
+   Compiling nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+    Finished `release` profile [optimized] target(s) in 38.41s
+EXIT 0
+Temporarily moved the previously built debug CLI to verify the standalone WASM build recreates its required CLI.
+
+$ just build wasm
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.05s
+{"runtime":"actual compiled WASM in Node","native_parity_cases":7,"malformed_versions_rejected":13,"malformed_texts_rejected":7,"invalid_locale_rejected":true,"max_safe_version_preserved":true,"gzip_bytes":383558,"gzip_budget_bytes":3145728}
+EXIT 0
+
+$ pnpm build
+Scope: all 3 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4m ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+
+Done in 1s using pnpm v11.25.0
+$ turbo run build
+
+   • Packages in scope: @nexwrite/design-tokens, @nexwrite/protocol
+   • Running build in 2 packages
+   • Remote caching disabled
+
+@nexwrite/design-tokens:build: cache miss, executing f0675e695c9aa823
+@nexwrite/design-tokens#build:  ERROR  command finished with error: Exec format error (os error 8)
+@nexwrite/protocol:build: cache miss, executing fc6e5fbaf3def473
+@nexwrite/design-tokens#build:  ERROR  unable to spawn child process: Exec format error (os error 8)
+
+ Tasks:    0 successful, 2 total
+Cached:    0 cached, 2 total
+  Time:    52ms 
+Failed:    @nexwrite/design-tokens#build
+
+ ERROR  run failed: command  exited (1)
+[ELIFECYCLE] Command failed with exit code 1.
+EXIT 1
+
+$ pnpm --filter @nexwrite/protocol check
+$ tsc --noEmit -p tsconfig.json
+EXIT 0
+
+$ just compose-check
+node tools/compose-check.mjs
+compose-check: seven optional service configurations parse and bind published ports to loopback; containers were not started.
+EXIT 0
+
+$ just secrets
+node tools/secret-check.mjs
+10:53AM INF scanned ~1665049 bytes (1.67 MB) in 315ms
+10:53AM INF no leaks found
+EXIT 0
+
+$ pnpm audit --audit-level high
+No known vulnerabilities found
+EXIT 0

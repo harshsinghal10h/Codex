@@ -1,0 +1,21 @@
+name: NexWrite feature slice
+description: Propose a bounded implementation from the NexWrite ledger.
+title: "[NexWrite] "
+body:
+  - type: input
+    id: ledger
+    attributes:
+      label: Ledger IDs and milestone
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Original behavior and acceptance cases
+      description: Include negative, malformed, privacy and accessibility cases as applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Permitted evidence sources and unresolved questions

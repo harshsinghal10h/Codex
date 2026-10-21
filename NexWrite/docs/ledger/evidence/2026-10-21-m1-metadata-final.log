@@ -1,0 +1,6 @@
+$ node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs
+Generated bindings match canonical schema.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: passed
+license-check: passed

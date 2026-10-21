@@ -1,0 +1,84 @@
+{
+  "themes": {
+    "dark": {
+      "background": "#0B0D10",
+      "surface": "#14181D",
+      "surfaceRaised": "#1B2027",
+      "text": "#F2F5F7",
+      "textMuted": "#A9B2BC",
+      "decoration": "#6B7580",
+      "action": "#76B900",
+      "actionText": "#0B0D10",
+      "focus": "#A9D663",
+      "correctness": "#FF5C5C",
+      "clarity": "#4DA3FF",
+      "engagement": "#FFB020",
+      "delivery": "#A78BFA"
+    },
+    "light": {
+      "background": "#F7F8F6",
+      "surface": "#FFFFFF",
+      "surfaceRaised": "#EAEEE7",
+      "text": "#0B0D10",
+      "textMuted": "#45505D",
+      "decoration": "#6B7580",
+      "action": "#4C7700",
+      "actionText": "#FFFFFF",
+      "focus": "#365800",
+      "correctness": "#B52431",
+      "clarity": "#075B9E",
+      "engagement": "#8C4C00",
+      "delivery": "#6743A8"
+    }
+  },
+  "fonts": {
+    "display": "Space Grotesk Variable",
+    "body": "Inter Variable",
+    "mono": "JetBrains Mono Variable",
+    "fallback": "system-ui, sans-serif",
+    "monoFallback": "ui-monospace, monospace"
+  },
+  "spacing": [
+    0,
+    8,
+    16,
+    24,
+    32,
+    40,
+    48,
+    64
+  ],
+  "radii": [
+    8,
+    12,
+    16,
+    24
+  ],
+  "motion": {
+    "fast": 120,
+    "normal": 200,
+    "slow": 320
+  },
+  "categories": {
+    "correctness": {
+      "label": "Correctness",
+      "underline": "wavy",
+      "symbol": "!"
+    },
+    "clarity": {
+      "label": "Clarity",
+      "underline": "dotted",
+      "symbol": ":"
+    },
+    "engagement": {
+      "label": "Engagement",
+      "underline": "dashed",
+      "symbol": "+"
+    },
+    "delivery": {
+      "label": "Delivery",
+      "underline": "double",
+      "symbol": "="
+    }
+  }
+}

@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set windows-shell := ["bash", "-euo", "pipefail", "-c"]
+
+default:
+    @just --list
+
+install:
+    pnpm install --frozen-lockfile
+    cargo fetch --locked
+
+check:
+    pnpm check
+    cargo fmt --all -- --check
+    cargo clippy --workspace --all-targets --locked -- -D warnings
+
+test:
+    pnpm test
+    cargo test --workspace --locked
+
+# The local editor consumes the same compiled engine; other surfaces remain roadmap work.
+build surface="core":
+    @case "{{surface}}" in core) cargo build --workspace --release --locked ;; wasm) cargo build -p nw-cli --locked; cargo build -p nw-wasm --release --target wasm32-unknown-unknown --locked; wasm-bindgen target/wasm32-unknown-unknown/release/nw_wasm.wasm --target nodejs --out-dir target/wasm-node; node tools/wasm-smoke.mjs ;; web) pnpm exec turbo run build --filter=@nexwrite/web ;; *) echo 'Supported targets: core, wasm, web' >&2; exit 2 ;; esac
+
+web:
+    pnpm --filter @nexwrite/web dev
+
+browser-test:
+    pnpm --filter @nexwrite/web test:e2e
+
+api:
+    pnpm --filter @nexwrite/api dev
+
+api-test:
+    pnpm --filter @nexwrite/api test
+
+android-core:
+    bash tools/build-android-core.sh
+
+android: android-core
+    bash apps/android/gradlew :app:assembleRelease :app:testDebugUnitTest :app:lintRelease
+
+bench-analysis:
+    node tools/analysis-benchmark.mjs
+
+generate:
+    node tools/codegen/generate.mjs
+
+bench:
+    node tools/benchmark.mjs
+
+secrets:
+    node tools/secret-check.mjs
+
+supply-chain:
+    node tools/license-check.mjs
+    cargo deny --locked check
+    pnpm audit --audit-level high
+
+dev-env:
+    node infra/compose/init-env.mjs
+
+# Services are optional for offline core development; dev-env creates local credentials.
+services:
+    docker compose --env-file infra/compose/.env -f infra/compose/compose.yaml --profile backend up -d
+
+services-down:
+    docker compose --env-file infra/compose/.env -f infra/compose/compose.yaml --profile backend down
+
+compose-check:
+    node tools/compose-check.mjs

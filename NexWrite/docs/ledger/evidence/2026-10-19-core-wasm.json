@@ -1,0 +1,1 @@
+{"runtime":"actual compiled WASM in Node","native_parity_cases":7,"malformed_versions_rejected":13,"malformed_texts_rejected":7,"invalid_locale_rejected":true,"max_safe_version_preserved":true,"gzip_bytes":541253,"gzip_budget_bytes":3145728}

@@ -1,0 +1,46 @@
+
+   • turbo 2.11.9
+   • Packages in scope: @nexwrite/web
+   • Running build in 1 package
+   • Remote caching disabled
+
+@nexwrite/design-tokens:build: cache hit, replaying logs 5c6057415cd76338
+@nexwrite/design-tokens:build: $ node generate.mjs
+@nexwrite/design-tokens:build: Design token outputs generated.
+@nexwrite/protocol:build: cache hit, replaying logs 1018c898b971e684
+@nexwrite/protocol:build: $ tsc -p tsconfig.json
+@nexwrite/web:build: cache bypass, force executing 9af749abd76f55dd
+@nexwrite/web:build: $ node tools/build-engine.mjs && tsc --noEmit && vite build
+@nexwrite/web:build:     Finished `release` profile [optimized] target(s) in 0.03s
+@nexwrite/web:build: vite v8.3.4 building client environment for production...
+@nexwrite/web:build: transforming...
+@nexwrite/web:build: ✓ 22 modules transformed.
+@nexwrite/web:build: rendering chunks...
+@nexwrite/web:build: computing gzip size...
+@nexwrite/web:build: dist/index.html                                                       1.08 kB │ gzip:  0.55 kB
+@nexwrite/web:build: dist/assets/analysis.worker-Deh58OJG.js                               1.39 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-cyrillic-ext-wght-normal-EocZY2iu.woff2    2.02 kB
+@nexwrite/web:build: dist/assets/space-grotesk-vietnamese-wght-normal-D0rl6rjA.woff2       6.71 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-vietnamese-wght-normal-Bt-aOZkq.woff2      7.50 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-greek-wght-normal-Bw9x6K1M.woff2           9.00 kB
+@nexwrite/web:build: dist/assets/inter-vietnamese-wght-normal-CBcvBZtf.woff2              10.25 kB
+@nexwrite/web:build: dist/assets/inter-greek-ext-wght-normal-DlzME5K_.woff2               11.23 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-cyrillic-wght-normal-D73BlboJ.woff2       12.10 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-latin-ext-wght-normal-DBQx-q_a.woff2      15.19 kB
+@nexwrite/web:build: dist/assets/inter-cyrillic-wght-normal-DqGufNeO.woff2                18.74 kB
+@nexwrite/web:build: dist/assets/space-grotesk-latin-ext-wght-normal-D9tNdqV9.woff2       18.94 kB
+@nexwrite/web:build: dist/assets/inter-greek-wght-normal-CkhJZR-_.woff2                   18.99 kB
+@nexwrite/web:build: dist/assets/space-grotesk-latin-wght-normal-BhU9QXUp.woff2           22.28 kB
+@nexwrite/web:build: dist/assets/inter-cyrillic-ext-wght-normal-BOeWTOD4.woff2            25.96 kB
+@nexwrite/web:build: dist/assets/jetbrains-mono-latin-wght-normal-B9CIFXIH.woff2          40.40 kB
+@nexwrite/web:build: dist/assets/inter-latin-wght-normal-Dx4kXJAl.woff2                   48.25 kB
+@nexwrite/web:build: dist/assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2               85.06 kB
+@nexwrite/web:build: dist/assets/index-KvB8tx6w.css                                       20.26 kB │ gzip:  4.55 kB
+@nexwrite/web:build: dist/assets/index-CRblWHq5.js                                       239.18 kB │ gzip: 75.00 kB
+@nexwrite/web:build: 
+@nexwrite/web:build: ✓ built in 234ms
+
+ Tasks:    3 successful, 3 total
+Cached:    2 cached, 3 total
+  Time:    1.421s 
+

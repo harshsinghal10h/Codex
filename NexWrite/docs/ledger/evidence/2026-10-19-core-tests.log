@@ -1,0 +1,87 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/main.rs (target/debug/deps/nw-a5ec17a85bdcbd27)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-e16f8e943a2cb279)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-ada41237ecb856b5)
+
+running 3 tests
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_rules-0c64207207dc78ca)
+
+running 3 tests
+test tests::examples_compile_and_run ... ok
+test tests::antipattern_excludes_overlapping_region ... ok
+test tests::rejects_malformed_and_unsupported_rules ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_schema-96bbbadfa333aef1)
+
+running 2 tests
+test tests::severity_is_a_bounded_wire_number ... ok
+test tests::offsets_have_exactly_two_unsigned_values ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_text-c5a237f6e88bded8)
+
+running 3 tests
+test tests::malformed_utf8_and_surrogate_boundaries_rejected ... ok
+test tests::graphemes_preserve_zwj_combining_and_crlf ... ok
+test tests::every_range_and_round_trip_in_all_units ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_wasm-d9f1f5dfcb523c03)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_schema
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

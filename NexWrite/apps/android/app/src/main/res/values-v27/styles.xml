@@ -1,0 +1,6 @@
+<!-- SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary -->
+<resources>
+    <style name="Theme.NexWrite" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+id: NW-SPACE-001
+locale: en-US
+category: correctness
+subcategory: spacing
+severity: 1
+pattern:
+  - regex: ' {2,}'
+antipatterns: []
+message:
+  short: Use one space here.
+  long: Reducing this run to one space keeps the words separated with consistent spacing.
+suggestions:
+  - ' '
+examples:
+  positive:
+    - {text: 'One  two', result: 'One two'}
+    - {text: 'One   two', result: 'One two'}
+    - {text: '  Leading', result: ' Leading'}
+    - {text: 'Trailing  ', result: 'Trailing '}
+  negative:
+    - 'One two'
+    - "One\ttwo"
+    - "One\u00a0\u00a0two"
+    - ''
+    - ' '
+tags: [COR-06, original, plain-text]
+provenance: own

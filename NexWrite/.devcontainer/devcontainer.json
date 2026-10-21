@@ -1,0 +1,10 @@
+{
+  "name": "NexWrite offline core",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "node",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "cargo install just --locked --version 1.59.0 && cargo install wasm-bindgen-cli --locked --version 0.2.129 && cargo install cargo-deny --locked --version 0.20.2 && pnpm install --frozen-lockfile && cargo fetch --locked",
+  "customizations": {
+    "vscode": { "extensions": ["rust-lang.rust-analyzer", "tamasfe.even-better-toml"] }
+  }
+}

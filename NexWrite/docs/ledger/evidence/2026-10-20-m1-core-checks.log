@@ -1,0 +1,7 @@
+    Checking nw-structure v0.1.0 (/workspace/Codex/NexWrite/core/structure)
+    Checking nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+    Checking nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Checking nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.42s
+    Finished `release` profile [optimized] target(s) in 0.07s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s

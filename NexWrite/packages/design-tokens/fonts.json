@@ -1,0 +1,9 @@
+{
+  "strategy": "Self-host package assets; never request a remote font at runtime.",
+  "fallback": "System fonts remain usable while assets load or are unavailable.",
+  "packages": [
+    { "name": "@fontsource-variable/inter", "version": "5.3.0", "license": "OFL-1.1", "css": "@fontsource-variable/inter/index.css", "role": "body" },
+    { "name": "@fontsource-variable/space-grotesk", "version": "5.3.0", "license": "OFL-1.1", "css": "@fontsource-variable/space-grotesk/index.css", "role": "display" },
+    { "name": "@fontsource-variable/jetbrains-mono", "version": "5.3.0", "license": "OFL-1.1", "css": "@fontsource-variable/jetbrains-mono/index.css", "role": "mono" }
+  ]
+}

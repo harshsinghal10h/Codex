@@ -1,0 +1,15 @@
+{
+  "scope": "actual own compiled Node WASM artifacts; no full runtime security claim",
+  "artifacts": [
+    {
+      "path": "target/wasm-node/nw_wasm.js",
+      "sha256": "74f09ba5b738f0ac4c1337e4e91441469cfedb2ffc11df022dac5882763e62cf",
+      "bytes": 7666
+    },
+    {
+      "path": "target/wasm-node/nw_wasm_bg.wasm",
+      "sha256": "ebb47553475015533d17130e259bcaf23eecce370e646debaf070cc2e80223e7",
+      "bytes": 1904928
+    }
+  ]
+}

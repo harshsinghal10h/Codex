@@ -1,0 +1,432 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexwrite.local/schema/owned-api.schema.json",
+  "x-spdx": "LicenseRef-NexWrite-Proprietary",
+  "description": "Generated API schema registry. Register canonical analysis.schema.json and suggestion.schema.json locally; do not fetch references. Enforce custom Unicode/UTF-8 keywords. DTOs are not validators.",
+  "$defs": {
+    "ApiLocale": {
+      "type": "string",
+      "enum": [
+        "en-US"
+      ],
+      "x-unicode-scalar-string": true
+    },
+    "AiTask": {
+      "type": "string",
+      "enum": [
+        "rewrite",
+        "summarize",
+        "compose"
+      ],
+      "x-unicode-scalar-string": true
+    },
+    "AiPreset": {
+      "type": "string",
+      "enum": [
+        "proofread",
+        "clearer",
+        "shorten",
+        "expand",
+        "formal",
+        "friendly",
+        "direct"
+      ],
+      "x-unicode-scalar-string": true
+    },
+    "HealthResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "version"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "const": "ok",
+          "x-unicode-scalar-string": true
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "x-unicode-scalar-string": true
+        }
+      }
+    },
+    "EngineCapabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "rule_count",
+        "locales",
+        "input_formats"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "rule_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "locales": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApiLocale"
+          },
+          "const": [
+            "en-US"
+          ]
+        },
+        "input_formats": {
+          "type": "array",
+          "items": {
+            "$ref": "https://nexwrite.local/schema/analysis.schema.json#/$defs/InputFormat"
+          },
+          "const": [
+            "plain",
+            "markdown"
+          ]
+        }
+      }
+    },
+    "ProviderProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "configured",
+        "models"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+          "x-unicode-scalar-string": true
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "x-unicode-scalar-string": true
+        },
+        "configured": {
+          "type": "boolean"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+            "x-unicode-scalar-string": true
+          }
+        }
+      }
+    },
+    "Capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol_version",
+        "version",
+        "engine",
+        "tasks",
+        "providers",
+        "accounts",
+        "cloud_docs",
+        "auth_required"
+      ],
+      "properties": {
+        "protocol_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "x-unicode-scalar-string": true
+        },
+        "engine": {
+          "$ref": "#/$defs/EngineCapabilities"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AiTask"
+          },
+          "const": [
+            "rewrite",
+            "summarize",
+            "compose"
+          ]
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProviderProfile"
+          }
+        },
+        "accounts": {
+          "type": "boolean",
+          "const": false
+        },
+        "cloud_docs": {
+          "type": "boolean",
+          "const": false
+        },
+        "auth_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AnalyzeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "doc_version",
+        "locale",
+        "input_format"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1048576,
+          "x-utf8-max-bytes": 1048576,
+          "x-unicode-scalar-string": true
+        },
+        "doc_version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "locale": {
+          "$ref": "#/$defs/ApiLocale"
+        },
+        "input_format": {
+          "$ref": "https://nexwrite.local/schema/analysis.schema.json#/$defs/InputFormat"
+        }
+      }
+    },
+    "RewriteRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "doc_version",
+        "locale",
+        "task",
+        "preset",
+        "provider",
+        "model",
+        "cloud_consent"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 32768,
+          "x-utf8-max-bytes": 32768,
+          "x-unicode-scalar-string": true,
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "doc_version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "locale": {
+          "$ref": "#/$defs/ApiLocale"
+        },
+        "task": {
+          "$ref": "#/$defs/AiTask"
+        },
+        "preset": {
+          "$ref": "#/$defs/AiPreset"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+          "x-unicode-scalar-string": true
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "x-unicode-scalar-string": true
+        },
+        "cloud_consent": {
+          "type": "boolean",
+          "const": true
+        }
+      },
+      "description": "The provider identifies a server-configured profile, never an arbitrary upstream URL. Initial default profiles are openai and gemini. The model must occur in that profile's current capabilities allowlist. All tasks require a nonblank source or compose brief. Summarize and compose accept only the clearer preset.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "task": {
+                "enum": [
+                  "summarize",
+                  "compose"
+                ]
+              }
+            },
+            "required": [
+              "task"
+            ]
+          },
+          "then": {
+            "properties": {
+              "preset": {
+                "const": "clearer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "AiResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "doc_version",
+        "provider",
+        "model",
+        "task",
+        "preset",
+        "original",
+        "replacement",
+        "warnings"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "x-unicode-scalar-string": true
+        },
+        "doc_version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+          "x-unicode-scalar-string": true
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+          "x-unicode-scalar-string": true
+        },
+        "task": {
+          "$ref": "#/$defs/AiTask"
+        },
+        "preset": {
+          "$ref": "#/$defs/AiPreset"
+        },
+        "original": {
+          "type": "string",
+          "maxLength": 32768,
+          "x-utf8-max-bytes": 32768,
+          "x-unicode-scalar-string": true
+        },
+        "replacement": {
+          "type": "string",
+          "maxLength": 65536,
+          "x-utf8-max-bytes": 65536,
+          "x-unicode-scalar-string": true
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 512,
+            "x-unicode-scalar-string": true
+          },
+          "maxItems": 64
+        }
+      },
+      "description": "A proposed plain-text replacement, not executable HTML, tools or actions. original must equal the exact request text; request identity, document version, provider, model, task and preset must match the request before a client enables Apply."
+    },
+    "ApiProblem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
+        "status",
+        "code",
+        "request_id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "x-unicode-scalar-string": true
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "x-unicode-scalar-string": true
+        },
+        "status": {
+          "type": "integer",
+          "enum": [
+            400,
+            401,
+            403,
+            409,
+            413,
+            422,
+            429,
+            502,
+            503,
+            504
+          ]
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "x-unicode-scalar-string": true
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 36,
+          "maxLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "x-unicode-scalar-string": true
+        },
+        "retry_after_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "description": "Safe error metadata only. Never include source text, tokens, upstream payloads or stack traces. retry_after_seconds is optional and omitted when unavailable."
+    }
+  }
+}

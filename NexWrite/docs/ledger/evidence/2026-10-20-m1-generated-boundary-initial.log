@@ -1,0 +1,11 @@
+pnpm check
+$ node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs
+Generated bindings match canonical schema.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: apps/web/public/engine/nw_wasm.d.ts: missing required SPDX header
+provenance-lint: apps/web/public/engine/nw_wasm.js: missing required SPDX header
+provenance-lint: apps/web/public/engine/nw_wasm_bg.wasm: asset lacks author, license and source provenance row
+provenance-lint: apps/web/public/engine/nw_wasm_bg.wasm.d.ts: missing required SPDX header
+[ELIFECYCLE] Command failed with exit code 1.
+error: recipe `check` failed on line 13 with exit code 1

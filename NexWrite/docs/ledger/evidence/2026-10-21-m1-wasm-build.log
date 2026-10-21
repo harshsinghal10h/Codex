@@ -1,0 +1,4 @@
+Command: just build wasm
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+    Finished `release` profile [optimized] target(s) in 0.05s
+{"runtime":"actual compiled WASM in Node","native_parity_cases":7,"malformed_versions_rejected":13,"malformed_texts_rejected":7,"analysis_native_parity_cases":23,"malformed_analysis_inputs_rejected":30,"invalid_locale_rejected":true,"max_safe_version_preserved":true,"gzip_bytes":668154,"gzip_budget_bytes":3145728}

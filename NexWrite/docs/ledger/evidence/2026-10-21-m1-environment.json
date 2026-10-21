@@ -1,0 +1,17 @@
+{
+  "kind": "static",
+  "date_utc": "2026-10-21",
+  "draft_id": "82514086-2fd2-49d7-80b9-20206fd18a80~cecfgdraft_6ad5f2b41ddc81948ea91567372cdf9a",
+  "revision": 4,
+  "runtime_spec_revision": "1",
+  "observed_phase": "running",
+  "custom_runtime_hosts": [],
+  "requires_publish": true,
+  "saved_domain_additions": [
+    "api.github.com",
+    "www.grammarly.com"
+  ],
+  "configuration_state": "Draft persistence confirmed by readback; saved additions are not applied or published. No new-task restoration was tested.",
+  "publication_state": "The earlier GitHub API probe was Forbidden. Runtime policy is unchanged; no repeat probe, push or pull request is claimed.",
+  "preservation": "Existing VLC setup/startup instructions were preserved. Patches/bundles provide an independent copy of local commits because local-only commit restoration is not independently reliable."
+}

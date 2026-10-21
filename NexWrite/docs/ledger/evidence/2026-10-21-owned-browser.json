@@ -1,0 +1,167 @@
+{
+  "scope": "Local Chromium production-build checks; automated accessibility and synthetic composition only, not device or screen-reader certification.",
+  "started": "2026-10-21T10:01:31.960Z",
+  "versions": {
+    "node": "v24.19.0",
+    "chromium": "154.0.8037.57",
+    "playwright": "1.64.1",
+    "@axe-core/playwright": "4.14.0",
+    "vite": "8.3.4",
+    "react": "19.3.1"
+  },
+  "cases": [
+    {
+      "name": "fresh memory-only, local assets/CSP, real WASM and independent/native metrics",
+      "status": "passed",
+      "milliseconds": 5534
+    },
+    {
+      "name": "Unicode accept/Undo preserves adopted source; typing clears accept history; exact export",
+      "status": "passed",
+      "milliseconds": 2741
+    },
+    {
+      "name": "late actual Worker responses are ignored after edits",
+      "status": "passed",
+      "milliseconds": 3770
+    },
+    {
+      "name": "composition suppresses checks and actions until committed; pause terminates Worker",
+      "status": "passed",
+      "milliseconds": 4966
+    },
+    {
+      "name": "opt-in draft restore, opt-out removal, and scoped clear preserve current/unrelated data",
+      "status": "passed",
+      "milliseconds": 8312
+    },
+    {
+      "name": "restored CRLF/CR adopts LF consistently for DOM, analysis, accept/Undo and export",
+      "status": "passed",
+      "milliseconds": 3104
+    },
+    {
+      "name": "storage denial/quota and malformed saved records remain editable",
+      "status": "passed",
+      "milliseconds": 4303
+    },
+    {
+      "name": "malformed draft is not imported",
+      "status": "passed",
+      "milliseconds": 4433
+    },
+    {
+      "name": "unknown-version draft is not imported",
+      "status": "passed",
+      "milliseconds": 2634
+    },
+    {
+      "name": "invalid-format draft is not imported",
+      "status": "passed",
+      "milliseconds": 2822
+    },
+    {
+      "name": "oversized draft is not imported",
+      "status": "passed",
+      "milliseconds": 4205
+    },
+    {
+      "name": "malformed-Unicode draft is not imported",
+      "status": "passed",
+      "milliseconds": 4155
+    },
+    {
+      "name": "storage read denial is bounded and analysis stays available",
+      "status": "passed",
+      "milliseconds": 2159
+    },
+    {
+      "name": "Markdown source protects code/link/HTML and omits incomplete grade estimates",
+      "status": "passed",
+      "milliseconds": 1914
+    },
+    {
+      "name": "UTF-8 input cap and malformed UTF-16 do not produce success or repaired export",
+      "status": "passed",
+      "milliseconds": 18897
+    },
+    {
+      "name": "dense real results render bounded cards with truthful total",
+      "status": "passed",
+      "milliseconds": 1795
+    },
+    {
+      "name": "controlled Worker asset failure has truthful error and real retry recovery",
+      "status": "passed",
+      "milliseconds": 1677
+    },
+    {
+      "name": "local library save/search/rename/duplicate/delete and reload preserve exact source",
+      "status": "passed",
+      "milliseconds": 2709
+    },
+    {
+      "name": "denied IndexedDB Save stays unsaved while local checking works",
+      "status": "passed",
+      "milliseconds": 1688
+    },
+    {
+      "name": "SAF-style local file import adopts LF and rejects invalid UTF8 without replacing source",
+      "status": "passed",
+      "milliseconds": 1312
+    },
+    {
+      "name": "optional AI starts unconfigured and no text request occurs without explicit consent",
+      "status": "passed",
+      "milliseconds": 5521
+    },
+    {
+      "name": "AI protocol fixture Apply/Undo preserves Unicode, literal text, consent and provenance",
+      "status": "passed",
+      "milliseconds": 4011
+    },
+    {
+      "name": "AI protocol fixture rejects stale Apply and cancellation leaves the source unchanged",
+      "status": "passed",
+      "milliseconds": 4239
+    },
+    {
+      "name": "AI rate-limit and mismatched-response protocol fixtures never change the source",
+      "status": "passed",
+      "milliseconds": 2854
+    },
+    {
+      "name": "offline static shell restores only explicitly saved local documents and never caches API data",
+      "status": "passed",
+      "milliseconds": 3071
+    },
+    {
+      "name": "320px keyboard, light/dark, reduced motion and forced colors remain operable",
+      "status": "passed",
+      "milliseconds": 5016
+    }
+  ],
+  "timings": {
+    "fixtureDebounceAndAnalysisMs": 254
+  },
+  "accessibility": [
+    {
+      "state": "desktop dark real metrics",
+      "violations": []
+    },
+    {
+      "state": "AI consent with configured protocol fixture",
+      "violations": []
+    },
+    {
+      "state": "320px dark suggestion",
+      "violations": []
+    },
+    {
+      "state": "320px light suggestion",
+      "violations": []
+    }
+  ],
+  "completed": "2026-10-21T10:03:37.308Z",
+  "status": "passed"
+}

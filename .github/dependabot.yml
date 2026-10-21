@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /NexWrite
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /NexWrite
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

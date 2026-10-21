@@ -1,0 +1,99 @@
+{
+  "evidence_id": "EV-20261019-007",
+  "kind": "local-runtime",
+  "platform": "Linux x86_64",
+  "commands": [
+    {
+      "command": [
+        "just",
+        "check"
+      ],
+      "started_at": "2026-10-19T10:52:19.063148+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.774
+    },
+    {
+      "command": [
+        "just",
+        "test"
+      ],
+      "started_at": "2026-10-19T10:52:20.836842+00:00",
+      "exit_code": 0,
+      "duration_seconds": 5.806
+    },
+    {
+      "command": [
+        "just",
+        "build",
+        "core"
+      ],
+      "started_at": "2026-10-19T10:52:26.643667+00:00",
+      "exit_code": 0,
+      "duration_seconds": 38.479
+    },
+    {
+      "command": [
+        "just",
+        "build",
+        "wasm"
+      ],
+      "started_at": "2026-10-19T10:53:05.143016+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.559
+    },
+    {
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "started_at": "2026-10-19T10:53:05.704311+00:00",
+      "exit_code": 1,
+      "duration_seconds": 2.01
+    },
+    {
+      "command": [
+        "pnpm",
+        "--filter",
+        "@nexwrite/protocol",
+        "check"
+      ],
+      "started_at": "2026-10-19T10:53:07.715051+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.434
+    },
+    {
+      "command": [
+        "just",
+        "compose-check"
+      ],
+      "started_at": "2026-10-19T10:53:09.148806+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.332
+    },
+    {
+      "command": [
+        "just",
+        "secrets"
+      ],
+      "started_at": "2026-10-19T10:53:09.481233+00:00",
+      "exit_code": 0,
+      "duration_seconds": 1.102
+    },
+    {
+      "command": [
+        "pnpm",
+        "audit",
+        "--audit-level",
+        "high"
+      ],
+      "started_at": "2026-10-19T10:53:10.583453+00:00",
+      "exit_code": 0,
+      "duration_seconds": 0.995
+    }
+  ],
+  "passed": 8,
+  "failed": 1,
+  "ci_verified": false,
+  "phase": "initial, superseded",
+  "superseded_by": "EV-20261019-001"
+}

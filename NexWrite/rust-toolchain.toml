@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]
+profile = "minimal"

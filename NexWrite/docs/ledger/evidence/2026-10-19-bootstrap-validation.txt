@@ -1,0 +1,273 @@
+
+$ just check
+pnpm check
+$ node tools/codegen/generate.mjs --check && node packages/design-tokens/generate.mjs --check && node tools/ledger-lint.mjs && node tools/provenance-lint.mjs && node tools/license-check.mjs
+Generated bindings match canonical schema.
+Design token outputs match.
+ledger-lint: passed
+provenance-lint: passed
+license-check: passed
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+    Checking nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+    Checking nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+    Checking nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+    Checking nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+    Checking nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Checking nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.03s
+EXIT 0
+
+$ just test
+pnpm test
+$ node --test
+✔ dark: text on background meets normal-text AA (2.051305ms)
+✔ dark: textMuted on background meets normal-text AA (0.186884ms)
+✔ dark: correctness on background meets normal-text AA (0.157542ms)
+✔ dark: clarity on background meets normal-text AA (0.169448ms)
+✔ dark: engagement on background meets normal-text AA (0.226088ms)
+✔ dark: delivery on background meets normal-text AA (0.361833ms)
+✔ dark: focus on background meets non-text contrast (0.2853ms)
+✔ dark: text on surface meets normal-text AA (0.106765ms)
+✔ dark: textMuted on surface meets normal-text AA (1.363109ms)
+✔ dark: correctness on surface meets normal-text AA (0.352432ms)
+✔ dark: clarity on surface meets normal-text AA (0.196933ms)
+✔ dark: engagement on surface meets normal-text AA (0.392487ms)
+✔ dark: delivery on surface meets normal-text AA (0.098209ms)
+✔ dark: focus on surface meets non-text contrast (0.074837ms)
+✔ dark: text on surfaceRaised meets normal-text AA (0.044169ms)
+✔ dark: textMuted on surfaceRaised meets normal-text AA (0.034396ms)
+✔ dark: correctness on surfaceRaised meets normal-text AA (0.02938ms)
+✔ dark: clarity on surfaceRaised meets normal-text AA (0.02695ms)
+✔ dark: engagement on surfaceRaised meets normal-text AA (0.027237ms)
+✔ dark: delivery on surfaceRaised meets normal-text AA (0.02819ms)
+✔ dark: focus on surfaceRaised meets non-text contrast (0.027742ms)
+✔ dark: action label meets AA (0.069539ms)
+✔ light: text on background meets normal-text AA (0.21374ms)
+✔ light: textMuted on background meets normal-text AA (0.049738ms)
+✔ light: correctness on background meets normal-text AA (0.030932ms)
+✔ light: clarity on background meets normal-text AA (0.027595ms)
+✔ light: engagement on background meets normal-text AA (0.026527ms)
+✔ light: delivery on background meets normal-text AA (0.034554ms)
+✔ light: focus on background meets non-text contrast (0.02728ms)
+✔ light: text on surface meets normal-text AA (0.031998ms)
+✔ light: textMuted on surface meets normal-text AA (0.028562ms)
+✔ light: correctness on surface meets normal-text AA (0.030139ms)
+✔ light: clarity on surface meets normal-text AA (0.030348ms)
+✔ light: engagement on surface meets normal-text AA (0.029152ms)
+✔ light: delivery on surface meets normal-text AA (0.102465ms)
+✔ light: focus on surface meets non-text contrast (0.061853ms)
+✔ light: text on surfaceRaised meets normal-text AA (0.101728ms)
+✔ light: textMuted on surfaceRaised meets normal-text AA (0.059461ms)
+✔ light: correctness on surfaceRaised meets normal-text AA (0.041149ms)
+✔ light: clarity on surfaceRaised meets normal-text AA (0.027304ms)
+✔ light: engagement on surfaceRaised meets normal-text AA (0.025705ms)
+✔ light: delivery on surfaceRaised meets normal-text AA (0.127581ms)
+✔ light: focus on surfaceRaised meets non-text contrast (0.069102ms)
+✔ light: action label meets AA (0.125677ms)
+✔ categories carry distinct non-color identities (6.011666ms)
+✔ fonts are configured as pinned self-hosted licensed assets (2.030645ms)
+✔ real CLI output satisfies canonical schema; malformed wire suggestions fail (2569.453143ms)
+✔ schema generator detects drift and rejects unsupported or ambiguous contracts (616.07214ms)
+✔ CSV handles quoted commas, escaped quotes, CRLF and multiline text (5.51639ms)
+✔ all 149 S7 rows remain accounted for (41.347916ms)
+✔ duplicate and invented IDs are rejected (17.432493ms)
+✔ non-planned status needs a real specification; unknowns must resolve (14.898512ms)
+✔ private URLs and escaping local evidence are rejected (54.128909ms)
+✔ invalid evidence classes and cases are rejected (11.640444ms)
+✔ verified requires CI provenance and every passing required case (16.78277ms)
+✔ local evidence cannot be relabeled verified (20.020446ms)
+✔ fail, unknown, skipped and truncated never aggregate to pass (57.508502ms)
+✔ verified cannot retain unresolved obligations or missing evidence (9.340756ms)
+✔ source requires an SPDX header and original identifiers (2.456414ms)
+✔ binaries and vendored files need reviewed per-file provenance (2.631805ms)
+✔ SPDX expression policy allows a permitted alternative and rejects unreviewed obligations (0.779422ms)
+✔ Cargo historical dual-license spelling preserves its OR meaning without accepting unknown licenses (0.264603ms)
+✔ local credential initializer generates independent values and preserves existing files (2.207599ms)
+ℹ tests 63
+ℹ suites 0
+ℹ pass 63
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3597.464025
+cargo test --workspace --locked
+   Compiling nw-schema v0.1.0 (/workspace/Codex/NexWrite/core/schema)
+   Compiling nw-text v0.1.0 (/workspace/Codex/NexWrite/core/text)
+   Compiling nw-rules v0.1.0 (/workspace/Codex/NexWrite/core/rules)
+   Compiling nw-engine v0.1.0 (/workspace/Codex/NexWrite/core/engine)
+   Compiling nw-wasm v0.1.0 (/workspace/Codex/NexWrite/core/wasm)
+   Compiling nw-cli v0.1.0 (/workspace/Codex/NexWrite/core/cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.35s
+     Running unittests src/main.rs (target/debug/deps/nw-43b1a023cee7dfab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-cba7ccd756a0c396)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-8b38f9abad21b97a)
+
+running 3 tests
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_rules-d349bef215f5e27e)
+
+running 3 tests
+test tests::antipattern_excludes_overlapping_region ... ok
+test tests::examples_compile_and_run ... ok
+test tests::rejects_malformed_and_unsupported_rules ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_schema-2e1e9b1197bbb959)
+
+running 2 tests
+test tests::severity_is_a_bounded_wire_number ... ok
+test tests::offsets_have_exactly_two_unsigned_values ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_text-16d1afc7e9b284cb)
+
+running 3 tests
+test tests::malformed_utf8_and_surrogate_boundaries_rejected ... ok
+test tests::graphemes_preserve_zwj_combining_and_crlf ... ok
+test tests::every_range_and_round_trip_in_all_units ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_wasm-15789f44109fa838)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_schema
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+EXIT 0
+
+$ just build core
+    Finished `release` profile [optimized] target(s) in 0.05s
+EXIT 0
+Moved the prior debug CLI aside to verify this standalone command rebuilds its own native prerequisite.
+
+$ just build wasm
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+    Finished `release` profile [optimized] target(s) in 0.06s
+{"runtime":"actual compiled WASM in Node","native_parity_cases":7,"malformed_versions_rejected":13,"malformed_texts_rejected":7,"invalid_locale_rejected":true,"max_safe_version_preserved":true,"gzip_bytes":541253,"gzip_budget_bytes":3145728}
+EXIT 0
+
+$ pnpm build
+$ turbo run build
+
+   • Packages in scope: @nexwrite/design-tokens, @nexwrite/protocol
+   • Running build in 2 packages
+   • Remote caching disabled
+
+@nexwrite/protocol:build: cache hit, replaying logs fc6e5fbaf3def473
+@nexwrite/protocol:build: $ tsc -p tsconfig.json
+@nexwrite/design-tokens:build: cache hit, replaying logs 00b066f0b94fe293
+@nexwrite/design-tokens:build: $ node generate.mjs
+@nexwrite/design-tokens:build: Design token outputs generated.
+
+ Tasks:    2 successful, 2 total
+Cached:    2 cached, 2 total
+  Time:    84ms >>> FULL TURBO
+
+EXIT 0
+
+$ pnpm --filter @nexwrite/protocol check
+$ tsc --noEmit -p tsconfig.json
+EXIT 0
+
+$ just compose-check
+node tools/compose-check.mjs
+compose-check: seven optional service configurations parse and bind published ports to loopback; containers were not started.
+EXIT 0
+
+$ just secrets
+node tools/secret-check.mjs
+10:58AM INF scanned ~1707889 bytes (1.71 MB) in 428ms
+10:58AM INF no leaks found
+EXIT 0
+
+$ just supply-chain
+node tools/license-check.mjs
+license-check: passed
+cargo deny --locked check
+warning[license-not-encountered]: license was not encountered
+  ┌─ /workspace/Codex/NexWrite/deny.toml:7:71
+  │
+7 │ allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "CC0-1.0", "Unlicense", "Unicode-3.0", "Zlib"]
+  │                                                                       ━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+  ┌─ /workspace/Codex/NexWrite/deny.toml:7:32
+  │
+7 │ allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "CC0-1.0", "Unlicense", "Unicode-3.0", "Zlib"]
+  │                                ━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+  ┌─ /workspace/Codex/NexWrite/deny.toml:7:79
+  │
+7 │ allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "CC0-1.0", "Unlicense", "Unicode-3.0", "Zlib"]
+  │                                                                               ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+  ┌─ /workspace/Codex/NexWrite/deny.toml:7:64
+  │
+7 │ allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "CC0-1.0", "Unlicense", "Unicode-3.0", "Zlib"]
+  │                                                                ━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+  ┌─ /workspace/Codex/NexWrite/deny.toml:7:118
+  │
+7 │ allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "CC0-1.0", "Unlicense", "Unicode-3.0", "Zlib"]
+  │                                                                                                                      ━━━━ unmatched license allowance
+
+advisories ok, bans ok, licenses ok, sources ok
+pnpm audit --audit-level high
+No known vulnerabilities found
+EXIT 0

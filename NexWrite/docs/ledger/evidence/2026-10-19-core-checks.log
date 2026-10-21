@@ -1,0 +1,12 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+Generated bindings match canonical schema.
+✔ real CLI output satisfies canonical schema; malformed wire suggestions fail (221.800145ms)
+✔ schema generator detects drift and rejects unsupported or ambiguous contracts (554.531819ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 662.714124

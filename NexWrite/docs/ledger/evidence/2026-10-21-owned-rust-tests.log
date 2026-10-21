@@ -1,0 +1,184 @@
+    Blocking waiting for file lock on build directory
+   Compiling syn v2.0.119
+   Compiling jni-sys v0.3.1
+   Compiling jni-sys-macros v0.4.1
+   Compiling thiserror-impl v1.0.69
+   Compiling jni-sys v0.4.1
+   Compiling thiserror v1.0.69
+   Compiling jni v0.21.1
+   Compiling nw-bridge v0.1.0 (/workspace/Codex/NexWrite/core/bridge)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.77s
+     Running unittests src/lib.rs (target/debug/deps/nw_bridge-ae646710cc91ff0c)
+
+running 6 tests
+test tests::errors_cannot_echo_untrusted_values ... ok
+test tests::malformed_utf8_never_uses_lossy_decoding ... ok
+test tests::portable_version_and_supported_settings_are_strict ... ok
+test tests::markdown_protection_and_original_unicode_offsets_are_retained ... ok
+test tests::native_transport_matches_actual_engine_for_unicode_and_markdown ... ok
+test tests::exact_core_byte_cap_is_preserved ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
+
+     Running unittests src/main.rs (target/debug/deps/nw-3af795cc0fafa8b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-8aacbcf0fe801109)
+
+running 3 tests
+test analyze_retains_native_paths_and_rejects_non_unicode_options ... ok
+test actual_cli_default_plain_explicit_markdown_and_analysis_schema ... ok
+test malformed_options_utf8_and_oversize_fail_without_partial_reports ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.94s
+
+     Running tests/cli.rs (target/debug/deps/cli-ad54cfbe3e95a3db)
+
+running 3 tests
+test actual_json_cli_and_document_version ... ok
+test non_utf8_paths_work_and_non_utf8_commands_or_options_fail_cleanly ... ok
+test malformed_input_and_options_fail_without_echoing_text ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_engine-77729eb25856136c)
+
+running 3 tests
+test tests::maximal_runs_original_replacements_and_versions ... ok
+test tests::unicode_neighbors_and_every_output_span ... ok
+test tests::empty_single_unicode_whitespace_and_long_runs ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/analysis.rs (target/debug/deps/analysis-65d18d668c3d8599)
+
+running 4 tests
+test independent_unicode_coordinates_and_original_suggestions ... ok
+test markdown_protection_is_additive_and_no_source_fragments_are_joined ... ok
+test independent_formulas_and_score_gates_are_preserved_end_to_end ... ok
+test input_limit_settings_and_legacy_limit_are_independent ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_metrics-66ef7f006e6c7288)
+
+running 12 tests
+test tests::ascii_heuristic_has_explicit_coverage_and_silent_e_rules ... ok
+test tests::code_only_projection_retains_whole_source_counts_and_zero_analyzed_counts ... ok
+test tests::each_readability_gate_omits_estimates_but_preserves_defined_metrics ... ok
+test tests::empty_punctuation_and_emoji_have_no_fabricated_scores ... ok
+test tests::independent_three_sentence_formula_oracle_preserves_negative_estimates ... ok
+test tests::lowercase_uniqueness_uses_unicode_without_normalization_or_full_folding ... ok
+test tests::markdown_warnings_are_deduplicated_ordered_and_any_protection_gates_grades ... ok
+test tests::numeric_and_non_latin_tokens_keep_counts_times_and_type_token_ratio ... ok
+test tests::original_unicode_source_counts_and_retained_prose_are_distinct ... ok
+test tests::malformed_spans_and_projection_warnings_are_errors_without_panics ... ok
+test tests::independent_thirty_sentence_smog_and_positive_polysyllable_oracles ... ok
+test tests::source_cap_is_checked_before_any_coordinate_allocation ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_rules-ae73578dd935d14b)
+
+running 3 tests
+test tests::examples_compile_and_run ... ok
+test tests::rejects_malformed_and_unsupported_rules ... ok
+test tests::antipattern_excludes_overlapping_region ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_schema-c109ac08a6a56a8f)
+
+running 2 tests
+test tests::severity_is_a_bounded_wire_number ... ok
+test tests::offsets_have_exactly_two_unsigned_values ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_structure-3e6f179f6c5eaa90)
+
+running 11 tests
+test tests::escapes_entities_indentation_and_hard_breaks_keep_source_coordinates ... ok
+test tests::code_links_images_and_reference_definition_are_wholly_protected ... ok
+test tests::html_blocks_and_inline_html_exclude_complete_source_lines ... ok
+test tests::empty_containers_beside_definitions_remain_markup ... ok
+test tests::malformed_openers_protect_to_eof_but_literal_pairs_remain ... ok
+test tests::plain_is_lossless_and_markdown_plain_prose_keeps_soft_crlf ... ok
+test tests::reference_titles_with_brackets_never_split_duplicate_definitions ... ok
+test tests::duplicate_multiline_reference_definitions_keep_whole_source_lines ... ok
+test tests::malformed_html_openers_warn_even_inside_parser_html_blocks ... ok
+test tests::syntax_fragments_are_never_joined_and_priority_union_is_stable ... ok
+test tests::repeated_html_openers_with_a_final_closer_do_not_become_ambiguous ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_text-14d637dac7fc6e73)
+
+running 7 tests
+test segment::tests::crlf_atomic_blank_lines_unicode_trim_and_sentence_fragments ... ok
+test segment::tests::protected_gaps_never_create_words_or_sentences ... ok
+test segment::tests::independent_original_coordinates_and_unicode_words ... ok
+test segment::tests::malformed_and_inconsistent_regions_return_errors ... ok
+test tests::every_range_and_round_trip_in_all_units ... ok
+test tests::graphemes_preserve_zwj_combining_and_crlf ... ok
+test tests::malformed_utf8_and_surrogate_boundaries_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/nw_wasm-e1a41277cabcf94c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_bridge
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_metrics
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_rules
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_schema
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_structure
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_text
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nw_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

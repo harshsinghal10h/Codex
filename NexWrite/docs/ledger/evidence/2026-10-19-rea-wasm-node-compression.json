@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "-e",
+    "const fs=require(\"node:fs\"),z=require(\"node:zlib\"),c=require(\"node:crypto\");const b=fs.readFileSync(\"/workspace/Codex/NexWrite/target/wasm-node/nw_wasm_bg.wasm\");process.stdout.write(JSON.stringify({sha256:c.createHash(\"sha256\").update(b).digest(\"hex\"),nodeVersion:process.version,zlibVersion:process.versions.zlib,defaultGzipBytes:z.gzipSync(b).length,gzipLevel9Bytes:z.gzipSync(b,{level:9}).length})+\"\\n\")"
+  ],
+  "exitCode": 0,
+  "result": {
+    "sha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300",
+    "nodeVersion": "v24.19.0",
+    "zlibVersion": "1.3.2.1-motley-3246f1b",
+    "defaultGzipBytes": 541253,
+    "gzipLevel9Bytes": 540874
+  },
+  "pythonZlibVersion": "1.3.2"
+}

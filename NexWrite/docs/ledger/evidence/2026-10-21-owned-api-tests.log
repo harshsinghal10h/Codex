@@ -1,0 +1,17 @@
+$ node --test test/*.test.mjs
+✔ public discovery is safe and describes actual core availability (223.511283ms)
+✔ backend analysis equals the actual Rust CLI for Unicode and protected Markdown (71.299707ms)
+✔ request validation rejects malformed, unknown, size, surrogate and unsafe version inputs (70.48096ms)
+✔ binding, authentication, CORS and rate limits fail closed (37.099173ms)
+✔ missing core and unconfigured provider produce explicit unavailable states (14.998362ms)
+✔ two actual HTTP adapter contracts preserve Unicode, consent and untrusted prompt boundaries (simulated upstreams) (73.552604ms)
+✔ provider invalid, partial, tool, oversized, redirection and rate-limit responses never become proposals (87.113359ms)
+✔ timeout and client cancellation abort the real downstream HTTP request (147.671732ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2015.541676

@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+node_modules/
+target/
+dist/
+.turbo/
+.pnpm-store/
+.env
+.env.*
+!.env.example
+*.log
+!docs/ledger/evidence/*.log
+.DS_Store
+coverage/
+ci/reports/
+.gradle/
+.kotlin/
+apps/android/**/build/
+apps/android/local.properties
+*.keystore
+*.jks

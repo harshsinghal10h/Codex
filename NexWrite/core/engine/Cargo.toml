@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+[package]
+name = "nw-engine"
+version.workspace = true
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+
+[dependencies]
+nw-text.workspace = true
+nw-schema.workspace = true
+nw-rules.workspace = true
+nw-structure.workspace = true
+nw-metrics.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

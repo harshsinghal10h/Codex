@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexwrite.local/schema/analysis.schema.json",
+  "x-spdx": "LicenseRef-NexWrite-Proprietary",
+  "title": "AnalysisResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "doc_version",
+    "locale",
+    "input_format",
+    "prose_regions",
+    "protected_regions",
+    "tokens",
+    "sentences",
+    "paragraphs",
+    "metrics",
+    "suggestions"
+  ],
+  "properties": {
+    "doc_version": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^en-US$"
+    },
+    "input_format": {
+      "$ref": "#/$defs/InputFormat"
+    },
+    "prose_regions": {
+      "type": "array",
+      "items": {
+        "$ref": "suggestion.schema.json#/$defs/Span"
+      }
+    },
+    "protected_regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ProtectedRegion"
+      }
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Token"
+      }
+    },
+    "sentences": {
+      "type": "array",
+      "items": {
+        "$ref": "suggestion.schema.json#/$defs/Span"
+      }
+    },
+    "paragraphs": {
+      "type": "array",
+      "items": {
+        "$ref": "suggestion.schema.json#/$defs/Span"
+      }
+    },
+    "metrics": {
+      "$ref": "#/$defs/TextMetrics"
+    },
+    "suggestions": {
+      "type": "array",
+      "items": {
+        "$ref": "suggestion.schema.json"
+      }
+    }
+  },
+  "$defs": {
+    "InputFormat": {
+      "type": "string",
+      "enum": [
+        "plain",
+        "markdown"
+      ]
+    },
+    "ProtectionKind": {
+      "type": "string",
+      "enum": [
+        "code",
+        "html",
+        "image",
+        "link",
+        "reference_definition",
+        "ambiguous_markup",
+        "escape",
+        "entity",
+        "hard_break",
+        "indentation",
+        "syntax"
+      ]
+    },
+    "ProtectedRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "span",
+        "kind"
+      ],
+      "properties": {
+        "span": {
+          "$ref": "suggestion.schema.json#/$defs/Span"
+        },
+        "kind": {
+          "$ref": "#/$defs/ProtectionKind"
+        }
+      }
+    },
+    "TokenKind": {
+      "type": "string",
+      "enum": [
+        "word"
+      ]
+    },
+    "Token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "span",
+        "kind"
+      ],
+      "properties": {
+        "span": {
+          "$ref": "suggestion.schema.json#/$defs/Span"
+        },
+        "kind": {
+          "$ref": "#/$defs/TokenKind"
+        }
+      }
+    },
+    "TextMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_utf8_bytes",
+        "source_utf16_units",
+        "source_scalar_count",
+        "source_grapheme_count",
+        "analyzed_scalar_count",
+        "word_count",
+        "sentence_count",
+        "paragraph_count",
+        "letter_count",
+        "digit_count",
+        "unique_word_count",
+        "syllable_covered_words",
+        "estimated_syllables",
+        "estimated_polysyllable_words",
+        "reading_seconds",
+        "speaking_seconds",
+        "scores",
+        "warnings"
+      ],
+      "properties": {
+        "source_utf8_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "source_utf16_units": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "source_scalar_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "source_grapheme_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "analyzed_scalar_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "word_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "sentence_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "paragraph_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "letter_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "digit_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "unique_word_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "syllable_covered_words": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "estimated_syllables": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "estimated_polysyllable_words": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "reading_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "speaking_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetricScore"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MetricScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/MetricKind"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "MetricKind": {
+      "type": "string",
+      "enum": [
+        "type_token_ratio",
+        "flesch_reading_ease",
+        "flesch_kincaid_grade",
+        "gunning_fog",
+        "smog_grade",
+        "coleman_liau_index",
+        "automated_readability_index"
+      ]
+    }
+  }
+}

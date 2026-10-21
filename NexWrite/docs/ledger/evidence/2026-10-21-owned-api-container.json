@@ -1,0 +1,17 @@
+{
+  "kind": "local",
+  "classification": "observation",
+  "live_provider": false,
+  "checks": {
+    "capabilities": true,
+    "real_rust_analysis_parity": true,
+    "unauthenticated_post_rejected": true,
+    "unconfigured_provider_unavailable": true
+  },
+  "runtime": {
+    "user": "node",
+    "read_only": true
+  },
+  "image_id": "sha256:13f886cd6d58aec3c8acd8ffc114fcf9c6dbbe1f5d7dcc05bf2678255c4c5d26",
+  "status": "passed"
+}

@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: LicenseRef-NexWrite-Proprietary
+packages:
+  - packages/*
+  - apps/*
+  - services/*
+minimumReleaseAge: 1440
+blockExoticSubdeps: true
+onlyBuiltDependencies: []

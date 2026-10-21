@@ -1,0 +1,39 @@
+pnpm --filter @nexwrite/web test:e2e
+$ node tests/e2e.mjs
+RUN fresh memory-only, local assets/CSP, real WASM and independent/native metrics
+PASS fresh memory-only, local assets/CSP, real WASM and independent/native metrics
+RUN Unicode accept/Undo preserves adopted source; typing clears accept history; exact export
+PASS Unicode accept/Undo preserves adopted source; typing clears accept history; exact export
+RUN late actual Worker responses are ignored after edits
+PASS late actual Worker responses are ignored after edits
+RUN composition suppresses checks and actions until committed; pause terminates Worker
+PASS composition suppresses checks and actions until committed; pause terminates Worker
+RUN opt-in draft restore, opt-out removal, and scoped clear preserve current/unrelated data
+PASS opt-in draft restore, opt-out removal, and scoped clear preserve current/unrelated data
+RUN restored CRLF/CR adopts LF consistently for DOM, analysis, accept/Undo and export
+PASS restored CRLF/CR adopts LF consistently for DOM, analysis, accept/Undo and export
+RUN storage denial/quota and malformed saved records remain editable
+PASS storage denial/quota and malformed saved records remain editable
+RUN malformed draft is not imported
+PASS malformed draft is not imported
+RUN unknown-version draft is not imported
+PASS unknown-version draft is not imported
+RUN invalid-format draft is not imported
+PASS invalid-format draft is not imported
+RUN oversized draft is not imported
+PASS oversized draft is not imported
+RUN malformed-Unicode draft is not imported
+PASS malformed-Unicode draft is not imported
+RUN storage read denial is bounded and analysis stays available
+PASS storage read denial is bounded and analysis stays available
+RUN Markdown source protects code/link/HTML and omits incomplete grade estimates
+PASS Markdown source protects code/link/HTML and omits incomplete grade estimates
+RUN UTF-8 input cap and malformed UTF-16 do not produce success or repaired export
+PASS UTF-8 input cap and malformed UTF-16 do not produce success or repaired export
+RUN dense real results render bounded cards with truthful total
+PASS dense real results render bounded cards with truthful total
+RUN controlled Worker asset failure has truthful error and real retry recovery
+PASS controlled Worker asset failure has truthful error and real retry recovery
+RUN 320px keyboard, light/dark, reduced motion and forced colors remain operable
+PASS 320px keyboard, light/dark, reduced motion and forced colors remain operable
+PASSED: 18 local browser cases; report test-results/e2e-report.json

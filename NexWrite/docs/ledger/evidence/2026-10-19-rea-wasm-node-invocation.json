@@ -1,0 +1,121 @@
+{
+  "command": [
+    "/workspace/.toolchains/nexwrite/rea/node_modules/.bin/rea",
+    "analyze-javascript-application",
+    "/workspace/Codex/NexWrite/target/wasm-node",
+    "--artifact-format",
+    "directory",
+    "--max-heap-mb",
+    "512",
+    "--analysis-timeout-ms",
+    "60000",
+    "--format",
+    "json",
+    "--full-output"
+  ],
+  "startedAt": "2026-10-19T10:56:04.908108+00:00",
+  "durationSeconds": 13.313,
+  "exitCode": 0,
+  "target": "/workspace/Codex/NexWrite/target/wasm-node",
+  "before": [
+    {
+      "path": "nw_wasm.d.ts",
+      "sizeBytes": 216,
+      "gzipBytes": 177,
+      "sha256": "d40bd9fc1cc0121844aff8f2eeaf103b7dfb8d20f569a96786bc7c52a0190242"
+    },
+    {
+      "path": "nw_wasm.js",
+      "sizeBytes": 6432,
+      "gzipBytes": 1880,
+      "sha256": "4e41048233023957199af0e5d467d243696f68b45269a8561d9bae7bd4eca978"
+    },
+    {
+      "path": "nw_wasm_bg.wasm",
+      "sizeBytes": 1587592,
+      "gzipBytes": 525052,
+      "sha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300"
+    },
+    {
+      "path": "nw_wasm_bg.wasm.d.ts",
+      "sizeBytes": 462,
+      "gzipBytes": 182,
+      "sha256": "afe4e5b9d6d759a2709eb6de6f16529c381fb6be71df5b7a3596f715898640d7"
+    },
+    {
+      "path": "package.json",
+      "sizeBytes": 20,
+      "gzipBytes": 40,
+      "sha256": "dbf8353f77358bc12169b7bb7301e1978d5b503e002ee927229a8993672818fc"
+    }
+  ],
+  "after": [
+    {
+      "path": "nw_wasm.d.ts",
+      "sizeBytes": 216,
+      "gzipBytes": 177,
+      "sha256": "d40bd9fc1cc0121844aff8f2eeaf103b7dfb8d20f569a96786bc7c52a0190242"
+    },
+    {
+      "path": "nw_wasm.js",
+      "sizeBytes": 6432,
+      "gzipBytes": 1880,
+      "sha256": "4e41048233023957199af0e5d467d243696f68b45269a8561d9bae7bd4eca978"
+    },
+    {
+      "path": "nw_wasm_bg.wasm",
+      "sizeBytes": 1587592,
+      "gzipBytes": 525052,
+      "sha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300"
+    },
+    {
+      "path": "nw_wasm_bg.wasm.d.ts",
+      "sizeBytes": 462,
+      "gzipBytes": 182,
+      "sha256": "afe4e5b9d6d759a2709eb6de6f16529c381fb6be71df5b7a3596f715898640d7"
+    },
+    {
+      "path": "package.json",
+      "sizeBytes": 20,
+      "gzipBytes": 40,
+      "sha256": "dbf8353f77358bc12169b7bb7301e1978d5b503e002ee927229a8993672818fc"
+    }
+  ],
+  "method": "Own compiled JS static analysis; not execution, WASM disassembly or native runtime proof",
+  "artifactStableDuringAnalysis": true,
+  "gzipMethod": "Python gzip.compress(compresslevel=9, mtime=0)",
+  "afterSupplements": [
+    {
+      "path": "nw_wasm.d.ts",
+      "sizeBytes": 216,
+      "gzipBytes": 177,
+      "sha256": "d40bd9fc1cc0121844aff8f2eeaf103b7dfb8d20f569a96786bc7c52a0190242"
+    },
+    {
+      "path": "nw_wasm.js",
+      "sizeBytes": 6432,
+      "gzipBytes": 1880,
+      "sha256": "4e41048233023957199af0e5d467d243696f68b45269a8561d9bae7bd4eca978"
+    },
+    {
+      "path": "nw_wasm_bg.wasm",
+      "sizeBytes": 1587592,
+      "gzipBytes": 525052,
+      "sha256": "48b4bddac19a7ef7d4b8986056b109b35cf8cab75718cfa40725cb5592d49300"
+    },
+    {
+      "path": "nw_wasm_bg.wasm.d.ts",
+      "sizeBytes": 462,
+      "gzipBytes": 182,
+      "sha256": "afe4e5b9d6d759a2709eb6de6f16529c381fb6be71df5b7a3596f715898640d7"
+    },
+    {
+      "path": "package.json",
+      "sizeBytes": 20,
+      "gzipBytes": 40,
+      "sha256": "dbf8353f77358bc12169b7bb7301e1978d5b503e002ee927229a8993672818fc"
+    }
+  ],
+  "artifactStableThroughSupplements": true,
+  "supplementsCompletedAt": "2026-10-19T10:56:43.081091+00:00"
+}
